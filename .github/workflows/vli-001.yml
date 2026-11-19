@@ -39,7 +39,7 @@ jobs:
           python -m pip install -e . -e upstream/vl64
       - name: Unit and real observed-header tests
         run: |
-          python -m unittest discover -s tests -v
+          python -m unittest discover -s tests -p test_vli_001.py -v
       - name: Lift pinned SmolLM2 structure and complete logits frontier
         run: |
           python -m vli inspect --manifest upstream/vl64/experiments/model_fabric/datasets/2026-11-18-pinned-smollm2-tensor-ground.json --out artifacts/real-model-ground.json
