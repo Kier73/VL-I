@@ -116,7 +116,11 @@ def validate_plan(observed, plan):
     _require(set(inventory) == set(plan["tensors"]),
              "Typed graph must bind the exact observed tensor inventory")
     for key, item in plan["tensors"].items():
-        _require(item == inventory[key], "Typed graph tensor binding altered: " + key)
+        # VL-64 compiles a minimal typed address rather than copying
+        # header-specific metadata such as 'name' and 'elements'.
+        expected = {field: inventory[key][field]
+                    for field in ("dtype", "shape", "data_offsets")}
+        _require(item == expected, "Typed graph tensor binding altered: " + key)
 
     seen = set()
     ops = Counter()
