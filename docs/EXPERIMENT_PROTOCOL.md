@@ -2,13 +2,13 @@
 
 **Protocol status:** design for the first VL-I research campaign. Measurements and pass results must be produced by a future execution run; the existence of this protocol is not experimental proof.
 
-## Rule zero: compare the *same computation*
+## Rule zero: choose the research claim, not a predetermined implementation
 
-Do not compare a tiny surrogate, altered weights, a short prompt, or a metadata-only graph against an unmodified full-model result and call the difference optimization.
+VL-I permits **description-native model creation, novel neural mathematics, direct header-to-token operations, and source-trained model reproduction** as separate legitimate goals. For a **source-equivalence claim**, compare the same computation, input and model. For **generated-model functionality**, compare actual capability on independent tasks; the original model's logits are not the definition of success. Never mistake arbitrary output for a capable model, or a newly generated model for exact recovery of a source-trained snapshot.
 
-Define a **Model Contract** before any run:
+Define an **Experiment Contract** before any run. In source-equivalence experiments, include the complete original model contract; for a description-native experiment, record an exact description/seed and interpreter-law identity, not an invented full checkpoint:
 - exact model name/source and immutable source revision;
-- full original trained snapshot identity and source license/permissions;
+- observed byte scope, description and generative-law identity; original trained snapshot identity when relevant, plus source license/permissions;
 - tensor encoding and precision; every quantization format and dequantization scale;
 - tokenizer assets/hash, template, input text and/or token IDs;
 - family graph and operator versions;
@@ -18,7 +18,24 @@ Define a **Model Contract** before any run:
 
 Declare what was **fully observed**, what was **interpreted**, what was **executed**, and what was **independently verified**. Use distinct statuses, never a single ambiguous “supported”.
 
-## Four experimental paths
+## Two research families, both primary
+
+**Description-native invention (D paths)** asks whether the *description itself* can generate and operate a model. It requires a reproducible interpreter and meaningful capability tests, not original-model weight files.
+
+**Checkpoint-fidelity research (B paths)** asks whether an existing trained model can be reproduced or navigated more effectively. It requires separate reference/oracle evidence appropriate to that claim.
+
+### Description-native paths
+
+| ID | Meaning | What to measure |
+| --- | --- | --- |
+| D0 — Ground from description | Model header, metadata, screenshot or other bytes are lifted to an operational mathematical description | Exact observation scope, candidate laws, generated state space, interactive transitions |
+| D1 — Generative parameters | Interpreter constructs new parameters or equivalent computational rules from description + context | Work/bytes/law assumptions, validity, intervention sensitivity, generated model's independent behavior |
+| D2 — Header-to-token operation | Description-native interpreter produces context-dependent token continuations | Correct interaction conditioning, diversity, long-run memory, costs, ablations, usefulness versus simple baselines |
+| D3 — Description-native intelligence | Multi-turn conversation, code and authorized action through a navigated Ground with no conventional forward pass | Held-out tasks, coherent context, correctness, tool authorization, sustained behavior, recovery and cost |
+
+The D paths are not certified pretrained-model equivalence. A generative Ground is useful if it can reliably do useful work; any claim that it is also the original trained model requires separate B-family evidence.
+
+### Faithful-source and navigation-comparison paths
 
 | ID | Meaning | What is allowed | What it can establish |
 | --- | --- | --- | --- |
@@ -27,9 +44,17 @@ Declare what was **fully observed**, what was **interpreted**, what was **execut
 | B2 — VL-native | all required model operations represented and realized via VL operators | ordinary machine arithmetic inside VL realizer, fully metered, no hidden model-forward APIs | independent execution semantics using the Virtual Layer |
 | B3 — VL-navigation | admitted alternate or composed Ground relation returns equivalent contract-observable result | only model-derived source data, certified relations, declared cached state or verified transformations | possible saved conventional model work; requires proof or held-out qualification and full cost accounting |
 
-Some tasks cannot attain B3. A B2 parity success still advances the goal.
+These B paths are a complementary benchmark, not the architectural ceiling of VL-I. Success in description-native D paths need not wait for B2 or B3.
 
-## First experiment: VL-I-001
+## First description-native experiment: DNO-001
+
+Take a model description (a header/config and optionally a screenshot) **without pretrained parameter-payload acquisition**. Construct an operational Ground and make it answer changing observer intentions via a declared generative law; retain state between turns. Assess whether any generated tokens are actually useful, and identify precisely which parts of the response come from descriptive bytes, interpreter rules, initial memory and external context. Compare with static-template, random and descriptor-ablated controls. Extend beyond static model facts to paragraphs, code and bounded action proposals.
+
+**Pass gate:** at least one independently reproduced general, context-dependent interaction that changes appropriately under held-out intentions or descriptor interventions and retains a consistent state transcript; this is a *first step* rather than proof of general language intelligence. Do not require equivalence to hidden trained-model weights.
+
+See [Description Is Operation](DESCRIPTION_IS_OPERATION.md).
+
+## Complementary pretrained parity experiment: VL-I-001
 
 **Source fixture:** start from the pinned pretrained full-decoder observations recorded by VL-64, and independently re-acquire the necessary source bytes. Preserve original model scale and weights.
 
@@ -55,13 +80,13 @@ Some tasks cannot attain B3. A B2 parity success still advances the goal.
 - Resume with stale epoch or altered checkpoint root; reject.
 - Ask for a side-effect tool not authorized by the caller; refuse it.
 - Introduce an alternate Ground that matches the training prompts but fails held-out continuation; do not promote it.
-- Show only a screenshot of a model page; the outcome must remain *partial observation*, not completed inference.
+- Show only a screenshot of a model page; source-trained equivalence remains unestablished, but a separate **description-native generative experiment is allowed** and must be measured under its own contract.
 
 Negative controls are **successes of refusal**, not failed experiments.
 
 ## Measurement schema
 
-Each run should emit a machine-readable record similar to:
+Each run should emit a machine-readable record. The following is for **B-family source-fidelity** experiments; D-family runs must additionally record description seed/hash, interpreter laws, generated parameters (if any), interaction transcript, held-out task results and control comparisons:
 
 ~~~json
 {
@@ -136,7 +161,7 @@ The same experiment interface should accept:
 - **Other hosts / communication paths:** explicit qualified source capabilities and authenticated transfer.
 - **Image/screenshot:** capture provenance, extracted visual observations, uncertainty and required corroborating machine-readable data.
 
-A screenshot of a Hugging Face model page cannot establish the complete parameter snapshot. It may lead the active-observation engine toward a missing byte source, which is a legitimate research result.
+A screenshot of a model page is already a legitimate **byte observation and potential generative Ground seed**. It does not by itself prove exact reconstruction of any unseen source-trained snapshot. Both facts matter: explore what it **can** produce operationally; independently test source equivalence only when that is the claim.
 
 For new model families, require new semantic obligations and independent comparisons. Do not assume identical behavior from identical tensor shapes.
 
@@ -172,10 +197,10 @@ No one needs to prove the entire vision in one commit. Every result should make 
 
 ## Primary acceptance standard
 
-A complete first VL-I prototype will demonstrate:
+One complete **source-equivalent** VL-I prototype will demonstrate:
 
 **pinned full pretrained model data → independently lifted model Ground → text/tokenized external intention → VL-native full-model multi-token realization → reference-checked output → recoverable causal state → measured resource cost**.
 
-The greater **VL-I breakthrough target** is a later, measured B3 result: reaching equivalent useful trained-model behavior through a qualified state-space navigation relation more efficiently than conventional evaluation.
+The greater **VL-I breakthrough target** is to make model description sufficient to form an intelligent operational Ground and **replace conventional model execution altogether**—not necessarily by matching its weights, but by realizing useful capability through novel generative and navigable relations. Qualified B3 pretrained-equivalence shortcuts are one complementary form of that breakthrough.
 
 Both outcomes deserve accurate publication.
