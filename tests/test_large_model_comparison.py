@@ -120,7 +120,7 @@ class TestUnscaledLargeModelEvidence(unittest.TestCase):
     def test_deepseek_nonfinite_or_wrong_numeric_reference_refused(self):
         changed=deepcopy(self.trained)
         changed["deepseek"]["selected_fp4_slices"]["max_abs_independent_error"]=0.1
-        with self.assertRaisesRegex(ValueError,"reference"):
+        with self.assertRaisesRegex(ValueError,"DeepSeek"):
             admit_archived_subgraphs(self.structural,changed,self.replays)
 
     def test_glance_replay_requires_zero_new_remote_ranges(self):
