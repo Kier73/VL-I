@@ -1,19 +1,20 @@
 # VL-I research plan — from observed model data to Virtual Layer Intelligence
 
-**Plan version:** 0.1 — 2026-11-19  
+**Plan version:** 0.2 — 2026-11-19  
 **Nature:** an executable research programme, not a claim that the future milestones have passed.  
-**Core hypothesis:** A trained model's information, transitions and causal state can be represented as a navigable Virtual Ground. A qualified VL interpreter can produce the model's useful functionality through that representation, and may eventually realize chosen observables more effectively than conventional layer-by-layer model execution.
+**Core hypothesis:** A model's **description itself** can be an operational and generative Virtual Ground. Interpreting and navigating that Ground can produce meaningful tokens, dialogue, programs, models and actions **without conventional neural-model execution**. This includes deriving or generating model weights from metadata, inventing alternate neural mathematics and discovering what functionality can emerge from even a file header. Faithful reproduction of original trained-model behavior is an additional research objective, not a gate on description-native intelligence.
 
-The goal is not to replace a large model with a smaller one. It is to change the **way the original model's structure and trained information are interpreted and realized**.
+The goal is not simply a smaller model or faster kernel. It is to **replace conventional model execution** by discovering how model descriptions, generative algebraic laws, structure, observer context and intention can operate as the model. A conventional pretrained implementation remains a useful comparator when relevant, never the limit of which experiments are allowed.
 
 ## Research charter
 
-A development increment is useful if it advances at least one of four things:
+A development increment is useful if it advances at least one of these research capacities:
 
-1. **Model addressability:** more of an actual model's original data and semantics can be observed, reconstructed and identified.
-2. **Ground fidelity:** the lifted representation preserves more verified behavior and meaningful state transitions.
-3. **Qualified navigation:** an intention can select a less costly and/or more capable route to the same declared observation.
-4. **Continuity and generality:** the result works across requests, model families, sources, scales or observer-hosts with retained evidence.
+1. **Description-native operation:** a header, metadata record, image, architecture description or arbitrary byte representation becomes an active Ground that can respond to intention.
+2. **Generative model synthesis:** alternative weights, token relations, state laws or architectures are constructed from a description and evaluated as operational systems.
+3. **New computational mathematics:** reduce or replace dependency on inherited layer-by-layer neural execution through new predictive, compositional or algebraic relations.
+4. **Model addressability and source fidelity:** actual pretrained snapshots can also be observed, reconstructed and compared where exact behavior is the research claim.
+5. **Continuity, generality and evidence:** the Ground can support changing requests, dialogue, code, actions, recovery and additional observer-hosts with measurable work and explicit uncertainty.
 
 Every increment must have a reproducible demonstration or explicit negative/control result.
 
@@ -26,9 +27,42 @@ Every increment must have a reproducible demonstration or explicit negative/cont
 - **Verified** — only what independent tests, proof obligations or measurement scopes actually establish.
 - **Predictable / unpredictable** — relative to a given context and observer, with observed uncertainty and missing information explicitly tracked.
 
-A large state space is not inherently a better description. A Ground earns promotion by predicting *more relevant independently observed distinctions per unit cost* and preserving the behavior requested by the intention.
+A Ground is judged by the **capability it realizes under intention**, its predictive value, the distinctions it preserves and its measured resources. The goal is to discover the most productive description, not merely the most faithful recitation of today's model operators.
 
-## Immediate project order
+## Immediate revolutionary programme — parallel to trained-snapshot integration
+
+**Description is not a passive prerequisite.** Investigate the following experiments *now*; conventional model parity is not a prerequisite. Each outcome must be reported under its own contract and evaluated on held-out intentions.
+
+### DNO-001 — Run a model description as an interactive Ground
+
+Start with model config, header, metadata, model card or screenshot alone. Construct a Virtual Ground that can accept observer intentions, produce tokens and context-sensitive responses, retain conversational state and revise its interpretation. Generalize beyond answering static configuration questions. Use a declared generative law and log what information the input description, interpreter, context and memory each contribute.
+
+**Test:** independent unseen prompts, different descriptions, ablations, reproducible state transitions and comparison to null/template baselines. This is not automatically reproduction of the original model's trained behavior.
+
+### DNO-002 — Model weights and functions from metadata
+
+Given a header/config with zero parameter-payload bytes, search for a procedural law that generates functional parameters or equivalent operations. Test both **exact checkpoint reconstruction** (when source data are available to validate) and **new model formation** (measured by behavior on independent tasks).
+
+**Test:** validity of synthesized parameter data or functions, output-quality changes under controlled metadata edits, measured extra information consumed, relation to any observed pretrained snapshot and counterexamples.
+
+### DNO-003 — Redefine inference mathematics
+
+Find new models for operations normally expressed as learned matrix/tensor transformations: predictive quotient states, relational composition, symbolic/temporal navigation, generative parameter Grounds, exact or approximate functional equivalence, and entirely novel schemes. Avoid treating the inherited Transformer graph as the definition of computation.
+
+**Test:** held-out tasks and full accounting of interpretation, observation, storage, verification and actual computation; report which capabilities emerge and where conventional operations were eliminated or reexpressed.
+
+### DNO-004 — Description-native conversational intelligence
+
+Aim for a multi-turn VL-I interaction: a human asks, changes goals, requests paragraphs and code, and authorizes a bounded action. The Virtual Layer interprets a model description and navigates its formed Ground to produce contextually useful continuations, persisting memory without running a conventional model backend.
+
+**Test:** long-horizon continuity, instruction changes, code checks, constrained tool decisions and independent capability comparison. A templated or random token stream is not sufficient.
+
+See [Description Is Operation](DESCRIPTION_IS_OPERATION.md) for the mathematical research thesis and [Experiment Protocol](EXPERIMENT_PROTOCOL.md) for the separate evidence contracts.
+
+## Complementary pretrained-equivalence programme
+
+The following established phases continue as an *independent* experimental track. They are powerful references and reuse sources, **not prerequisites for DNO-001..004**.
+
 
 ### Phase A — Establish an independently reproducible model intake
 
@@ -40,7 +74,7 @@ A large state space is not inherently a better description. A Ground earns promo
 - Build an adapter around existing HFR NSD and HFG/weight Ground contracts instead of copying model internals.
 - Define a model-independent transcript for one observational input and one decoded continuation.
 
-**Pass gate:** A verifiable model identity, complete typed graph, exact tensor-to-byte addressing for the chosen operation, tokenizer identity, and separately audited provenance. Missing or altered bytes cause explicit refusal.
+**Pass gate for source fidelity:** a verifiable model identity, typed graph, exact tensor-to-byte addressing and audited provenance. Missing source bytes refuse an exact checkpoint claim; they do **not** prohibit creating and evaluating a new generative Ground from the description.
 
 **Output:** model Ground manifest, observations, adapter tests and independent verifier.
 
@@ -52,7 +86,7 @@ A large state space is not inherently a better description. A Ground earns promo
 - Make the *experimental VL path* call only VL-native operators. Do not use Transformers/PyTorch model.forward or a hosted model API there. They remain isolated baselines.
 - Run both direct numerical and independently implemented reference computations on the same pinned weight bits and input IDs.
 
-**Pass gate:** all layers and final logits are independently compared under declared precision/tolerance. A selected token ID must match, or the mismatch must be diagnosed. Missing operators or weights refuse. Count actual work, bytes read and memory used.
+**Pass gate for trained-source equivalence:** all layers and final logits independently compared under declared precision/tolerance, or a precisely declared alternative functional-equivalence contract. Missing original weights refuse a claim of exact source parity; novel generated models remain eligible for their own behavioral experiments. Count actual work, bytes read and memory used.
 
 **Output:** exact-input, full-model numeric transcript plus cost and verifier receipts.
 
@@ -80,9 +114,9 @@ A large state space is not inherently a better description. A Ground earns promo
 
 **Output:** independent recovery verifier, two-model and multi-session evidence.
 
-### Phase E — Predictive description formation and the first genuine navigation advantage
+### Phase E — Predictive description formation and a navigation advantage
 
-**The experimental heart of VL-I.** Having established numerical parity, search for a model-derived relation that changes **how much computation is required** for a fixed observable.
+This track tests alternative laws against a particular trained checkpoint *after parity is available for that comparison*. The broader description-native and new-mathematics research above does not need to wait for numerical parity.
 
 Candidates:
 - reuse certified causal prefixes or whole subgraph results under identical inputs and snapshots;
@@ -128,9 +162,9 @@ Extract only proven interpreter relations into the size-constrained companion.
 
 **Output:** small interoperable VL seed with verifiable full-model external data access.
 
-## The first research experiment to start now
+## The first research experiments
 
-**VL-I-001: observed-data full-model Ground parity.**
+**DNO-001: description-native interaction** starts directly from metadata/header bytes and intention, seeking operative model behavior without original weight-payload access. In parallel, **VL-I-001: observed-data full-model Ground parity** remains a reference-equivalence track.
 
 Use an immutable full pretrained decoder snapshot with a known existing numerical reference. Stage the experiment:
 
@@ -144,7 +178,7 @@ Use an immutable full pretrained decoder snapshot with a known existing numerica
 | 6. Recover | resume without repeated committed effects | stale/mismatched checkpoint root |
 | 7. Optimize | alternate Ground with held-out cost/accuracy improvement | shortcut that only fits the training trace |
 
-This experiment is complete only when actual results and executable independent checks are published. Existing predecessor results provide test fixtures and implementation references, **not inherited VL-I pass status**.
+Each experiment is complete only when actual results and executable checks are published. Predecessor results provide valuable evidence and machinery, not automatic new VL-I pass status. **Do not gate successful DNO-001 outcomes on matching the original pretrained-model logits; compare the claims under the correct contract.**
 
 ## Parallel workstreams for independent agents
 
@@ -166,12 +200,12 @@ Workstreams must use a common model ID, Ground receipt protocol and experiment I
 
 Do not mark an entire milestone complete when only one substage passed. An open problem should be written as an actionable experiment, not as a permanent prohibition.
 
-A claimed gain should say *over which baseline, for which model/input/precision/host, with which costs included*. A candidate that saves arithmetic by asking a conventional backend to compute the answer is not a VL-only inference gain.
+A claimed gain should state the reference, task, input, interpretation, host and all included costs. A conventional backend may be used as a separately metered comparator, but its output must not be silently credited to a description-native VL. New generated functionality must be measured on independent tasks rather than dismissed for not matching a pretrained checkpoint.
 
 ## Success criteria
 
 At maturity, VL-I should be able to receive a real model description and data source, produce a versioned Ground, accept human intentions, and run the original pretrained model's relevant behavior through VL-native interpretation and navigable transitions, preserving exact source identity, causal memory, authority, reproducibility and evidence.
 
-The **breakthrough** sought is not simply "a model ran." It is an independently validated method by which navigating the model's representation **changes the efficiency or capability of realizing its trained computation**, possibly without the conventional per-layer/per-token sequence in qualified cases.
+The **breakthrough** sought is a Virtual Layer in which **operating a description** provides interactive intelligence: metadata can form useful mathematical models, headers can seed token-producing Grounds, and novel interpretation/navigation can replace conventional model inference. The benchmark is meaningful observer-directed functionality, with exact pretrained equivalence tested separately when claimed.
 
 See [Architecture](ARCHITECTURE.md), [Source Inventory](SOURCE_INVENTORY.md) and [Experiment Protocol](EXPERIMENT_PROTOCOL.md).
