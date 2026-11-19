@@ -22,6 +22,8 @@ jobs:
   evidence-gated-comparison:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      PYTHONPATH: upstream/vl64
     strategy:
       fail-fast: false
       matrix:
