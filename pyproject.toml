@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "virtual-layer-intelligence"
+version = "0.1.0"
+description = "Experimental model-data Ground lifting and VL-native inference integration"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+numerical = ["numpy>=2.1"]
+
+[project.scripts]
+vli = "vli.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
