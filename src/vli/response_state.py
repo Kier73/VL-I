@@ -289,9 +289,8 @@ class ResponseFormation:
         if node_id == "render":
             return {"coordinate": self.position["coordinate"],
                     "selected_slots": self.position["selected_slots"],
-                    "source_digests": [self.source.slots[n].__dict__["content"].hex()[:0] +
-                        _sha(self.source.slots[n].content)
-                        for n in self.position["selected_slots"]],
+                    "source_digests": [_sha(self.source.slots[n].content)
+                                       for n in self.position["selected_slots"]],
                     "scope": "render_supplied_verified_ground_not_model_inference"}
         name = self.name_for[node_id]
         s = self.source.slots[name]
