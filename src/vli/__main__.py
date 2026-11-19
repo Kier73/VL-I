@@ -31,7 +31,8 @@ def main(argv=None):
     sub = p.add_subparsers(dest="operation", required=True)
     i = sub.add_parser("inspect", help="Lift typed model and select an intention frontier; no weights")
     i.add_argument("--manifest", required=True)
-    i.add_argument("--target", action="append", default=["vocab_logits"])
+    i.add_argument("--target", action="append", default=[],
+                   help="Observed graph output (repeatable); defaults to vocab_logits")
     i.add_argument("--out", default="-")
 
     r = sub.add_parser("run", help="Execute complete pretrained decoder with real qualified ranges")
@@ -67,7 +68,7 @@ def main(argv=None):
         return 0
     ground, plan = lift_observation(observed)
     if args.operation == "inspect":
-        frontier = intention_frontier(plan, args.target)
+        frontier = intention_frontier(plan, args.target or ["vocab_logits"])
         verify_frontier(frontier, plan)
         _save(args.out, {"ground": ground, "frontier": frontier})
         return 0
