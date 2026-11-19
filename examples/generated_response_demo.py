@@ -14,6 +14,7 @@ from pathlib import Path
 from time import perf_counter_ns
 
 from vli.generative_response import GeneratedModelGround, GenerativeConversation
+from vli.generative_intent import ActionWitness, propose_action, accept_and_respond
 
 
 def run():
@@ -58,6 +59,24 @@ def run():
     restored = GenerativeConversation.restore(
         model, original, expected_head=original["checkpoint_digest"])
     after_replay = perf_counter_ns()
+    prototype_turn = GenerativeConversation(model, observer="vli-lab")
+    examples = (
+        ActionWitness("inspect the model state", "inspect"),
+        ActionWitness("show the current state observation", "inspect"),
+        ActionWitness("advance to the next state", "advance"),
+        ActionWitness("continue the described system", "advance"),
+        ActionWitness("reset the state", "reset"),
+        ActionWitness("return to the initial state", "reset"),
+    )
+    proposed = propose_action(
+        prototype_turn, examples, "advance to the next state",
+        min_confidence=0.35, min_margin=0.001)
+    assert proposed["status"] == "PROPOSED_NEEDS_OBSERVER_ACCEPTANCE"
+    prompted = accept_and_respond(
+        prototype_turn, examples, proposed,
+        expected_proposal_head=proposed["proposal_digest"],
+        views=("text", "code", "tokens"))
+    assert prompted["turn"]["action"] == "advance"
     assert restored.head == conversation.head
     assert restored.state == conversation.state
     assert restored.checkpoint() == original
@@ -76,6 +95,17 @@ def run():
             sum(map(len, model.neural.channel_weight)),
         "complete_neural_verification_cells": len(model.system.states)*len(model.system.actions),
         "turns": generated,
+        "prompt_first_intention": {
+            "status": proposed["status"],
+            "admitted_action": proposed["action"],
+            "ecpu_evidence_tier": proposed["ecpu_advisory_prediction"]["evidence_tier"],
+            "confidence": proposed["ecpu_advisory_prediction"]["confidence"],
+            "external_proposal_head": proposed["proposal_digest"],
+            "generated_state_position": prompted["turn"]["coordinate"],
+            "generated_state": prompted["turn"]["to_state"],
+            "actual_execution_without_model_server": True,
+            "scope": "witnessed_ECPU_advisory_not_general_English_model",
+        },
         "stable_fixed_width_coordinates": all(len(x["position"])==76 for x in generated),
         "distinct_turn_positions": len({x["position"] for x in generated})==len(generated),
         "restored_state": restored.state,
