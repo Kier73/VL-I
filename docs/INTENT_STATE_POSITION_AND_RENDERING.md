@@ -114,6 +114,32 @@ The executable demonstration renders actual E-CPU state-space architecture Markd
 
 GitHub Actions runs the experiment and retains its summarized evidence JSON separately from large source/rendered bytes.
 
+## 5A. Intent-to-topology selection is now an executable precursor
+
+The research now has a second operational component: [src/vli/intent_topology.py](../src/vli/intent_topology.py).
+
+Instead of asking the observer to enumerate response slots every time, an E-CPU \`IntentPrototypeModel\` is trained from **actual caller-labeled prompt → topology witnesses**. It proposes which source projections are relevant for the raw prompt. The proposal carries the E-CPU model snapshot identity, witnessed examples, explicit E0 confidence/margin and its source-Ground identity. The caller must externally pin and admit the proposal before it becomes a typed VL-I intention, and uncertain requests may be refused.
+
+It is an **advisory partial solution** to deriving topology from intention, not natural-language comprehension or new inference authority. The selected view's materialization is still governed by VLD's DAG and E-CPU's exact byte Ground.
+
+### Recorded CI experiment
+
+The source-based demonstration [succeeded in workflow run 44637937058](https://github.com/Kier73/VL-I/actions/runs/44637937058), with **17 passing response-state/prototype tests**.
+
+| Observation | Recorded result |
+| --- | --- |
+| Full response-state coordinate | A 76-character opaque \`state://vli/...\` address |
+| Coordinate across stages | Identical from formation start through final output |
+| Materialized response source | **59,223 bytes** of actual E-CPU and VL-I documentation/source and an inert tool proposal |
+| Formation | 5 steps, after a verified partial-state checkpoint/restore |
+| Rendered views | Page, code, inert tool proposal |
+| Advisory E-CPU prototype | Prompt "display the interpreter source code" proposed the \`code\` view |
+| Prototype confidence | **0.61655**, E0 advisory evidence only |
+| Automatically proposed coordinate | A *different*, code-specific state address under the same source Ground |
+| Experimental source | Pin E-CPU and VLD to the workflow's immutable checkout revisions |
+
+The prototype has a few labeled witnesses; this score is **not calibrated probability of semantic correctness** and not a benchmark of general prompt understanding. The measured coordinate's length does not imply the 59,223 output bytes were obtained without source reading or interpreter work.
+
 ## 6. The more ambitious experiments, beyond supplied-source rendering
 
 The above is a first real bridge. These are the more important unanswered problems to pursue.
