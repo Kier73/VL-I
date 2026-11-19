@@ -45,7 +45,7 @@ These efforts begin **now**, in parallel with faithful pretrained-model integrat
 - **New neural mathematics:** reconstruct attention, inference, tokenization, memory and learned behavior as alternative algebras, predictive quotients, compositional transformations or navigation in time/state space—not merely a different implementation of matrix multiplication.
 - **Observation → self-improving interpretation:** let uncertainty choose what source to inspect, which interpretation to try and which experimental intention distinguishes candidate Grounds; retain the best supported descriptions and their counterexamples.
 
-See [Description Is Operation — Research Thesis](docs/DESCRIPTION_IS_OPERATION.md). These are **goals for experimentation**, not descriptions of already demonstrated pretrained-model equivalence.
+See [Description Is Operation — Research Thesis](docs/DESCRIPTION_IS_OPERATION.md). **The first direct engineering target is [DNO-001: operate a model description as a generative, conversational Ground](https://github.com/Kier73/VL-I/issues/3).** These are **goals for experimentation**, not descriptions of already demonstrated pretrained-model equivalence.
 
 ## First implementation — VL-I-001
 
