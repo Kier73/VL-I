@@ -121,6 +121,26 @@ class TestConnectomeShapedObservation(unittest.TestCase):
         with self.assertRaises(QuotientRefused):
             g.verify(certificate=bad)
 
+    def test_changed_stored_proof_cannot_be_reused_as_a_valid_navigable_shape(self):
+        from temporal_ground import hash_object
+        g=ConnectomeObserverShape(
+            FIXTURE,groups=8,copies=16,seed=73,original_source=False)
+        position=g.position(source_micro=2,logical_tick=3,
+                            observer="proof-observer",prompt="Observe")
+        g.certificate["quotient_columns"][0][0][1] += 1
+        # Even replacing the in-memory head cannot change an already
+        # admitted, externally addressable model-Ground identity.
+        g.certificate["digest"]=hash_object({
+            k:v for k,v in g.certificate.items() if k!="digest"})
+        with self.assertRaises(ValueError):
+            g.observe(position)
+
+    def test_in_memory_partition_not_caller_mutable(self):
+        g=self.ground
+        self.assertIsInstance(g.audited[0],tuple)
+        with self.assertRaises(TypeError):
+            g.audited[0][0] = 999
+
     def test_position_tamper_and_unadmitted_observer_refuse(self):
         g=self.ground
         pos=g.position(source_micro=0,logical_tick=2,observer="test",prompt="Observe")
