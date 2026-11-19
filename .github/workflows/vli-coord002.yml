@@ -1,0 +1,46 @@
+name: VL-I COORD-002 description-native generation
+
+on:
+  push:
+    branches: ["main", "feat/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generated-model:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin E-CPU exact byte interpretations
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - name: Pin VLD generative neural compiler and response DAG
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/Virtual-Layer-Dynamics
+          ref: 985ba5c2fbcc40842aed9f45f42587749620b98e
+          path: upstream/vld
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install actual predecessor implementations
+        run: python -m pip install -e . -e upstream/ecpu -e upstream/vld
+      - name: Test description-derived neural law, generated code and causal recovery
+        run: python -m unittest discover -s tests -p test_generative_response.py -v
+      - name: Generate real 4-turn code/text/token conversation from description
+        run: python -m examples.generated_response_demo --out artifacts/coord002-description-native.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vli-coord002-description-native-neural-and-dialogue-evidence
+          path: artifacts/coord002-description-native.json
+          if-no-files-found: warn
