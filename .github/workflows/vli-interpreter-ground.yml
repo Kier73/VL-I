@@ -38,6 +38,14 @@ jobs:
       - name: Real interpreter self-ground, byte movement and memory-orbit tests
         run: |
           python -m unittest discover -s tests -p test_interpreter_ground.py -v
+      - name: Execute and record self-Ground source-byte and far-memory experiment
+        run: |
+          python -m examples.interpreter_self_ground_demo --out artifacts/interpreter-self-ground.json
+      - name: Retain measured interpreter-ground evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: interpreter-self-ground-real-upstream-evidence
+          path: artifacts/interpreter-self-ground.json
       - name: Inspect actual module origins and pinned versions
         run: |
           python -c "import mailcpu.virtual_layer as e, vld.signal.machine as v; print('ECPU', e.__file__); print('VLD', v.__file__)"
