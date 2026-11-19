@@ -8,7 +8,6 @@ version = "0.1.0"
 description = "Experimental model-data Ground lifting and VL-native inference integration"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
 dependencies = []
 
 [project.optional-dependencies]
