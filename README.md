@@ -77,6 +77,22 @@ The *ultimate* target is not to keep a separate installed VLD or Python runtime 
 
 Read [Interpreter as Ground — E-CPU × VLD × VL-I](docs/INTERPRETER_SELF_GROUND.md) and [the direct experiment](examples/interpreter_self_ground_demo.py).
 
+## Coordinates locate response states, not numbers
+
+**A coordinate is the address of a state in an intention-conditioned topology—not a numerical representation of the state.** The response, rendered page, code, emitted tokens, tool proposals/results, causal memory and interpreter lineage belong to the observable structure at that position. The observer's intention constrains which topology must be navigated and which views are relevant.
+
+The response need not be preassembled. The Virtual Layer can first locate a state position, then **progressively form its observable content** as its required Ground relations become available: outline → component observation → evidence-backed composition → text/page/code/tool projection. This is the **diffusion-like formation** research direction, not a claim that a stochastic diffusion network is already operating.
+
+This principle is now exercised in [RESPONSE-001 — Intent as topology and state-position rendering](docs/INTENT_STATE_POSITION_AND_RENDERING.md):
+
+- Actual E-CPU byte Grounds anchor the supplied information.
+- VLD's original navigable, checkpointable DAG progressively forms a response, keeping the **same opaque coordinate** across incomplete and complete observations.
+- The output can include page, code, text, token IDs and **inert** tool proposals; actual authority remains separate.
+- E-CPU's existing \`IntentPrototypeModel\` can now propose the response topology from **witnessed prompts**, with uncertainty and externally pinned acceptance. It is an early intention-navigation mechanism, not general natural-language comprehension.
+- The coordinate is fixed-width independent of source payload size. Data acquisition, verification and rendering are **not** assumed scale-free.
+
+The demonstrated response composition uses *already supplied* source bytes; generating novel language, tools or intermediate model states from the **position itself** remains the larger research challenge. That is the ambition, not a reason to reduce the goal to arithmetic coordinates.
+
 ## The model-to-intention path
 
 ~~~text
