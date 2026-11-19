@@ -1,0 +1,43 @@
+name: VL-I interpreter self-Ground integration
+
+on:
+  push:
+    branches: ["main", "feat/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  interpreter-self-ground:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin actual E-CPU source and semantics
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - name: Pin actual VLD interpreter and Structural Memory
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/Virtual-Layer-Dynamics
+          ref: 985ba5c2fbcc40842aed9f45f42587749620b98e
+          path: upstream/vld
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install three original packages without replacing semantics
+        run: |
+          python -m pip install -e . -e upstream/ecpu -e upstream/vld
+      - name: Real interpreter self-ground, byte movement and memory-orbit tests
+        run: |
+          python -m unittest discover -s tests -p test_interpreter_ground.py -v
+      - name: Inspect actual module origins and pinned versions
+        run: |
+          python -c "import mailcpu.virtual_layer as e, vld.signal.machine as v; print('ECPU', e.__file__); print('VLD', v.__file__)"
