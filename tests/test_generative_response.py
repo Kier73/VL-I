@@ -280,5 +280,80 @@ class TestGenerativeConversation(unittest.TestCase):
                                            expected_head=saved["checkpoint_digest"])
 
 
+from vli.generative_intent import (
+    ActionWitness, propose_action, accept_and_respond
+)
+
+
+def action_examples():
+    return (
+        ActionWitness("inspect the model state","inspect"),
+        ActionWitness("show the current state observation","inspect"),
+        ActionWitness("advance to the next state","advance"),
+        ActionWitness("continue the described system","advance"),
+        ActionWitness("reset the state","reset"),
+        ActionWitness("return to the initial state","reset"),
+    )
+
+
+class TestObserverIntentionFormation(unittest.TestCase):
+    def setUp(self):
+        self.conversation=GenerativeConversation(make_ground())
+        self.witnesses=action_examples()
+
+    def test_prompt_first_intention_proposes_and_forms_new_response(self):
+        question="advance to the next state"
+        candidate=propose_action(self.conversation,self.witnesses,question,
+                                 min_confidence=0.35,min_margin=0.001)
+        self.assertEqual(candidate["status"],"PROPOSED_NEEDS_OBSERVER_ACCEPTANCE")
+        self.assertEqual(candidate["action"],"advance")
+        self.assertEqual(candidate["ecpu_advisory_prediction"]["evidence_tier"],"E0")
+        self.assertEqual(self.conversation.state,"idle")  # Proposing has no effects.
+        result=accept_and_respond(
+            self.conversation,self.witnesses,candidate,
+            expected_proposal_head=candidate["proposal_digest"],
+            views=("text","code","tokens"))
+        self.assertEqual(result["turn"]["action"],"advance")
+        self.assertEqual(result["turn"]["to_state"],"formed")
+        self.assertEqual([p["kind"] for p in result["response"]["projections"]],
+                         ["text","code","tokens"])
+        self.assertEqual(self.conversation.state,"formed")
+
+    def test_uncertain_intention_refuses_without_mutating_session(self):
+        p=propose_action(self.conversation,self.witnesses,
+                         "nonsense ambivalent question",
+                         min_confidence=0.999999,min_margin=0.999999)
+        self.assertEqual(p["status"],"INSUFFICIENT_INTENTION_EVIDENCE")
+        with self.assertRaises(ValueError):
+            accept_and_respond(self.conversation,self.witnesses,p,
+                               expected_proposal_head=p["proposal_digest"])
+        self.assertEqual(self.conversation.events,[])
+        self.assertEqual(self.conversation.state,"idle")
+
+    def test_old_intent_cannot_advance_a_new_causal_state(self):
+        p=propose_action(self.conversation,self.witnesses,
+                         "inspect the model state",min_confidence=0.35,
+                         min_margin=0.001)
+        self.conversation.respond("Change the causal state first","inspect")
+        head=self.conversation.head
+        with self.assertRaises(ValueError):
+            accept_and_respond(self.conversation,self.witnesses,p,
+                               expected_proposal_head=p["proposal_digest"])
+        self.assertEqual(self.conversation.head,head)
+        self.assertEqual(len(self.conversation.events),1)
+
+    def test_forged_model_evidence_or_witness_refuses(self):
+        p=propose_action(self.conversation,self.witnesses,
+                         "reset the state",min_confidence=0.35,min_margin=0.001)
+        with self.assertRaises(ValueError):
+            accept_and_respond(self.conversation,self.witnesses,p,
+                               expected_proposal_head="0"*64)
+        altered=list(self.witnesses)
+        altered[0]=ActionWitness("inspect the model state","advance")
+        with self.assertRaises(ValueError):
+            accept_and_respond(self.conversation,tuple(altered),p,
+                               expected_proposal_head=p["proposal_digest"])
+        self.assertEqual(self.conversation.events, [])
+
 if __name__=="__main__":
     unittest.main()
