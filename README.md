@@ -122,6 +122,8 @@ Full dependencies, deliverables and test gates: [Research Plan](docs/RESEARCH_PL
 
 ## How to begin
 
+**First implementation task:** [VL-I-001 — Lift actual pretrained model data and verify VL-native full-model generation](https://github.com/Kier73/VL-I/issues/1). Its checklist begins with source identity and independent parity, then advances to multi-token generation, recovery and the first genuine shortcut experiment.
+
 Start with the [Architecture](docs/ARCHITECTURE.md), [Source Inventory](docs/SOURCE_INVENTORY.md) and [Experiment Protocol](docs/EXPERIMENT_PROTOCOL.md). The first experiment should reuse an already pinned, observed, full-layer decoder case, retain exact pretrained weights, and compare the same input under:
 
 1. conventional independently implemented model execution (reference);
