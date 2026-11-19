@@ -213,5 +213,77 @@ class TestResponseTopology(unittest.TestCase):
             SourceSlot("invalid","tokens",b"[1, true]")
 
 
+from vli.intent_topology import (
+    TopologyWitness, propose_response_topology, admit_response_topology,
+)
+
+
+def example_witnesses():
+    return (
+        TopologyWitness("render markdown document page", ("page",)),
+        TopologyWitness("show the full markdown page", ("page",)),
+        TopologyWitness("display python source code", ("program",)),
+        TopologyWitness("give me the python program", ("program",)),
+        TopologyWitness("explain the answer in text", ("answer",)),
+        TopologyWitness("read the text explanation", ("answer",)),
+    )
+
+
+class TestWitnessConditionedTopology(unittest.TestCase):
+    def setUp(self):
+        self.src = source()
+        self.witnesses = example_witnesses()
+
+    def test_ecpu_prototype_proposes_state_view_from_prompt(self):
+        query = "render markdown document page"
+        p = propose_response_topology(self.src, self.witnesses, query,
+                                      min_confidence=0.4, min_margin=0.01)
+        self.assertEqual(p["status"],"PROPOSED_NEEDS_OBSERVER_APPROVAL")
+        self.assertEqual(p["proposed_slots"],["page"])
+        self.assertEqual(p["ecpu_prediction"]["evidence_tier"], "E0")
+        typed = admit_response_topology(
+            self.src, self.witnesses, p,
+            expected_proposal_head=p["proposal_digest"], observer="route-observer")
+        f = ResponseFormation(self.src,typed)
+        while not f.dag.is_complete:
+            f.advance()
+        self.assertEqual([x["kind"] for x in f.observe()["projections"]],["page"])
+        self.assertEqual(f.position["required_slots"],["page"])
+
+    def test_uncertain_intention_stays_unresolved(self):
+        p = propose_response_topology(
+            self.src, self.witnesses, "ambiguous unknown command",
+            min_confidence=0.999999, min_margin=0.999999)
+        self.assertEqual(p["status"],"INSUFFICIENT_INTENT_EVIDENCE")
+        self.assertEqual(p["proposed_slots"],[])
+        with self.assertRaises(ValueError):
+            admit_response_topology(
+                self.src,self.witnesses,p,
+                expected_proposal_head=p["proposal_digest"],observer="route-observer")
+
+    def test_proposal_requires_external_acceptance_and_unchanged_witnesses(self):
+        p = propose_response_topology(self.src,self.witnesses,
+                                      "render markdown document page",
+                                      min_confidence=0.4,min_margin=0.01)
+        with self.assertRaises(ValueError):
+            admit_response_topology(
+                self.src,self.witnesses,p,
+                expected_proposal_head="0"*64,observer="route-observer")
+        changed = list(self.witnesses)
+        changed[0]=TopologyWitness("render markdown document page",("program",))
+        with self.assertRaises(ValueError):
+            admit_response_topology(
+                self.src,tuple(changed),p,
+                expected_proposal_head=p["proposal_digest"],observer="route-observer")
+
+    def test_prototype_inference_is_reproducible_on_same_ground(self):
+        a = propose_response_topology(self.src,self.witnesses,
+                                      "display python source code",
+                                      min_confidence=0.4,min_margin=0.01)
+        b = propose_response_topology(self.src,self.witnesses,
+                                      "display python source code",
+                                      min_confidence=0.4,min_margin=0.01)
+        self.assertEqual(a,b)
+
 if __name__=="__main__":
     unittest.main()
