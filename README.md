@@ -91,7 +91,19 @@ This principle is now exercised in [RESPONSE-001 — Intent as topology and stat
 - E-CPU's existing \`IntentPrototypeModel\` can now propose the response topology from **witnessed prompts**, with uncertainty and externally pinned acceptance. It is an early intention-navigation mechanism, not general natural-language comprehension.
 - The coordinate is fixed-width independent of source payload size. Data acquisition, verification and rendering are **not** assumed scale-free.
 
-The demonstrated response composition uses *already supplied* source bytes; generating novel language, tools or intermediate model states from the **position itself** remains the larger research challenge. That is the ambition, not a reason to reduce the goal to arithmetic coordinates.
+**RESPONSE-001** renders supplied source bytes. **COORD-002 now goes further:** it uses a model description to **generate new neural weights, interpret a state transition, and form new code, grounded text, Markdown, and UTF-8 byte tokens from that transition**. The coordinate is positioned *before* the generated output exists. Four causal turns, an independent all-transition neural comparison, E-CPU prompt-to-action proposals, and restart verification have been exercised in CI.
+
+### COORD-002 — A description becomes a generative model Ground
+
+- **3,199 input bytes** describing a complete three-state/nine-transition computational Ground; **zero pretrained weight bytes acquired**.
+- VLD constructs **108 neural coefficients** and a **nine-unit ReLU model**, checking all nine source transitions independently. The weights are *generated from the description*, not guessed as the exact values of some unknown pretrained checkpoint.
+- A prompt and causal state locate the new response position **before** the output is computed. The Ground then forms a verifiable new state and creates a runnable Python transition program, explanation, Markdown page, token bytes and optional inert tool proposal.
+- E-CPU's existing \`IntentPrototypeModel\` can propose a generative action from witnessed prompts; a model- and causal-state-bound caller approval is mandatory, and stale/uncertain prompts refuse.
+- Sessions retain causal positions across turns; restart replays pure interpreted relations to independently verify committed history. There is no hidden language-model backend.
+
+**This is an actual description-native generative capability, not an open-ended chatbot.** Its fixed finite-state grammar and formatting laws still constrain what the resulting intelligence can do. Discovering richer predictive and language-producing laws, learned state, general intentions and recursive interpreter operation is our next focus—not a reason to retreat to conventional inference.
+
+Read [COORD-002 — Description-Native Generative Model and Conversation](docs/COORD_002_DESCRIPTION_NATIVE_GENERATION.md), inspect [the executable experiment](examples/generated_response_demo.py), and follow [the original COORD-002 research issue](https://github.com/Kier73/VL-I/issues/9).
 
 ## The model-to-intention path
 
