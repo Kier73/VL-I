@@ -2,7 +2,7 @@
 
 **The description of a model is a computational resource. VL-I seeks to operate that description directly—until a Virtual Layer can converse, reason, generate, and act through a Model Ground without needing to run a conventional language-model engine.**
 
-**Status: research charter and design programme.** This repository begins with an ambitious target, not a claim that the target has already been achieved.
+**Status: active revolutionary research.** The overarching description-native intelligence goal is a development aim, not a claim of already-demonstrated general language-model behavior. Initial source-fidelity and exact-observation components are implemented.
 
 ## The endeavor
 
@@ -113,7 +113,7 @@ A concise description that fits the training trace but fails a held-out continua
 
 ## What we inherit — do not rebuild it blindly
 
-VL-I is a **focused integration and research environment**. It reuses existing work and preserves its provenance rather than duplicating whole runtimes.
+VL-I is an **experimental research environment for new forms of model operation**. It draws upon the other repositories as tools and evidence, without requiring their existing computational machinery to define what novel Grounds may become.
 
 | Source | Capabilities to investigate and compose |
 | --- | --- |
@@ -148,7 +148,7 @@ Full dependencies, deliverables and test gates: [Research Plan](docs/RESEARCH_PL
 
 ## How to begin
 
-**First implementation task:** [VL-I-001 — Lift actual pretrained model data and verify VL-native full-model generation](https://github.com/Kier73/VL-I/issues/1). Its checklist begins with source identity and independent parity, then advances to multi-token generation, recovery and the first genuine shortcut experiment.
+**Foremost new research track:** [DNO-001 — Operate a model description as a generative, conversational Virtual Ground](https://github.com/Kier73/VL-I/issues/3), independent of original pretrained weights. **Complementary source-equivalence track:** [VL-I-001 — Lift and verify full pretrained-model behavior](https://github.com/Kier73/VL-I/issues/1). These develop in parallel; neither limits the other's possible mathematical architecture.
 
 Start with the [Architecture](docs/ARCHITECTURE.md), [Source Inventory](docs/SOURCE_INVENTORY.md) and [Experiment Protocol](docs/EXPERIMENT_PROTOCOL.md). The first experiment should reuse an already pinned, observed, full-layer decoder case, retain exact pretrained weights, and compare the same input under:
 
