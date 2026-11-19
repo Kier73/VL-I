@@ -11,6 +11,7 @@ from pathlib import Path
 
 from .ground import load_json, lift_observation, intention_frontier, verify_frontier
 from .realization import run_pinned_decoder, verify_realization
+from .navigation import commit_continuation, navigate_continuation
 
 
 def _save(path, record):
@@ -44,6 +45,19 @@ def main(argv=None):
     v.add_argument("--manifest", required=True)
     v.add_argument("--report", required=True)
 
+    memo = sub.add_parser("remember", help="Retain one B2-verified exact-input next-token observation")
+    memo.add_argument("--manifest", required=True)
+    memo.add_argument("--report", required=True)
+    memo.add_argument("--out", default="artifacts/vli-retained-continuation.json")
+
+    nav = sub.add_parser("navigate", help="Recover the exact same token from a pinned observed state")
+    nav.add_argument("--manifest", required=True)
+    nav.add_argument("--retained", required=True)
+    nav.add_argument("--expected-head", required=True,
+                     help="Trusted SHA-256 observation digest retained outside the cache")
+    nav.add_argument("--tokens", nargs="+", type=int, required=True)
+    nav.add_argument("--out", default="-")
+
     args = p.parse_args(argv)
     observed = load_json(args.manifest)
     if args.operation == "run":
@@ -57,12 +71,24 @@ def main(argv=None):
         verify_frontier(frontier, plan)
         _save(args.out, {"ground": ground, "frontier": frontier})
         return 0
-    report = load_json(args.report)
     frontier = intention_frontier(plan, ["vocab_logits"])
     verify_frontier(frontier, plan)
+    if args.operation == "navigate":
+        retained = load_json(args.retained)
+        answer = navigate_continuation(
+            ground, frontier, retained, input_token_ids=args.tokens,
+            expected_observation_digest=args.expected_head)
+        _save(args.out, answer)
+        return 0
+    report = load_json(args.report)
     if report.get("ground") != ground or report.get("frontier") != frontier:
         raise ValueError("Reconstructed Ground/frontier differs from recorded evidence")
     verify_realization(ground, frontier, report.get("realization", {}))
+    if args.operation == "remember":
+        record = commit_continuation(ground, frontier, report["realization"])
+        _save(args.out, record)
+        print("VL_I_EXPECTED_OBSERVATION_HEAD " + record["observation_digest"])
+        return 0
     print("VL_I_STRUCTURAL_RECEIPT_VALID — numerical equivalence requires reference replay")
     return 0
 
