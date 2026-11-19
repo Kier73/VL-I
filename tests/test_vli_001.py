@@ -47,7 +47,8 @@ def fixture():
         "model": model, "revision": rev, "model_ground_digest": "1"*64,
         "tensor_ground_digest": "3"*64,
         "dag_digest": "5"*64, "architecture": {"layers": 30, "vocab": 2},
-        "tensors": {t["name"]: t for t in tensors},
+        "tensors": {t["name"]: {k: t[k] for k in ("dtype", "shape", "data_offsets")}
+                    for t in tensors},
         "nodes": [
             {"id": "tokens", "op": "input", "inputs": [], "weight": None},
             {"id": "emb", "op": "embedding", "inputs": ["tokens"], "weight": "embedding"},
