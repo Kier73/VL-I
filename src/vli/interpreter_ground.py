@@ -355,3 +355,99 @@ def load_real_interpreter_modules():
         _require(path is not None, "No actual source file for interpreter: " + name)
         sources[name] = Path(path).read_bytes()
     return sources
+
+
+def rebind_interpreter_from_ground(ground, source_modules: Mapping[str, bytes],
+                                   *, expected_ground_digest: str):
+    """Restore a trusted local VLD *interpreter binding* from its lifted Ground.
+
+    The declarative record describes semantic operators and source identities,
+    but cannot execute untrusted source code or grant Hypervisor authority.
+    This first embodiment requires an already-installed, qualified VLD backend.
+    It supports the exact Z/256Z ring family used in the experiment; all other
+    families refuse until a typed, separately qualified backend exists.
+    """
+    from mailcpu.virtual_layer import OperatorRegistry
+    from vld.signal import ModularRingBackend, SignalGroundSpec, VirtualGroundInterpreter
+
+    _require(_hex64(expected_ground_digest) and
+             isinstance(ground, dict) and
+             ground.get("ground_digest") == expected_ground_digest,
+             "Missing or changed external interpreter Ground head")
+    spec_data = ground.get("vld_signal_ground")
+    _require(isinstance(spec_data, dict) and
+             spec_data.get("domain_id") == "signal.ring.z2pow8.v1",
+             "Unsupported interpreter algebra for source-ground rebind")
+    spec = SignalGroundSpec(**spec_data)
+    backend = ModularRingBackend(
+        bit_width=8, observer_profiles=tuple(spec.observer_profiles))
+    interpreter = VirtualGroundInterpreter(spec, backend)
+    declared_registry = OperatorRegistry.from_snapshot(
+        ground.get("ecpu_operator_snapshot"))
+    # Recheck *every supplied source byte* and both declared interpreter
+    # identities against the unchanged Ground before permitting operation.
+    verify_interpreter_ground(ground, source_modules, declared_registry, interpreter)
+    _require(interpreter.ground.fingerprint ==
+             ground["vld_signal_ground_fingerprint"],
+             "Restored signal interpreter differs from Ground")
+    return declared_registry, interpreter
+
+
+def derive_orbit_from_interpreter_description(ground, source_modules: Mapping[str, bytes],
+                                               *, source_name: str, coordinate: int,
+                                               observer: str):
+    """Experiment: original interpreter bytes seed a *new* structural law.
+
+    Two exact source coordinates determine the seed and progression increment
+    in Z/256Z. This is a deliberate simple generative-law control, not a
+    learned model or any claim to predict real pretrained logits.
+    """
+    from mailcpu.ground_native_realization import (
+        AffineGround, GroundIntention, independent_observation,
+    )
+    from vld.memory import StructuralMemoryRegistry
+
+    _require(isinstance(ground, dict) and _hex64(ground.get("ground_digest")),
+             "No interpreter Ground")
+    _require(type(coordinate) is int and coordinate >= 0 and
+             type(source_name) is str and source_name in source_modules,
+             "Invalid source-derived orbit query")
+    raw = source_modules[source_name]
+    _require(type(raw) is bytes and len(raw) >= 2,
+             "Description requires two actually observed bytes")
+    matches = [entry for entry in ground.get("source_modules", [])
+               if entry.get("name") == source_name]
+    _require(len(matches) == 1 and matches[0]["sha256"] == _hash(raw)
+             and matches[0]["size"] == len(raw),
+             "Source-derived law not bound to observed interpreter bytes")
+    # Initial 2-byte generator hypothesis: one seed, one increment.
+    seed = raw[0]
+    increment = (raw[1] % 255) + 1
+    law = AffineGround(a=1, c=increment, modulus=256, seed=seed)
+    samples = [(seed + t*increment) % 256 for t in range(12)]
+    registry = StructuralMemoryRegistry()
+    memory_id = "vl-i-interpreter-source-orbit"
+    spec, cert = registry.certify_and_admit(
+        memory_id, samples, declared_modulus=256, domain="Z/256Z",
+        context={"interpreter_ground_digest": ground["ground_digest"],
+                 "source_sha256": _hash(raw), "source_name": source_name,
+                 "generator": "two-byte-affine-progression-control"},
+    )
+    independent = independent_observation(GroundIntention(
+        request_id="vl-i-self-ground-orbit", ground=law, coordinate=coordinate))
+    observed = observe_structural_orbit(
+        ground, registry, memory_id=memory_id, coordinate=coordinate,
+        expected_value=independent, observer=observer)
+    observed.update({
+        "source_module": source_name,
+        "source_sha256": _hash(raw),
+        "source_byte_positions": [0, 1],
+        "source_byte_values": [raw[0], raw[1]],
+        "law_family": "modular_arithmetic_progression_from_description_bytes",
+        "law_seed": seed, "law_step": increment, "law_modulus": 256,
+        "sampled_witness_count": len(samples),
+        "native_certificate_digest": cert.digest,
+        "original_checkpoint_weights_required": False,
+        "capability_scope": "procedural_law_construction_not_trained_model_inference",
+    })
+    return observed
