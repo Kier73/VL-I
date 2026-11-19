@@ -107,6 +107,31 @@ python -m examples.interpreter_self_ground_demo \
 
 The direct experiment writes source/semantic digests, numerical result, full trace head, verified memory certificate and oracle result, measured local nanosecond timings, and the exact claims **not** established. GitHub Actions retains a machine-readable artifact.
 
+## 4A. Measured first run — actual GitHub Actions execution
+
+The pinned integration [succeeded in GitHub Actions run 44632236169](https://github.com/Kier73/VL-I/actions/runs/44632236169); the [machine-readable report](https://github.com/Kier73/VL-I/actions/runs/44632236169/artifacts/14582152910) was uploaded directly by the workflow.
+
+| Observation | Recorded result |
+| --- | ---: |
+| Actual interpreter source observed (E-CPU + VLD + VL-I) | **114,966 bytes** |
+| Independent dual-byte Ground and declarative operator source | Verified in 16 tests |
+| Source coordinates interpreted | [0, 1] from VL-I interpreter source |
+| Original coordinate bytes | [34, 34] |
+| VLD interpreter result / independent arithmetic result | **68 / 68** |
+| Signal-StateMachine steps actually executed | **5** |
+| Radiance events in output chain | **7** |
+| New source-byte-derived Ground orbit coordinate | **1,000,000,003** |
+| Source-derived modular law result | **139** |
+| Intermediate states expanded by VLD Structural Memory | **0** |
+| E-CPU independent mathematical comparison | Matched, or CI would fail |
+| Measured interpreter Ground lift | **24.26 ms** |
+| Measured byte relation execution | **0.86 ms** |
+| Measured source-law certification + far navigation | **7.08 ms** |
+
+Times are wall-clock samples from one GitHub-hosted Python 3.11 run, not stable throughput, hardware energy measurements or comparative LLM speedups. They include interpreter-side Python work and receipt construction within the stated measured sections; other setup/import overhead is outside those timings.
+
+The 16 tests include new interpreter binding, real exact source bytes, alternative operation rejection, source tampering, untrusted digest, stale journal event and independent far-coordinate comparison. The source-derived arithmetic law is intentionally simple; **this proves a compositional operational mechanism, not general model intelligence**.
+
 ## 5. What should count as compute?
 
 The **architectural ambition** is to make the Virtual Layer interpreter the only general-purpose executable substrate: it interprets descriptions; model architecture, parameters, processing, state, generation and memory become Grounds. Then lift the interpreter itself to progressively express more of *its* work as Ground navigation.
