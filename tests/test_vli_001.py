@@ -14,6 +14,7 @@ from vli.ground import (
     intention_frontier, verify_frontier, load_json,
 )
 from vli.realization import bind_realization, run_pinned_decoder, verify_realization
+from vli.navigation import commit_continuation, navigate_continuation
 
 
 def fixture():
@@ -170,6 +171,60 @@ class TestModelGround(unittest.TestCase):
                                         native_runner=lambda **_: fake_upstream())
         self.assertTrue(verify_realization(result["ground"], result["frontier"],
                                            result["realization"]))
+
+    def test_exact_observation_navigation_skips_new_neural_work(self):
+        ground, plan = self.lift()
+        full = intention_frontier(plan, ["vocab_logits"])
+        execution = bind_realization(ground, full, fake_upstream(), (0, 1))
+        retained = commit_continuation(ground, full, execution)
+        answer = navigate_continuation(
+            ground, full, retained, input_token_ids=(0, 1),
+            expected_observation_digest=retained["observation_digest"])
+        self.assertEqual(answer["selected_next_token"], 1)
+        self.assertEqual(answer["tier"], "B3_EXACT_OBSERVATION_NAVIGATION_ONLY")
+        self.assertEqual(answer["new_pretrained_weight_bytes_acquired"], 0)
+        self.assertEqual(answer["new_neural_forward_operations"], 0)
+        self.assertEqual(answer["avoided_original_range_reads"], 3)
+
+    def test_exact_navigation_rejects_changed_intention(self):
+        ground, plan = self.lift()
+        full = intention_frontier(plan, ["vocab_logits"])
+        retained = commit_continuation(
+            ground, full, bind_realization(ground, full, fake_upstream(), (0, 1)))
+        with self.assertRaises(ValueError):
+            navigate_continuation(ground, full, retained, input_token_ids=(1, 0),
+                                  expected_observation_digest=retained["observation_digest"])
+
+    def test_exact_navigation_rejects_forged_or_stale_evidence(self):
+        ground, plan = self.lift()
+        full = intention_frontier(plan, ["vocab_logits"])
+        retained = commit_continuation(
+            ground, full, bind_realization(ground, full, fake_upstream(), (0, 1)))
+        previous = retained["observation_digest"]
+        retained["selected_next_token"] = 0
+        with self.assertRaises(ValueError):
+            navigate_continuation(ground, full, retained, input_token_ids=(0, 1),
+                                  expected_observation_digest=previous)
+        retained["observation_digest"] = _digest(
+            "vl-i.exact-continuation-observation.v1",
+            {k:v for k,v in retained.items() if k != "observation_digest"})
+        with self.assertRaises(ValueError):
+            navigate_continuation(ground, full, retained, input_token_ids=(0, 1),
+                                  expected_observation_digest=previous)
+
+    def test_exact_navigation_rejects_different_model_ground(self):
+        ground, plan = self.lift()
+        full = intention_frontier(plan, ["vocab_logits"])
+        retained = commit_continuation(
+            ground, full, bind_realization(ground, full, fake_upstream(), (0, 1)))
+        changed = copy.deepcopy(ground)
+        changed["source"]["revision"] = "b" * 40
+        changed["ground_digest"] = _digest(
+            "vl-i.model-ground.v1",
+            {k:v for k,v in changed.items() if k != "ground_digest"})
+        with self.assertRaises(ValueError):
+            navigate_continuation(changed, full, retained, input_token_ids=(0, 1),
+                                  expected_observation_digest=retained["observation_digest"])
 
     def test_strict_json_rejects_duplicate_keys(self):
         import tempfile
