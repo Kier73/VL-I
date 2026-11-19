@@ -15,6 +15,9 @@ from time import perf_counter_ns
 from vli.response_state import (
     SourceSlot, ResponseSourceGround, ResponseFormation, compile_intention
 )
+from vli.intent_topology import (
+    TopologyWitness, propose_response_topology, admit_response_topology
+)
 
 
 def run():
@@ -55,6 +58,24 @@ def run():
         frames.append(restarted.observe())
     final=frames[-1]
     duration = perf_counter_ns()-start
+    witnesses = (
+        TopologyWitness("show python source code", ("code",)),
+        TopologyWitness("display the interpreter source code", ("code",)),
+        TopologyWitness("render the markdown page", ("page",)),
+        TopologyWitness("display the documentation page", ("page",)),
+        TopologyWitness("prepare a read-only tool proposal", ("tool_proposal",)),
+        TopologyWitness("show the tool proposal", ("tool_proposal",)),
+    )
+    suggestion = propose_response_topology(
+        ground, witnesses, "display the interpreter source code",
+        min_confidence=0.4, min_margin=0.01)
+    proposed_state = None
+    if suggestion["status"] == "PROPOSED_NEEDS_OBSERVER_APPROVAL":
+        accepted_intent = admit_response_topology(
+            ground, witnesses, suggestion,
+            expected_proposal_head=suggestion["proposal_digest"],
+            observer="qualified-proposal-observer")
+        proposed_state = ResponseFormation(ground, accepted_intent).position
     return {
         "schema": "vl-i.response-coordinate-experiment.v1",
         "coordinate": final["coordinate"],
@@ -75,6 +96,15 @@ def run():
         "final_dag_head": final["dag_state_digest"],
         "inert_tool_call_only": final["projections"][-1]["status"]=="INERT_PROPOSAL",
         "wall_time_ns_including_snapshot_replay": duration,
+        "ecpu_intention_topology_advisory": {
+            "status": suggestion["status"],
+            "proposed_slots": suggestion["proposed_slots"],
+            "confidence": suggestion["ecpu_prediction"]["confidence"],
+            "proposal_head": suggestion["proposal_digest"],
+            "accepted_coordinate": (proposed_state["coordinate"]
+                                    if proposed_state is not None else None),
+            "scope": "caller_pinned_advisory_not_general_prompt_interpretation",
+        },
         "not_claimed": [
             "general natural language intention interpretation",
             "new free-text content generation beyond supplied Ground",
