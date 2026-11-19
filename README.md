@@ -4,6 +4,17 @@
 
 **Status: research charter and design programme.** This repository begins with an ambitious target, not a claim that the target has already been achieved.
 
+## First implementation — VL-I-001
+
+**Executable integration is underway:** [VL-I-001 — First Experiment](docs/VLI_001_FIRST_EXPERIMENT.md) provides a pinned, reproducible path from real pretrained model header → verified typed Ground → intention-specific graph frontier → qualified VL-native model realization → exact retained-result navigation.
+
+- `src/vli/ground.py` independently checks the model graph and derives the required dependency closure for any declared graph output. It never promotes metadata into missing trained weights.
+- `src/vli/realization.py` reuses VL-64's **actual pretrained model operators and independent numerical oracle**, rather than quietly invoking a conventional model server.
+- `src/vli/navigation.py` demonstrates a narrow but genuine state-navigation relation: an already verified exact-input next-token result can be recovered without new neural evaluation, while changed inputs or evidence roots are refused.
+- [GitHub Actions](.github/workflows/vli-001.yml) runs the pinned observed-model lift and 19 adversarial/unit cases; a separate opt-in live job downloads real trained weights and tests the complete numerical path.
+
+**Evidence policy:** a model-header observation, numerical full-model execution, retained same-input observation and unobserved-input predictive shortcut are four different claims. The last remains an open research frontier. [PR #2](https://github.com/Kier73/VL-I/pull/2) tracks this first integration.
+
 ## The endeavor
 
 A Virtual Layer observes bytes, constructs an interpretation of their variables and transformations, and expresses them as a **Virtual Ground**: a versioned, testable description of possible states, transitions, observations, and intentions.
