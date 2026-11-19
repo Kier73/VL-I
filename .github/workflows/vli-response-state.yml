@@ -1,0 +1,44 @@
+name: VL-I intent-topology response coordinates
+
+on:
+  push:
+    branches: ["main", "feat/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render-state:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin E-CPU source for exact byte observations
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - name: Pin VLD source for state-topology and checkpoints
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/Virtual-Layer-Dynamics
+          ref: 985ba5c2fbcc40842aed9f45f42587749620b98e
+          path: upstream/vld
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install real interpreter dependencies
+        run: python -m pip install -e . -e upstream/ecpu -e upstream/vld
+      - name: Verify topological state addresses and progressive rendering
+        run: python -m unittest discover -s tests -p test_response_state.py -v
+      - name: Render an actual documentation/code/tool-proposal response coordinate
+        run: python -m examples.response_coordinate_demo --out artifacts/response-coordinate.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vli-intent-topology-response-state-evidence
+          path: artifacts/response-coordinate.json
