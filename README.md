@@ -58,6 +58,25 @@ See [Description Is Operation — Research Thesis](docs/DESCRIPTION_IS_OPERATION
 
 **Evidence policy:** a model-header observation, numerical full-model execution, retained same-input observation and unobserved-input predictive shortcut are four different claims. The last remains an open research frontier. [PR #2](https://github.com/Kier73/VL-I/pull/2) tracks this first integration.
 
+## The interpreter is also a Virtual Ground
+
+**Information radiates from every movement of bytes and every piece of verified memory.** Source data, transformed observations, semantic laws, memory, source-to-result lineage and future intentions form one evolving state space. Rather than treating computation as a particular processor's run of a neural graph, **VL-I seeks to make the interpreter the minimal active programme—and then lift the interpreter itself into a Virtual Ground**.
+
+This is a recursive endeavor:
+
+1. Lift the real interpreter's **own source bytes**, state semantics, operator declarations, memory relations and observer projections.
+2. Make those operations addressable as algebraic Ground relations rather than opaque host functions.
+3. Discover alternative verified relations capable of realizing the same interpreter behavior through time navigation, Structural Memory, generative laws or composition.
+4. Recursively use the emerging Ground interpreter to realize more of its own implementation, progressively reducing the trusted executable bootstrap.
+
+The integration uses **E-CPU's exact byte Grounds, operator contracts, Structural Memory and Ground-native reference** alongside **Virtual-Layer-Dynamics' actual signal interpreter, observer algebra, byte lenses and certified state navigation**.
+
+**An initial experiment is already executable:** real E-CPU, VLD and VL-I interpreter source bytes are dual-lifted into a source-bound Ground; the VLD interpreter executes a typed byte relation, emits trace-linked observations, and can be rebound from declarative Ground identities onto an installed interpreter. A simple source-generated law navigates over a billion logical coordinates without expanding intermediate states, with an independent E-CPU mathematical check. The integration suite contains 16 tests, including source tamper, altered semantics and transcript refusal.
+
+The *ultimate* target is not to keep a separate installed VLD or Python runtime indefinitely; it is to have **more of that interpreter's own mathematics and operation realized by the Ground itself**. The present self-lifting stage is semantic re-binding, **not yet independent self-hosting**. Interpreter work, byte transfer, hashing and verification are still counted rather than described as free.
+
+Read [Interpreter as Ground — E-CPU × VLD × VL-I](docs/INTERPRETER_SELF_GROUND.md) and [the direct experiment](examples/interpreter_self_ground_demo.py).
+
 ## The model-to-intention path
 
 ~~~text
