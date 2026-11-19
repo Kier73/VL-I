@@ -50,7 +50,7 @@ jobs:
 
   real-pretrained:
     needs: ground
-    if: (github.event_name == 'workflow_dispatch' && inputs.live_model) || (github.event_name == 'push' && github.ref == 'refs/heads/feat/vli-001-ground-runner')
+    if: github.event_name == 'workflow_dispatch' && inputs.live_model
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -76,6 +76,11 @@ jobs:
       - name: Independently reconstruct VL-I Ground and verify structural receipt binding
         run: |
           python -m vli verify --manifest upstream/vl64/experiments/model_fabric/datasets/2026-11-18-pinned-smollm2-tensor-ground.json --report artifacts/vli-realization.json
+      - name: Retain and re-navigate the exact observed token without model computation
+        run: |
+          python -m vli remember --manifest upstream/vl64/experiments/model_fabric/datasets/2026-11-18-pinned-smollm2-tensor-ground.json --report artifacts/vli-realization.json --out artifacts/vli-retained.json
+          HEAD=$(python -c "import json; print(json.load(open('artifacts/vli-retained.json'))['observation_digest'])")
+          python -m vli navigate --manifest upstream/vl64/experiments/model_fabric/datasets/2026-11-18-pinned-smollm2-tensor-ground.json --retained artifacts/vli-retained.json --expected-head "$HEAD" --tokens 42 75 --out artifacts/vli-replayed.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -84,4 +89,6 @@ jobs:
             artifacts/vli-realization.json
             artifacts/upstream-pretrained-numeric.json
             artifacts/real-model-state/checkpoint.json
+            artifacts/vli-retained.json
+            artifacts/vli-replayed.json
           if-no-files-found: warn
