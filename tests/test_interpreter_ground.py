@@ -10,7 +10,8 @@ import unittest
 
 from vli.interpreter_ground import (
     GENESIS, RadianceJournal, _hash, lift_interpreter,
-    load_real_interpreter_modules, observe_structural_orbit,
+    derive_orbit_from_interpreter_description, load_real_interpreter_modules,
+    observe_structural_orbit, rebind_interpreter_from_ground,
     operate_byte_ground, verify_byte_ground_run,
     verify_interpreter_ground, verify_radiance,
 )
@@ -170,6 +171,64 @@ class TestInterpreterSelfGround(unittest.TestCase):
                 self.ground, memory, memory_id="vli-desc-interpreter-orbit",
                 coordinate=coordinate, expected_value=(ecpu_reference+1) % 256,
                 observer="structural-memory-observer")
+
+    def test_rebind_from_lifted_ground_with_original_predecessor_runtime(self):
+        declared, restored = rebind_interpreter_from_ground(
+            self.ground, self.modules,
+            expected_ground_digest=self.ground["ground_digest"])
+        self.assertIsNot(restored, self.interpreter)
+        self.assertEqual(restored.ground.fingerprint,
+                         self.interpreter.ground.fingerprint)
+        self.assertEqual(declared.digest, self.registry.digest)
+        with self.assertRaises(VirtualLayerError):
+            declared.resolve("vli.byte.relation")
+        result = operate_byte_ground(b"\x07\x0b", left=0, right=1,
+                                     operation="MUL", observer="restored-host",
+                                     interpreter_ground=self.ground,
+                                     signal_interpreter=restored)
+        self.assertEqual(result["value"], 77)
+
+    def test_rebinding_requires_trusted_external_ground_head(self):
+        with self.assertRaises(ValueError):
+            rebind_interpreter_from_ground(self.ground, self.modules,
+                                           expected_ground_digest="0"*64)
+        changed = dict(self.modules)
+        changed["VLI.InterpreterSelfGround"] = b"forged"
+        with self.assertRaises(ValueError):
+            rebind_interpreter_from_ground(
+                self.ground, changed, expected_ground_digest=self.ground["ground_digest"])
+
+    def test_rebind_rejects_altered_signal_algebra(self):
+        changed = copy.deepcopy(self.ground)
+        changed["vld_signal_ground"]["domain_id"] = "unsupported.algebra"
+        with self.assertRaises(ValueError):
+            rebind_interpreter_from_ground(changed, self.modules,
+                                           expected_ground_digest=self.ground["ground_digest"])
+
+    def test_interpreter_description_generates_navigable_memory_law(self):
+        source = "VLI.InterpreterSelfGround"
+        coordinate = 9_876_543_210
+        reading = derive_orbit_from_interpreter_description(
+            self.ground, self.modules, source_name=source,
+            coordinate=coordinate, observer="law-observer")
+        raw = self.modules[source]
+        seed, step = raw[0], raw[1] % 255 + 1
+        self.assertEqual(reading["value"], (seed+coordinate*step)%256)
+        self.assertEqual(reading["source_byte_values"], [raw[0], raw[1]])
+        self.assertEqual(reading["sampled_witness_count"], 12)
+        self.assertEqual(reading["expanded_intermediate_states"], 0)
+        self.assertTrue(verify_radiance(
+            reading["transcript"],
+            expected_ground_digest=self.ground["ground_digest"],
+            expected_head=reading["transcript"]["head"]))
+
+    def test_source_derived_law_refuses_replaced_interpreter_description(self):
+        changed = dict(self.modules)
+        changed["VLI.InterpreterSelfGround"] = b"different source bytes"
+        with self.assertRaises(ValueError):
+            derive_orbit_from_interpreter_description(
+                self.ground, changed, source_name="VLI.InterpreterSelfGround",
+                coordinate=10**10, observer="law-observer")
 
     def test_observer_scopes_are_distinct_from_source_authority(self):
         # The Ground is source-observed, but never claims a trusted executable
