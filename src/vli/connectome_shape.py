@@ -42,8 +42,11 @@ class ConnectomeObserverShape:
         t2 = perf_counter_ns()
         self.certificate = discover(self.synthetic, horizon=32)
         t3 = perf_counter_ns()
-        self.audited = verify(self.synthetic, self.certificate,
-                             replay_observations=True)
+        partition, quotient = verify(self.synthetic, self.certificate,
+                                     replay_observations=True)
+        # Freeze the admitted proof's partition rather than trusting mutable
+        # caller-exposed training arrays between repeated observations.
+        self.audited = (tuple(partition), quotient)
         t4 = perf_counter_ns()
         self.source_sha256 = sha256(source_bytes).hexdigest()
         self.source_bytes = source_bytes
@@ -76,9 +79,12 @@ class ConnectomeObserverShape:
 
     def verify(self, *, certificate=None):
         from observer_quotient import verify
-        audited = verify(self.synthetic, self.certificate if certificate is None
-                         else certificate, replay_observations=True)
-        _require(audited == self.audited, "Observer Ground differs from its source proof")
+        partition, quotient = verify(self.synthetic,
+                                     self.certificate if certificate is None
+                                     else certificate,
+                                     replay_observations=True)
+        _require((tuple(partition), quotient) == self.audited,
+                 "Observer Ground differs from its source proof")
         return True
 
     def position(self, *, source_micro: int, logical_tick: int, observer: str,
@@ -121,6 +127,18 @@ class ConnectomeObserverShape:
                  and position.get("coordinate") ==
                  "state://vli/" + position["position_digest"],
                  "Altered or missing state-position contract")
+        from temporal_ground import hash_object
+        _require(self.certificate.get("digest") ==
+                 self.manifest["qualified_quotient_certificate"] and
+                 hash_object({k:v for k,v in self.certificate.items()
+                              if k != "digest"}) == self.certificate["digest"] and
+                 self.synthetic.fingerprint == self.manifest["expanded_synthetic_ground"] and
+                 self.source.fingerprint == self.manifest["source_ground_fingerprint"] and
+                 self.source_sha256 == self.manifest["source_sha256"] and
+                 self.manifest["ground_digest"] ==
+                 _digest(SCHEMA, {k:v for k,v in self.manifest.items()
+                                  if k != "ground_digest"}),
+                 "Observer source, verified quotient or Ground identity was changed")
         source_micro, tick = position["source_microstate"], position["logical_tick"]
         t0 = perf_counter_ns()
         operator, source_class = quotient_operator(
