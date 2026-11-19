@@ -1,0 +1,78 @@
+name: Large-scale VL-I B1/B2 evidence and same-intention frontier
+
+on:
+  push:
+    paths:
+      - 'src/vli/large_model_comparison.py'
+      - 'tests/test_large_model_comparison.py'
+      - 'docs/LARGE_MODEL_PARITY_FRONTIER.md'
+      - '.github/workflows/large-model-comparison.yml'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      external_b1_report:
+        description: 'Supply a separately obtained B1 report through the CLI; this job runs protocol fixtures only'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  evidence-gated-comparison:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.13"]
+    steps:
+      - name: Checkout VL-I
+        uses: actions/checkout@v4
+      - name: Checkout immutable upstream large-model evidence and interpreter
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install provenance and interface dependencies (no model runtime)
+        run: python -m pip install -e . -e upstream/vl64 pytest
+      - name: Validate exact original-scale model observations and refusing parity claims
+        run: python -m pytest -q tests/test_large_model_comparison.py
+      - name: Execute full-scale B1 CPU-controller fixture with two independent model routes
+        run: |
+          python -m experiments.model_fabric.remote_large_recovery_benchmark --fixture \
+            --max-tokens 64 --working-dir artifacts/b1-epochs \
+            --out artifacts/b1-control.json
+      - name: Produce B1/B2/B3 comparison with exact same task intentions
+        run: |
+          python -m vli.large_model_comparison --vl64-root upstream/vl64 \
+            --b1-report artifacts/b1-control.json \
+            --out artifacts/full-scale-evidence-comparison.json
+      - name: Assert fixture is never treated as real provider model or full VL-native forward
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('artifacts/full-scale-evidence-comparison.json').read_text())
+          assert r['b1_observation_grade']=='B1_CONTROL_FIXTURE_ONLY'
+          assert r['b2_execution_grade']=='REAL_PRETRAINED_PARTIAL_SUBGRAPHS_ONLY'
+          assert r['same_model_same_intention_full_output_parity']=='UNRESOLVED'
+          assert set(r['models'])=={'qwen-27b','deepseek-v41-flash'}
+          assert all(not m['eligibility_for_B2_full_model'] for m in r['models'].values())
+          assert all(not m['eligibility_for_B3_predictive_shortcut'] for m in r['models'].values())
+          print('B1_B2_RESULT',r['status'])
+          PY
+      - name: Preserve comparable report and independently tested negative controls
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vli-unscaled-b1-b2-obligations-${{ matrix.python-version }}
+          path: |
+            artifacts/full-scale-evidence-comparison.json
+            artifacts/b1-control.json
+          if-no-files-found: warn
