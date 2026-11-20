@@ -48,7 +48,10 @@ jobs:
         run: python -m pytest -q tests/test_qwen_architecture_navigator.py tests/test_qwen_architecture_process_recovery.py tests/test_qwen_hybrid_block.py tests/test_qwen_hybrid_process_recovery.py tests/test_saved_original_qwen_first_hybrid.py
 
   original-pretrained-eight:
-    if: github.event_name == 'workflow_dispatch' && inputs.run_original_eight
+    if: >-
+      (github.event_name == 'pull_request' &&
+       github.head_ref == 'feat/qualified-008-architecture-directed-qwen') ||
+      (github.event_name == 'workflow_dispatch' && inputs.run_original_eight)
     runs-on: ubuntu-latest
     timeout-minutes: 80
     env:
