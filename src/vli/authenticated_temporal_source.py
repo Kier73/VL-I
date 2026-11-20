@@ -20,7 +20,7 @@ import json
 import os
 from pathlib import Path
 import tempfile
-from time import monotonic_ns, time_ns
+from time import monotonic_ns, time_ns, sleep
 
 from .ground import _canonical, _hex64, _require, load_json
 from .temporal_intelligence import TemporalIntelligenceGround, _fraction
@@ -251,7 +251,8 @@ def _check_checkpoint_against_signed_source(snapshot,packets,source):
 def resume_signed_observer(*, journal_path, checkpoint_path, source, public_key,
                            expected_source_head,expected_source_count,
                            environment,host, observer="vli-time",
-                           hard_exit_before=None,hard_exit_after=None):
+                           hard_exit_before=None,hard_exit_after=None,
+                           pause_after_index=None,pause_marker_path=None):
     """Replay signed observations at most once into a checkpointed TIME-001 Ground.
 
     A process can die before commit or after fsync/rename but before it
@@ -289,6 +290,14 @@ def resume_signed_observer(*, journal_path, checkpoint_path, source, public_key,
         })
         if hard_exit_after==index:
             os._exit(72)  # snapshot/fsync/rename complete, acknowledgment lost
+        if pause_after_index==index:
+            _require(pause_marker_path is not None,
+                     "External process-kill test requires an isolated marker")
+            _persist_snapshot(pause_marker_path,{
+                "schema":"vl-i.time005.ready-for-external-kill.v1",
+                "committed_index":index,"ground_head":ground.head})
+            sleep(30)  # parent test forcibly kills the OS process, not this code
+            raise RuntimeError("External process kill was not delivered")
 
     _require(len(ground.events)==len(packets),
              "Recovered source ledger is missing authenticated events")
@@ -344,13 +353,16 @@ def main(argv=None):
     parser.add_argument("--host",required=True)
     parser.add_argument("--crash-before",type=int,default=None)
     parser.add_argument("--crash-after",type=int,default=None)
+    parser.add_argument("--pause-after",type=int,default=None)
+    parser.add_argument("--pause-marker",default=None)
     args=parser.parse_args(argv)
     result=resume_signed_observer(
         journal_path=args.journal,checkpoint_path=args.checkpoint,
         source=args.source,public_key=args.public_key,
         expected_source_head=args.head,expected_source_count=args.count,
         environment=args.environment,host=args.host,
-        hard_exit_before=args.crash_before,hard_exit_after=args.crash_after)
+        hard_exit_before=args.crash_before,hard_exit_after=args.crash_after,
+        pause_after_index=args.pause_after,pause_marker_path=args.pause_marker)
     print(json.dumps(result,sort_keys=True))
     return 0
 
