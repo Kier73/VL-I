@@ -197,6 +197,30 @@ def test_complete_binary_frontier_shares_prefixes_exactly(tmp_path):
     assert nav.nodes[leaf]["causal_head"] == receipt["chain_head"]
 
 
+def test_rehashed_in_memory_node_cannot_outrun_externally_pinned_forest(tmp_path):
+    from vli.counterfactual_navigation import NODE
+    from vli.ground import _digest
+
+    nav = CounterfactualCausalGround(two_factory, LocalStatePages(tmp_path))
+    _, first, _ = advance(nav, nav.root_coordinate, A, 1)
+    pinned = nav.head
+    # Simulate an adversary with write access to node memory who tries to
+    # replace a receipt and recompute *its own* local content hashes.
+    stored = nav.nodes[first["coordinate"]]
+    stored["receipt"]["layer_witnesses"][-1]["output_f64_digest"] = "0"*64
+    stored["receipt_digest"] = _digest(NODE, stored["receipt"])
+    stored["node_digest"] = _digest(
+        NODE, {k:v for k,v in stored.items() if k != "node_digest"})
+    with pytest.raises(ValueError, match="Committed causal forest"):
+        nav.observe(first["coordinate"], expected_head=pinned)
+    with pytest.raises(ValueError, match="Committed causal forest"):
+        nav.snapshot()
+    with pytest.raises(ValueError, match="Committed causal forest"):
+        nav.advance(first["coordinate"], B, token_id=2,
+                    expected_parent_digest=first["node_digest"],
+                    expected_head=pinned)
+
+
 def test_refuse_bad_input_or_excess_nodes(tmp_path):
     nav = CounterfactualCausalGround(two_factory, LocalStatePages(tmp_path), max_nodes=1)
     with pytest.raises(ValueError, match="identifier"):
