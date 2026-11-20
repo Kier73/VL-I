@@ -1,0 +1,247 @@
+{
+  "ECPU_reusable_hidden_state_ground": {
+    "checkpoint_digest": "503aa1bacc289d354177e172f3188ac39eda88c42d2b4f9d1df691fc8fcd65e3",
+    "checkpoint_serialized_bytes": 373237,
+    "native_layer1_trained_weight_bytes": 10240,
+    "objects": {
+      "causal_0": "6c253fb3ab5653dea9930cd9028363d7b990a0fb016dffb263740e225fd438bd",
+      "causal_1": "378b1a4dd8feeb2b15ea2e0d751c398e56ac126cf32cbb8af95f89b2d5803fb6",
+      "causal_2": "33d99fb8207c1c6a0c463745bb81c302b42b435d90207617be1b49bf9f137683",
+      "gain": "e33031c35a1fd83bd8bbb129c8607ec3fc1788c1c6f07f3f2c07c221c5ac5467",
+      "norm_raw": "4f70084fa85d8a5a2349d0fffb9c5a8baa4d10c26bc5d0bbb1674131a75af0c0"
+    },
+    "recovery_ns": 15636841,
+    "source_causal_hidden_bytes": 122880,
+    "source_free_restoration_verified": true
+  },
+  "actual_original_pretrained_source": true,
+  "actual_original_source_layer_positions": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "admitted_law": "quadratic_with_cross_term",
+  "all_four_original_causal_positions_complete": true,
+  "candidate_max_challenge_errors": {
+    "affine": 0.512391250994245,
+    "constant": 3.1070283249201545,
+    "full_quadratic": 3.552713678800501e-15,
+    "separable_quadratic": 0.3318822481990402
+  },
+  "complete_original_model_decoder_executed": false,
+  "complete_output_negative_control": {
+    "generated_full_ns": 9571465,
+    "generated_slower": true,
+    "max_abs_error": 7.105427357601002e-15,
+    "original_native_full_norm_ns": 3190789,
+    "width": 5120
+  },
+  "falsification_positions": [
+    [
+      0.21,
+      0.13
+    ],
+    [
+      0.45,
+      0.22
+    ],
+    [
+      0.12,
+      0.73
+    ]
+  ],
+  "first_native_original_layer0_to_layer1_verification_grade": "VL64_NATIVE_SAME_IMPLEMENTATION_NOT_INDEPENDENT_PYTORCH_REFERENCE",
+  "fourth_real_causal_hidden_state_negative_probe": {
+    "actual_layer0_output_f64_digest": "3510331de4f556f0012af5ec6f7f1208750f53deea436f0bad34079b747854ef",
+    "causal_position": 3,
+    "fit_parameters": [
+      0.34712308427607946,
+      0.4664690045835977
+    ],
+    "inside_declared_convex_hull": false,
+    "next_action": "refuse_and_observe_new_original_causal_position",
+    "original_token_id": 33303,
+    "relative_residual": 0.5342974931648563,
+    "source_native_chain_head": "c4debda04772e0c4f310753d9fd00bfef7fd672888675cb57d2f891bade56b16",
+    "source_qualification": "native_original_complete_two_layer_causal_position",
+    "would_wrongly_extrapolate": true
+  },
+  "heldout_max_abs_error": 5.551115123125783e-17,
+  "independent_real_original_weight_PyTorch_whole_layer_oracle": false,
+  "index_sha256": "77042094076611b69791a610065f28b7013b8c621795fa86ddccc8bac7d1b9df",
+  "input_width": 5120,
+  "mode": "ORIGINAL_QWEN27B_TWO_COMPLETE_GDN_LAYERS_FOUR_REAL_CAUSAL_POSITIONS",
+  "model": "Qwen/Qwen3.8-27B",
+  "native_original_causal_chain_heads": [
+    "9e67b8be3fb587953a4fb1c7280aef10f8c36f58c78ab35cb60e4530a74d2be4",
+    "876143cf7e35b9bd788bb9820e4ece049925a3c80adf722fb72d5aecf880062f",
+    "669f87fa43b18cbf801d528b409c5d4784e49cc679dc25e4106422397d3cbc34"
+  ],
+  "native_training_calls": 9,
+  "native_training_ns": 25233503,
+  "no_unproven_future_causal_state_admitted": true,
+  "observation_based_fit_positions": [
+    [
+      0,
+      0
+    ],
+    [
+      1,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      0.5,
+      0
+    ],
+    [
+      0,
+      0.5
+    ],
+    [
+      0.5,
+      0.5
+    ]
+  ],
+  "original_interlayer_handoff_digests": [
+    "7f8abcbe75c429851ef049dc1501c87762fefc7194aa4feb52aa97e57df78f45",
+    "f61fc8b6487d6a667fa9576904b3c5d601e680a1cda6ce82b45150fd73011773",
+    "ef6bbac76a9f3a07f971e9ff0f289d3b5015368ea1c8b86e5f6ae6f7b83a036d"
+  ],
+  "original_model_host_bytes_and_ranges": {
+    "evicted_blocks": 754,
+    "host_compute_happens_in_worker_not_network": true,
+    "logical_64k_ranges": 93679,
+    "logical_range_bytes": 6131850608,
+    "model_weights_stored_in_VL_ground_bytes": 0,
+    "network_observation_head": "e4f93480699d54e0734ca889ce7fb1d5d6ce44415179b7efe5a432a7b2554c1c",
+    "remote_http_bytes": 6459228160,
+    "remote_https_206_blocks": 770,
+    "resident_model_host_budget_bytes": 134217728,
+    "resident_model_host_bytes": 134217728,
+    "schema": "vl-i.pinned-coalesced-host-block.v1",
+    "source_blocks_reused_by_logical_reads": 92909
+  },
+  "original_native_layer1_norm_sha256": "97e3a70202400c8f895d55c02467271facf1aba2e990222a835932b8da8a0340",
+  "original_norm_acquisition_ns": 279578326,
+  "original_source_and_four_layer_chain_ns": 258014878367,
+  "original_source_token_ids": [
+    63204,
+    628,
+    1761,
+    33303
+  ],
+  "original_token_ids": [
+    63204,
+    628,
+    1761,
+    33303
+  ],
+  "original_token_sequence_sha256": "498325b33f14f72e68b44ec67b382bcf4ace020e18b45e9eba5a991ff9843df1",
+  "original_two_layer_chain_final_head": "c4debda04772e0c4f310753d9fd00bfef7fd672888675cb57d2f891bade56b16",
+  "real_original_pretrained": true,
+  "recovered_new_unseen_mixture": {
+    "generated_ns": 465012,
+    "max_abs_native_reference_error": 1.1102230246251565e-16,
+    "mixture": [
+      0.24,
+      0.41
+    ],
+    "native_layer_evaluations_during_prediction": 0,
+    "position": "state://vli/c135afaadb9364d018a37a2f66d31d74b5527427c195f76e01ee9d41ac967341"
+  },
+  "revision": "37561816e66b5b9153b1b64c10968c18c1e6f4a0",
+  "schema": "vl-i.shape009-original-causal-interlayer-manifold.v1",
+  "scope": [
+    "genuine native original first two complete Qwen GDN layer states for four tokens in live mode",
+    "learned norm law only on convex interpolation of three real causal layer0 output hidden states",
+    "fourth real causal position is a counterexample to automatic extrapolation, not a generated output",
+    "native original layer1 normalization reference queried only after heldout predictions",
+    "source-free ECPU structural memory preserves exact original causal outputs and trained norm coefficients",
+    "independent PyTorch/Transformers whole-layer parity remains unresolved",
+    "no generated next token and no full 64-layer decoder"
+  ],
+  "source_root": "cb1d13475d44374cdbb5542b115ed7fd81c3423d80aabc5c8ad16dd0aca92fc2",
+  "status": "MEASURED",
+  "third_true_causal_state_not_on_two_state_line": {
+    "line_projection": 0.7610846666375904,
+    "off_line_relative_residual": 0.5770410350751523
+  },
+  "tokenizer_sha256": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3",
+  "unseen_convex_span_intentions": [
+    {
+      "barycentric_coordinates": [
+        0.13,
+        0.27
+      ],
+      "generated_before_native_reference": true,
+      "generated_ns": 528651,
+      "max_abs_heldout_error": 0,
+      "native_reference_ns": 3023105,
+      "original_native_operator_calls_during_generation": 0,
+      "position": "state://vli/2c5f972df8b5db8dab4b95f73a624b1e45de6b7ec8b6761f04ec627664871b97",
+      "requested_original_output_indices": [
+        0,
+        1,
+        2,
+        2560,
+        5119
+      ]
+    },
+    {
+      "barycentric_coordinates": [
+        0.44,
+        0.19
+      ],
+      "generated_before_native_reference": true,
+      "generated_ns": 409017,
+      "max_abs_heldout_error": 6.938893903907228e-18,
+      "native_reference_ns": 3034376,
+      "original_native_operator_calls_during_generation": 0,
+      "position": "state://vli/9d207790a35efb0bec2ad1e73ad37be47028f5cf4e4dbc8210126f3f47d488f0",
+      "requested_original_output_indices": [
+        0,
+        1,
+        2,
+        2560,
+        5119
+      ]
+    },
+    {
+      "barycentric_coordinates": [
+        0.08,
+        0.73
+      ],
+      "generated_before_native_reference": true,
+      "generated_ns": 418564,
+      "max_abs_heldout_error": 5.551115123125783e-17,
+      "native_reference_ns": 3029606,
+      "original_native_operator_calls_during_generation": 0,
+      "position": "state://vli/b38bf0b7f1a7fa779ef0a985d42844ea2871167bd0480bbd8826e6e3cacf68a5",
+      "requested_original_output_indices": [
+        0,
+        1,
+        2,
+        2560,
+        5119
+      ]
+    }
+  ],
+  "provenance": {
+    "github_actions_run": "https://github.com/Kier73/VL-I/actions/runs/44668309457",
+    "github_job_id": 136062932681,
+    "merged_implementation_sha": "16e1de936f165023963dd4eab3d18aeead6e1bcf",
+    "evidence_scope": "original pinned Qwen3.8 27B 4 genuine causal original-token positions through complete native GDN layers 0 and 1; learned layer1 normalization law for mathematically interpolated contextual states; 4th real position counterexample",
+    "excluded_claims": [
+      "complete 64-layer decoder",
+      "new real causal position prediction",
+      "separately implemented original-weight PyTorch whole-layer parity",
+      "wall-time speedup including original source bootstrap"
+    ],
+    "no_original_trained_weight_payloads_in_report": true
+  }
+}
