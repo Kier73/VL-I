@@ -82,24 +82,34 @@ These prototypes are **E0, witness-conditioned advisory classification**, not ge
 
 ## 5. Measured cold and warm costs
 
-The experiment deliberately does not equate smaller neural state dimension with automatic speed.
+This experiment does not equate a smaller neural state dimension with an automatic speedup.
 
-The same GitHub-hosted Python 3.11 run recorded the following sampled timings:
+The first run exposed a **benchmark confound:** the first generated model paid additional one-time Python module initialization, incorrectly making the small phase model appear much more expensive to compile. We corrected the order of operation: **the shared VLD compiler backend is now initialized and paid for during source admission**, before comparing separately generated model alternatives.
 
-| Component | Phase quotient | Full state model |
+The corrected [GitHub Actions SHAPE-002 run 44645427574](https://github.com/Kier73/VL-I/actions/runs/44645427574), using one hosted Python 3.11 worker, produced:
+
+| Measurement | Phase-only model | Full state model |
 | --- | ---: | ---: |
-| Neural hidden units | 9 | 36 |
-| Source proof and model preparation (observed) | **48.74 ms** | **3.90 ms** |
-| Sampled generated neural step + local VLD oracle | **12.02 μs** | **63.59 μs** |
-| Repeated-query *step-only* timing ratio | approximately **5.3×** full/phase | — |
+| Source states available | 12 | 12 |
+| Qualified observer states | 3 | 12 |
+| Generated ReLU hidden units | 9 | 36 |
+| Shape prediction, proof and neural compilation | **0.676 ms** | **2.615 ms** |
+| Neural step + local VLD oracle, sampled | **8.29 μs** | **42.07 μs** |
+| Query-only execution reduction relative to full model | **~5.08×** | Reference |
 
-**Important confound:** the phase model was the first compilation in the Python process and includes disproportionate one-time module initialization; this is **not** evidence that generating a smaller network intrinsically costs 12× more to prepare. The current chooser records these particular samples; a more robust cold-cost comparison needs isolated, randomized compilation orders, more repetitions and hardware/energy profiling.
+**Shared original description admission including VLD/E-CPU import/bootstrap** cost about **242 ms** in that run. This work is **not** attributed to an arbitrary first-choice morphology but must be charged when calculating absolute end-to-end cold cost.
 
-With these particular observations, the cost chooser selected the full model for **eight expected cold phase queries**, but selected the smaller phase-only model for **10,000 expected queries**. It refused to use the phase-only model for a microstate intention even when the latter would be faster on paper.
+The observer-aware cost chooser correctly selected the phase-only shape for both short and long workloads with the corrected measurements. A phase-only shape was **refused** for microstate observation regardless of its lower predicted cost; the full or micro-competent form is required.
 
-Costs still **outside** the selector's per-candidate total estimates include acquiring the original source description (one measurement was about 277 ms with Python import/module initialization), generating and timing *all* candidate shapes, caller/observer approval, full source retention, renderer/response output, transport and host energy. Candidate selection and estimator costs must be accounted for in a deployment-level benchmark.
+This measures a tiny, fully described finite transition law. The query costs are actual Python computations through a generated neural model and its local VLD oracle, **not direct CPU/GPU Transformer inference, energy measurements or speedups for a pretrained language model**. Cost contracts still need to account for:
 
-These numbers show a viable mathematical-work difference in a small finite-state model; they are **not pretrained Transformer acceleration, general intelligence, or measured end-to-end energy savings**.
+- shared original-description acquisition/admission, model-source and interpreter initialization;
+- discovering, compiling and timing *all* candidate morphologies, not just the selected one;
+- the actual external observer's intent compilation and permission to proceed;
+- full hidden state retention, checkpoint verification, output serialization/rendering and any host-to-host transport;
+- source-independent replay and complete proof maintenance when a new intention changes the output contract.
+
+A measured **5.08× step-only improvement** is useful evidence that morphology matters *even when the neural model genuinely changes*, but it is not a measured 5× end-to-end intelligence cost reduction. Timings vary across worker hosts, source sizes and compiler order; additional randomized repetitions are needed before generalizing.
 
 ## 6. Causal preservation and verification
 
