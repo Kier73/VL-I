@@ -59,7 +59,11 @@ power-loss guarantees.
 
 The experiment invokes the process-hard-exit primitive os._exit at two
 adversarial points; there is no finally block, destructor or normal Python
-cleanup.
+cleanup. A third control pauses a **separate child OS process immediately
+after its fsynced checkpoint** and has the external parent forcibly terminate
+it with subprocess.Popen.kill(). The parent reads the persisted checkpoint,
+then verifies the replacement process accepts exactly the one missing source
+event, never replays the already committed effect.
 
 - **Before commit:** the worker dies with source index 2 signed externally
   but missing from its durable state. The new worker verifies the complete
