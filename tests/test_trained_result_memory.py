@@ -179,6 +179,46 @@ class TestTrainedResultGround(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.ground.observe(spec,expected_head=self.ground.head)
 
+    def test_rehashed_fake_causal_position_cannot_recover_as_trained_result(self):
+        spec=intention()
+        self.ground.observe(spec,expected_head=self.ground.head)
+        saved=self.ground.checkpoint()
+        forged=deepcopy(saved)
+        event=forged["events"][0]
+        event["position_digest"]="0"*64
+        event["event_digest"]=_digest(
+            event["schema"],{k:v for k,v in event.items()
+                             if k!="event_digest"})
+        forged["head"]=event["event_digest"]
+        forged["checkpoint_digest"]=_digest(
+            forged["schema"],{k:v for k,v in forged.items()
+                              if k!="checkpoint_digest"})
+        with self.assertRaises(ValueError):
+            VerifiedTrainedResultGround.restore(
+                index_raw=self.index,snapshot=forged,
+                expected_head=forged["checkpoint_digest"])
+
+    def test_rehashed_false_reuse_must_not_claim_skipped_arithmetic(self):
+        spec=intention()
+        self.ground.observe(spec,expected_head=self.ground.head)
+        self.ground.observe(spec,expected_head=self.ground.head)
+        saved=self.ground.checkpoint()
+        forged=deepcopy(saved)
+        event=forged["events"][1]
+        event["result_disposition"]="NEW_TRAINED_ARITHMETIC"
+        event["new_trained_arithmetic_evaluations"]=1
+        event["event_digest"]=_digest(
+            event["schema"],{k:v for k,v in event.items()
+                             if k!="event_digest"})
+        forged["head"]=event["event_digest"]
+        forged["checkpoint_digest"]=_digest(
+            forged["schema"],{k:v for k,v in forged.items()
+                              if k!="checkpoint_digest"})
+        with self.assertRaises(ValueError):
+            VerifiedTrainedResultGround.restore(
+                index_raw=self.index,snapshot=forged,
+                expected_head=forged["checkpoint_digest"])
+
     def test_no_model_parity_or_language_generation_claim_from_norm(self):
         spec=intention()
         self.ground.observe(spec,expected_head=self.ground.head)
