@@ -1,0 +1,125 @@
+name: VL-I QUALIFIED-009 independently trained PyTorch numerical parity
+
+on:
+  pull_request:
+    paths:
+      - 'src/vli/qwen_torch_oracle.py'
+      - 'examples/qwen_independent_torch_parity.py'
+      - 'tests/test_qwen_torch_oracle.py'
+      - 'tests/test_saved_original_qwen_first_eight.py'
+      - 'tests/test_saved_original_qwen_torch_parity.py'
+      - 'experiments/qwen_all_heads/datasets/2026-11-19-real-original-qwen-layer7-independent-pytorch-parity.json'
+      - 'experiments/qwen_all_heads/datasets/2026-11-19-real-original-qwen-first-eight-architecture-directed.json'
+      - '.github/workflows/vli-qualified-pytorch-parity.yml'
+  workflow_dispatch:
+    inputs:
+      run_original_pytorch_parity:
+        description: 'Run independent real-weight PyTorch layer7 parity, ~8GB source transfer'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  independent-torch-math-and-archival:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11','3.13']
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests:tests
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install NumPy, pytest, and independent CPU PyTorch numerical backend
+        run: |
+          python -m pip install -e . -e upstream/vl64 'numpy>=1.26' 'pytest>=8'
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
+      - name: Independent PyTorch Qwen mathematical parity and original eight-layer archive
+        run: |
+          python -m pytest -q \
+            tests/test_qwen_torch_oracle.py \
+            tests/test_saved_original_qwen_first_eight.py \
+            tests/test_saved_original_qwen_torch_parity.py \
+            tests/test_saved_original_qwen_first_hybrid.py
+
+  original-pretrained-layer7-torch:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_original_pytorch_parity
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests:tests
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install model worker NumPy, tokenizer and separate PyTorch CPU runtime
+        run: |
+          python -m pip install -e . -e upstream/vl64 'numpy>=1.26' 'tokenizers>=0.20,<1'
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
+      - name: Original Qwen layer7 from actual trained layer6, independent PyTorch F64
+        run: |
+          python -m examples.qwen_independent_torch_parity \
+            --block-bytes 8388608 \
+            --host-budget-bytes 134217728 \
+            --layer-budget-bytes 2000000000 \
+            --out artifacts/qualified-009-original-torch-parity.json
+      - name: Verify original first seven layer digests and independent full-attention agreement
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('artifacts/qualified-009-original-torch-parity.json').read_text())
+          assert r['status']=='REAL_ORIGINAL_TRAINED_QWEN_LAYER7_TORCH_F64_PARITY_VERIFIED',r
+          assert r['model']=='Qwen/Qwen3.8-27B'
+          assert r['revision']=='37561816e66b5b9153b1b64c10968c18c1e6f4a0'
+          assert r['actual_original_token_id']==63204
+          assert r['original_hidden_width']==5120
+          assert r['independent_input_from_full_trained_layers']==list(range(7))
+          assert r['hidden6_f64_digest']=='84bce25d25334bd81510ce756dafb978c7f4501411e42933321082f3d2bbbafa'
+          assert r['vl_original_layer7_f64_digest']==r['previous_original_eight_layer_f64_digest']
+          assert r['max_abs_numeric_error']<=1e-5
+          assert r['max_scaled_numeric_error']<=2e-7
+          assert r['reference']['math_runtime']=='independent_torch_float64'
+          assert r['reference']['complete_output_width']==5120
+          assert r['reference']['new_source_weight_payload_bytes']>100000000
+          assert r['independent_f64_pytorch_trained_operator_parity']
+          assert not r['original_model_bf16_runtime_equivalence_tested']
+          assert not r['full_original_decoder_completed']
+          assert not r['vocabulary_logits_computed']
+          assert r['model_host_traffic']['remote_https_206_blocks']>0
+          assert not r['vl64_core_modified']
+          print('INDEPENDENT_REAL_ORIGINAL_QWEN_TORCH_F64_PARITY_CONFIRMED')
+          print('MAX_ABS_F64_ERROR',r['max_abs_numeric_error'])
+          print('MAX_SCALED_F64_ERROR',r['max_scaled_numeric_error'])
+          PY
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qualified-009-original-trained-layer7-independent-pytorch
+          path: artifacts/qualified-009-original-torch-parity.json
+          if-no-files-found: warn
