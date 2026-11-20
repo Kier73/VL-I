@@ -31,7 +31,7 @@ def experiment(tmp_path, factory, *, horizon=2,threshold=0.0,actions=None):
     _,left,_=advance(ground,ground.root_coordinate,A,1)
     _,right,_=advance(ground,ground.root_coordinate,D,2)
     assert left["coordinate"]!=right["coordinate"]
-    observer=observer_spec(3,[(0,threshold)],observer="scalar-sign-reader")
+    observer=observer_spec(3,[(2,threshold)],observer="scalar-sign-reader")
     alphabet=actions or [("negative",3,B),("positive",4,C)]
     navigator=FiniteFutureObserverGround(ground)
     cert=navigator.prove(left["coordinate"],right["coordinate"],
@@ -144,7 +144,7 @@ def test_finite_horizon_and_explicit_action_alphabet_are_enforced(tmp_path):
     ground,navigator,left,right,cert=experiment(tmp_path,two_factory,horizon=1)
     assert cert["verdict"]==EQUIVALENT
     head=ground.head
-    with pytest.raises(ValueError,match="extent"):
+    with pytest.raises(ValueError,match="virtual future navigation request"):
         navigator.navigate(cert,[("negative",5,B),("positive",6,C)],
             anchor="left",expected_certificate_digest=cert["certificate_digest"],
             expected_head=head,expected_anchor_digest=left["node_digest"])
@@ -238,7 +238,7 @@ if sys.argv[1]=="writer":
     nav=FiniteFutureObserverGround(g)
     cert=nav.prove(a["coordinate"],b["coordinate"],
         expected_left_digest=a["node_digest"],expected_right_digest=b["node_digest"],
-        expected_head=g.head,observer=observer_spec(3,[(0,0.0)]),
+        expected_head=g.head,observer=observer_spec(3,[(2,0.0)]),
         actions=[("negative",3,B),("positive",4,C)],horizon=2)
     assert cert["verdict"]=="CERTIFIED_FINITE_HORIZON"
     response=nav.navigate(cert,[("negative",100,B),("positive",101,C)],
