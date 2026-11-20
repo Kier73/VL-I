@@ -1,0 +1,209 @@
+{
+  "ECPU_reusable_hidden_state_ground": {
+    "checkpoint_digest": "2b32b1106fbd2601b33b063ea80ed5919af5b30ea9c207b7a4058d9158d570eb",
+    "checkpoint_serialized_bytes": 54633,
+    "native_layer1_trained_weight_bytes": 12,
+    "objects": {
+      "causal_0": "6d1b2c5092c4532c58b00ef660a3721060b23f6a7ac131c3a4dee6580efac660",
+      "causal_1": "965807c442dd2bd40aa72b0f93979d482ad41e5129700ba25222eab299990e27",
+      "causal_2": "2012218c73b143f0670774f77fe97cb0177c6c14c05c651cb75711e87cacb90f",
+      "gain": "e6fadb73b56c69c2bc6e397b5a031596deed5971ab679f82d2d0560df77fd3d7",
+      "norm_raw": "e68529461bb6ae1fd36b3bfa1bc02304346ad1d38bbc9958698ea0aa902885e1"
+    },
+    "recovery_ns": 2381792,
+    "source_causal_hidden_bytes": 72,
+    "source_free_restoration_verified": true
+  },
+  "actual_original_source_layer_positions": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "admitted_law": "quadratic_with_cross_term",
+  "candidate_max_challenge_errors": {
+    "affine": 0.4238240419472563,
+    "constant": 0.4055868285705486,
+    "full_quadratic": 4.440892098500626e-16,
+    "separable_quadratic": 0.12263235280778595
+  },
+  "complete_original_model_decoder_executed": false,
+  "complete_output_negative_control": {
+    "generated_full_ns": 316615,
+    "generated_slower": true,
+    "max_abs_error": 2.220446049250313e-16,
+    "original_native_full_norm_ns": 198714,
+    "width": 3
+  },
+  "falsification_positions": [
+    [
+      0.21,
+      0.13
+    ],
+    [
+      0.45,
+      0.22
+    ],
+    [
+      0.12,
+      0.73
+    ]
+  ],
+  "fourth_real_causal_hidden_state_negative_probe": {
+    "actual_layer0_output_f64_digest": "f29856797e223f0c9338b8a5e613d05354ed34357f7a2b3f8d0036fbc0d27d2f",
+    "causal_position": 3,
+    "fit_parameters": [
+      -0.4357195657035982,
+      -0.5516606261374293
+    ],
+    "inside_declared_convex_hull": false,
+    "next_action": "refuse_and_observe_new_original_causal_position",
+    "original_token_id": 33303,
+    "relative_residual": 0.2779131626628974,
+    "source_native_chain_head": "776917f91067618c2cd33e528d863f594afc056fab084149627cd1afb084004c",
+    "source_qualification": "native_original_complete_two_layer_causal_position",
+    "would_wrongly_extrapolate": true
+  },
+  "heldout_max_abs_error": 6.661338147750939e-16,
+  "independent_real_original_weight_PyTorch_whole_layer_oracle": false,
+  "index_sha256": "9f3f25d2c5acbd754f9bb0756a08ed50c2a555815612e7062f33bd8a8b5814a7",
+  "input_width": 3,
+  "mode": "SYNTHETIC_NATIVE_QWEN_TWO_LAYER_CAUSAL_FIXTURE",
+  "model": "example/fixture-model",
+  "native_original_causal_chain_heads": [
+    "362a9a6c7e59f7525bde1fbd8dfb8812438ff639a44af50e9448121b9cf5fd0f",
+    "c0246596695166035dec985a44d736360ad286b3885bdef090d1a1153d384386",
+    "0433c0390b73d304c146e71c3523c17a9a35602cd3faf08975c3e0189ce21c84"
+  ],
+  "native_training_calls": 9,
+  "native_training_ns": 94907,
+  "no_unproven_future_causal_state_admitted": true,
+  "not_original_pretrained": true,
+  "observation_based_fit_positions": [
+    [
+      0,
+      0
+    ],
+    [
+      1,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      0.5,
+      0
+    ],
+    [
+      0,
+      0.5
+    ],
+    [
+      0.5,
+      0.5
+    ]
+  ],
+  "original_interlayer_handoff_digests": [
+    "089d34bd0bb4ddce30532f4f155ce3114a1d607e679ec30fa112613cf034d99a",
+    "d59d7a16cd7c881ad90fdeafd9248b9a23369edd30162708627065ab606c031b",
+    "3a535e9195999c57fdcb9c5fa4987571c06df102a199195e50acd7c52e6119b8"
+  ],
+  "original_native_layer1_norm_sha256": "d0fc0bb0ae611580f72933cdf5fdc3ba922d7f41f3858ddd85d54706edbc4fc0",
+  "original_source_token_ids": [
+    63204,
+    628,
+    1761,
+    33303
+  ],
+  "real_original_pretrained": false,
+  "recovered_new_unseen_mixture": {
+    "generated_ns": 331113,
+    "max_abs_native_reference_error": 2.220446049250313e-16,
+    "mixture": [
+      0.24,
+      0.41
+    ],
+    "native_layer_evaluations_during_prediction": 0,
+    "position": "state://vli/99083beadb43a1e3835eabed721efb3ed8197f1a357277fa8d86bcc4df962249"
+  },
+  "revision": "1111111111111111111111111111111111111111",
+  "schema": "vl-i.shape009-original-causal-interlayer-manifold.v1",
+  "scope": [
+    "genuine native original first two complete Qwen GDN layer states for four tokens in live mode",
+    "learned norm law only on convex interpolation of three real causal layer0 output hidden states",
+    "fourth real causal position is a counterexample to automatic extrapolation, not a generated output",
+    "native original layer1 normalization reference queried only after heldout predictions",
+    "source-free ECPU structural memory preserves exact original causal outputs and trained norm coefficients",
+    "independent PyTorch/Transformers whole-layer parity remains unresolved",
+    "no generated next token and no full 64-layer decoder"
+  ],
+  "source_root": "c5a2a477ebd530b8c07c8f1657605f50beb4d4c92370a80626cbddebd1e45ecb",
+  "status": "MEASURED",
+  "third_true_causal_state_not_on_two_state_line": {
+    "line_projection": -0.5969954586547629,
+    "off_line_relative_residual": 0.8912270926029328
+  },
+  "unseen_convex_span_intentions": [
+    {
+      "barycentric_coordinates": [
+        0.13,
+        0.27
+      ],
+      "generated_before_native_reference": true,
+      "generated_ns": 390284,
+      "max_abs_heldout_error": 2.220446049250313e-16,
+      "native_reference_ns": 232307,
+      "original_native_operator_calls_during_generation": 0,
+      "position": "state://vli/13440c2fa708108773581e4f475efa71421b1939e71d15b5c35b03086f5f30d6",
+      "requested_original_output_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "barycentric_coordinates": [
+        0.44,
+        0.19
+      ],
+      "generated_before_native_reference": true,
+      "generated_ns": 295166,
+      "max_abs_heldout_error": 6.661338147750939e-16,
+      "native_reference_ns": 206599,
+      "original_native_operator_calls_during_generation": 0,
+      "position": "state://vli/49249b94d30735ff5aab21459003d7b7a57ad14b17e5219a637831ba45c9b359",
+      "requested_original_output_indices": [
+        0,
+        1,
+        2
+      ]
+    },
+    {
+      "barycentric_coordinates": [
+        0.08,
+        0.73
+      ],
+      "generated_before_native_reference": true,
+      "generated_ns": 278614,
+      "max_abs_heldout_error": 0,
+      "native_reference_ns": 200737,
+      "original_native_operator_calls_during_generation": 0,
+      "position": "state://vli/a996084bca19f4861ba79c060c2056456778c2d74c5b92bd59f7472a601b8b52",
+      "requested_original_output_indices": [
+        0,
+        1,
+        2
+      ]
+    }
+  ],
+  "provenance": {
+    "github_actions_run": "https://github.com/Kier73/VL-I/actions/runs/44668309457",
+    "github_job_id": 136062932983,
+    "merged_implementation_commit": "16e1de936f165023963dd4eab3d18aeead6e1bcf",
+    "scope": "synthetic native two trained GDN+SwiGLU layers with real causal history; NOT original pretrained weights",
+    "original_27b_external_oracle": "not_performed",
+    "original_model_scaled_evidence": "separate live original full-size job"
+  }
+}
