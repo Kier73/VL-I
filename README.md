@@ -207,6 +207,29 @@ and original decoder logits are separate research milestones.
 See [NAV-001 — Counterfactual Causal State Navigation](docs/NAV_001_COUNTERFACTUAL_CAUSAL_GROUND.md)
 and [its adversarial tests](tests/test_counterfactual_navigation.py).
 
+## NAV-002 — Exact computational-state equivalence, beyond history replay
+
+**An unexecuted history coordinate can sometimes receive a proven numerical
+future.** NAV-002 verifies when different observed history coordinates carry
+*identical complete neural causal machine state*: all original-geometry
+Gated DeltaNet convolution/recurrent values, gated-attention KV timeline,
+causal position, model Ground, and numerical interpreter identity. If the
+whole next-step F64 input is also identical, a previously executed trained
+transition qualifies the same numerical result at a new history coordinate.
+The new coordinate remains different, and the proof **never fabricates a
+trained execution receipt** in NAV-001.
+
+The falsifiable fixture experiment navigates **16 distinct virtual
+token-label histories from four actually executed numerical transitions**.
+The histories intentionally reuse the **same underlying hidden vectors**:
+this is exact numerical-state equivalence, not a claim that 16 different
+source-token sequences have been computed. New hidden inputs and merely
+rounded/observer-equal states remain **UNRESOLVED**, and full initial
+state checking plus repeated page verification are charged as work.
+
+See [NAV-002 — Exact Causal-State Quotient](docs/NAV_002_EXACT_STATE_QUOTIENT.md)
+and [its source-bound/negative-control tests](tests/test_exact_state_quotient.py).
+
 ## The model-to-intention path
 
 ~~~text
