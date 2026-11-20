@@ -269,3 +269,18 @@ def test_plan_digests_and_operator_types_are_mutation_resistant():
         QwenArchitectureCausalPrefix(nav,plan,stop_layer=9)
     with pytest.raises(ValueError,match="extent"):
         QwenArchitectureCausalPrefix(nav,plan,stop_layer=0)
+
+
+def test_accepted_plan_cannot_be_mutated_between_tokens_or_checkpoint(tmp_path):
+    chain=auto_eight()
+    chain.step([.5,-.2,.3])
+    head=chain.head
+    snapshots=deepcopy(chain._snapshot())
+    chain.plan["layers"][7]["kind"]="GDN"
+    with pytest.raises(ValueError,match="Changed"):
+        chain.step([-.1,.2,.8])
+    with pytest.raises(ValueError,match="Changed"):
+        chain.checkpoint(LocalStatePages(tmp_path),input_sequence_digest="a"*64)
+    assert chain.position==1
+    assert chain.head==head
+    assert chain._snapshot()==snapshots
