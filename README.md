@@ -135,6 +135,15 @@ A measured GitHub Actions run found approximately **5.08× lower repeated neural
 
 See [SHAPE-002 — Intention-driven neural morphogenesis](docs/SHAPE_002_INTENTION_MORPHOGENESIS.md) and [its measured generative conversation](examples/morphological_generation_demo.py).
 
+**SHAPE-003 now learns the computational shape through observation instead of receiving the original transition table.** The original **IFS COG-008 black-box learner** sees only action/output traces, builds an intentionally underfitted predictive hypothesis, receives real counterexamples from a separate exact finite-state verifier, and refines its learned model. **Only the independently certified candidate** is compiled by VLD into new neural parameters and used to form a VL-I response-state.
+
+On one 12-state source, the learner discovered **three different observer-dependent models (3, 4 and 12 states)** using 30, 39 and 111 actual black-box membership queries respectively. Each started as an incorrect one-state machine; the true distinguishing history caused a correction. The new generated neural models then supported a four-turn conversation switching observer shapes, rendering new code/text/tokens and recovering its causal history from an independently checked checkpoint. The source-state graph was **not available to the learning algorithm**; the external conformance verifier held that authority separately.
+
+**Acquisition is not yet cheap**: 111 queries (and repeated prefix transitions) for the complete observer exceed the source model's 36 direct transition cells. The important milestone is **learning and reconstructing the shape of computation from observation**, not a claim of reduced model-training cost or pretrained LLM capability. The challenge now is learning richer response semantics with fewer observations and reusing them to eliminate substantial conventional model interpretation work.
+
+See [SHAPE-003 — Observation-learned intelligence shape](docs/SHAPE_003_LEARNED_OBSERVER_GROUND.md) and [the executable black-box model-learning experiment](examples/learned_morphology_demo.py).
+
+
 
 ## The model-to-intention path
 
