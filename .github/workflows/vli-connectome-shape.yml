@@ -1,0 +1,57 @@
+name: VL-I SHAPE-001 connectome observer quotient
+
+on:
+  push:
+    branches: ["main", "feat/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  connectome-observer-ground:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin original IFS connectome and verified quotient code
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/In-Formation-Space
+          ref: 0c712a83a33d14a0de630e26facd74cb487e102e
+          path: upstream/ifs
+          persist-credentials: false
+      - name: Pin original E-CPU exact byte sources
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - name: Pin VLD state-position rendering
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/Virtual-Layer-Dynamics
+          ref: 985ba5c2fbcc40842aed9f45f42587749620b98e
+          path: upstream/vld
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install VL-I, E-CPU, VLD; import IFS source-native scripts
+        run: python -m pip install -e . -e upstream/ecpu -e upstream/vld
+      - name: Verify real source and observer quotients against full synthetic network
+        env:
+          PYTHONPATH: upstream/ifs/experiments/real_connectome_ground:upstream/ifs/experiments/real_connectome_ground/continuity/temporal_fabric:upstream/ifs/experiments/real_connectome_ground/continuity/nonlinear_orbit:upstream/ifs/experiments/real_connectome_ground/continuity/observer_quotient
+        run: python -m unittest discover -s tests -p test_connectome_shape.py -v
+      - name: Benchmark full microstates vs independently verified observer-Ground navigation
+        env:
+          PYTHONPATH: upstream/ifs/experiments/real_connectome_ground:upstream/ifs/experiments/real_connectome_ground/continuity/temporal_fabric:upstream/ifs/experiments/real_connectome_ground/continuity/nonlinear_orbit:upstream/ifs/experiments/real_connectome_ground/continuity/observer_quotient
+        run: python -m examples.connectome_shape_demo --out artifacts/connectome-shape-observer.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vli-connectome-shaped-observer-ground-evidence
+          path: artifacts/connectome-shape-observer.json
+          if-no-files-found: warn

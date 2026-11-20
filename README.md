@@ -105,6 +105,16 @@ This principle is now exercised in [RESPONSE-001 — Intent as topology and stat
 
 Read [COORD-002 — Description-Native Generative Model and Conversation](docs/COORD_002_DESCRIPTION_NATIVE_GENERATION.md), inspect [the executable experiment](examples/generated_response_demo.py), and follow [the original COORD-002 research issue](https://github.com/Kier73/VL-I/issues/9).
 
+## Malleable computational shape — observer-relative intelligence
+
+A state-space can be vast even when **the distinctions needed by a particular observer are few**. The connectome investigations in [In-Formation-Space](https://github.com/Kier73/In-Formation-Space/tree/main/experiments/real_connectome_ground) and the predictive-quotient, structured-operator and sparse-neural foundations in [Virtual-Layer-Dynamics](https://github.com/Kier73/Virtual-Layer-Dynamics) suggest a path beyond conventional fixed network architecture: **let the intention qualify which state distinctions to preserve, then navigate the smallest Ground that actually supports the requested observation**.
+
+SHAPE-001 is a live cross-repository experiment. It loads the source-pinned OpenWorm **448-label / 7,379-record** connectivity observation, then forms a **separate synthetic** mathematical computational Ground, not a claim about biological neural behavior. IFS' original observer-quotient verifier proves the smaller topology preserves every future observation in its declared finite-field model. VL-I locates an opaque response state and renders its verified readout using VLD.
+
+On a measured 256-microstate synthetic expansion, a **verified eight-state observer quotient** matched the original on five queries, yielding a **32× reduction in state dimension** and a **35.6× query-only Python timing ratio**. The one-time source intake/discovery/proof cost was approximately 65 ms, **more expensive than those five queries combined**. These are encouraging shape-of-computation measurements, not measured pretrained LLM acceleration or free interpretation. The research target is to adaptively form and refine such topologies around *real model intentions and generative Ground relations*, with full cost accounting.
+
+See [SHAPE-001 — Connectome-inspired Observer Grounds](docs/SHAPE_001_CONNECTOME_OBSERVER_GROUND.md) and [the measured cross-repository experiment](examples/connectome_shape_demo.py).
+
 ## The model-to-intention path
 
 ~~~text
