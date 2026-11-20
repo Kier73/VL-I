@@ -246,3 +246,95 @@ def test_invalid_specifications_or_nonfinite_hidden_are_refused(tmp_path):
     with pytest.raises(ValueError,match="UNRESOLVED"):
         quotient.navigate(a["coordinate"],[(2,C)],
             expected_parent_digest=a["node_digest"],expected_head=ground.head)
+
+
+@pytest.mark.parametrize("factory", [two_factory,hybrid_factory])
+def test_navigation_after_admission_needs_no_model_worker_factory(tmp_path,factory):
+    """Once checked, exact stored relations navigate with no neural host alive."""
+    ground=CounterfactualCausalGround(factory,LocalStatePages(tmp_path))
+    _,a,_=advance(ground,ground.root_coordinate,A,1)
+    _,b,_=advance(ground,ground.root_coordinate,A,2)
+    expected,child,_=advance(ground,a["coordinate"],B,3)
+    quotient=ExactCausalStateQuotient(ground,expected_head=ground.head)
+    def departed():
+        raise AssertionError("a conventional neural model worker was instantiated")
+    ground.factory=departed
+    proof,outputs=quotient.navigate(
+        b["coordinate"],[(4,B)],expected_parent_digest=b["node_digest"],
+        expected_head=ground.head)
+    assert outputs[0]["numerical_output"]==expected
+    assert outputs[0]["was_originally_executed"] is False
+    assert quotient.verify(proof, expected_digest=proof["proof_digest"],
+        expected_parent_digest=b["node_digest"],expected_head=ground.head)==outputs
+    assert ground.executed_transitions==3
+
+
+def test_process_death_preserves_unexecuted_numerical_proof(tmp_path):
+    """Kill the observer which built the Ground; independent process rechecks proof."""
+    import os
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    child=r'''
+import json
+from pathlib import Path
+import sys,time
+from experiments.model_fabric.complete_native_layers import LocalStatePages
+from vli.counterfactual_navigation import CounterfactualCausalGround
+from vli.exact_state_quotient import ExactCausalStateQuotient
+from test_counterfactual_navigation import hybrid_factory,advance,A,B
+root=Path(sys.argv[2])
+pages=LocalStatePages(root)
+if sys.argv[1]=="writer":
+    ground=CounterfactualCausalGround(hybrid_factory,pages)
+    _,p,_=advance(ground,ground.root_coordinate,A,1)
+    _,q,_=advance(ground,ground.root_coordinate,A,2)
+    _,_,_=advance(ground,p["coordinate"],B,3)
+    quotient=ExactCausalStateQuotient(ground,expected_head=ground.head)
+    proof,_=quotient.navigate(q["coordinate"],[(4,B)],
+        expected_parent_digest=q["node_digest"],expected_head=ground.head)
+    snapshot=ground.snapshot()
+    (root/"snapshot.json").write_text(json.dumps(snapshot),encoding="utf8")
+    (root/"proof.json").write_text(json.dumps(proof),encoding="utf8")
+    print(json.dumps({"forest":ground.head,"snapshot":snapshot["snapshot_digest"],
+                      "proof":proof["proof_digest"],"parent":q["node_digest"]}),flush=True)
+    while True:time.sleep(1)
+elif sys.argv[1]=="verifier":
+    pins=json.loads(sys.argv[3])
+    snapshot=json.loads((root/"snapshot.json").read_text(encoding="utf8"))
+    proof=json.loads((root/"proof.json").read_text(encoding="utf8"))
+    ground=CounterfactualCausalGround.restore(
+        hybrid_factory,pages,snapshot,expected_digest=pins["snapshot"])
+    quotient=ExactCausalStateQuotient(ground,expected_head=pins["forest"])
+    output=quotient.verify(proof,expected_digest=pins["proof"],
+         expected_parent_digest=pins["parent"],expected_head=pins["forest"])
+    assert output[0]["coordinate"] not in ground.nodes
+    print(json.dumps({"result":output[0]["numerical_output"],
+                      "proof_revalidated":True,
+                      "executed_nodes":len(ground.nodes)}),flush=True)
+'''
+    env=os.environ.copy()
+    env["PYTHONPATH"]=str(Path(__file__).resolve().parent)+os.pathsep+env.get("PYTHONPATH","")
+    cmd=[sys.executable,"-u","-c",child]
+    writer=subprocess.Popen(cmd+["writer",str(tmp_path)],stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,text=True,env=env)
+    try:
+        first=writer.stdout.readline().strip()
+        assert first.startswith("{"), (
+            first,writer.poll(),writer.stderr.read() if writer.poll() is not None else "")
+        pins=json.loads(first)
+    finally:
+        writer.kill()
+        writer.wait(timeout=10)
+        writer.stdout.close()
+        writer.stderr.close()
+    assert writer.returncode != 0
+    recovered=subprocess.run(cmd+["verifier",str(tmp_path),json.dumps(pins)],
+        env=env,capture_output=True,text=True,check=True,timeout=60)
+    outcome=json.loads(recovered.stdout.strip())
+    assert outcome["proof_revalidated"] and outcome["executed_nodes"]==3
+    independent=hybrid_factory()
+    independent.step(A,token_id=2)
+    expected,_=independent.step(B,token_id=4)
+    assert outcome["result"]==expected
