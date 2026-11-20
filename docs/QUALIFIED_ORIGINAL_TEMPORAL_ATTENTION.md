@@ -105,3 +105,79 @@ over longer genuine paragraphs. More ambitious: learn which causal
 history distinctions are actually necessary to realize a requested
 output, then test a compressed Ground/quotient against the same
 independent pretrained numerical authority.
+
+## Verified original pretrained outcome
+
+The exact original model's two-token source job
+[44673275797](https://github.com/Kier73/VL-I/actions/runs/44673275797)
+**passed**. The unabridged receipt is artifact
+[14601034410](https://github.com/Kier73/VL-I/actions/runs/44673275797/artifacts/14601034410);
+the compact source-traceable archive and reproducible regressions live at:
+
+- `experiments/qwen_all_heads/datasets/2026-11-19-real-original-qwen-two-token-trained-attention-parity.json`
+- `tests/test_saved_original_qwen_temporal_parity.py`
+
+Original source: Qwen3.8-27B revision
+`37561816e66b5b9153b1b64c10968c18c1e6f4a0`. Both genuine paragraph
+tokens `63204` and `628` were executed through all seven prior
+original trained layers, retaining genuine independent recurrent
+and earlier-attention histories.
+
+Measured complete layer-7 (5,120-wide) numerical agreement:
+
+| Original causal position | Available KV positions | Maximum absolute PyTorch F64 error | Historical attention evidence |
+| --- | ---: | ---: | --- |
+| First token `63204` | 1 | 7.105427357601002 × 10^-15 | Exactly one softmax entry: 1.0 |
+| Second token `628` | 2 | 5.273559366969494 × 10^-16 | Nonuniform learned two-token attention |
+
+At the second original trained position:
+
+- There are **24 independently observed query-head distributions** with
+  four shared KV heads.
+- Previous-token attention probabilities range from
+  **0.0027075803346912294** to **0.9539322042725595**.
+- Maximum absolute deviation from uniform two-position attention
+  is **0.4972924196653088**, clearly nontrivial trained query–key
+  selection.
+- Maximum historical value-context difference from the current-token-only
+  value is **4.862222537731979**.
+- The source host observed **1,734 HTTPS 206 responses** containing
+  **14,537,908,768 bytes**, servicing **208,800 bounded 64 KiB logical
+  range requests**. The external cache was limited to 128 MiB; VL-64
+  retained no model weights.
+
+Layer 0–7 exact F64 digests at the first token reproduced QUALIFIED-008;
+layer 0–3 exact F64 digests at the second token reproduced QUALIFIED-007.
+These controls exclude an arbitrary synthetic hidden state or silently
+changed source from the accepted experiment.
+
+### Research curiosity: a one-coordinate Ground for two-key attention
+
+Two causal keys have only **one normalized attention degree of freedom**
+per query head. If `s_prior` and `s_now` are the trained query–key
+scores after their usual scaling, then:
+
+```text
+delta = s_prior - s_now
+p_prior = 1 / (1 + exp(-delta))
+p_now = 1 - p_prior
+attended_V = V_now + p_prior * (V_prior - V_now)
+```
+
+This is an exact algebraic identity before ordinary floating-point
+roundoff. The new `binary_attention_quotient.py` records just
+**one log-odds coordinate per head** rather than two probabilities.
+The source-attested, originally observed 24 probabilities are used
+in `tests/test_binary_attention_quotient.py` to verify reconstruction
+with sub-picounit errors and refusal of altered source observation pins.
+
+This **does not** eliminate trained Q/K dot products, values, or the
+original complete model architecture. What it does establish is an
+interpretable, one-dimensional structural coordinate for the exact
+two-position attention relation. The conditional V realization can be
+reconstructed from this coordinate and its two value endpoints.
+
+The practical research direction is to discover reusable, witnessed
+quotient coordinates for longer genuine causal histories, and measure
+**actual saved work** versus the unmodified trained model. A structural
+description alone is not yet a demonstrated computational speedup.
