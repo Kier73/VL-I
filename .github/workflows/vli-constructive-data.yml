@@ -1,0 +1,78 @@
+name: VL-I INTERACT-001 constructive data execution and output rendering
+
+on:
+  push:
+    paths:
+      - 'src/vli/constructive_data.py'
+      - 'tests/test_constructive_data.py'
+      - 'examples/constructive_data_demo.py'
+      - 'docs/CONSTRUCTIVE_DATA_GROUNDS.md'
+      - '.github/workflows/vli-constructive-data.yml'
+      - 'README.md'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  constructive-evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin E-CPU exact byte interpretations
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - name: Pin VLD response-DAG and interpreter laws
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/Virtual-Layer-Dynamics
+          ref: 985ba5c2fbcc40842aed9f45f42587749620b98e
+          path: upstream/vld
+          persist-credentials: false
+      - name: Pin original model-scale VL-64 observation evidence
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install original interpreter components
+        run: python -m pip install -e . -e upstream/ecpu -e upstream/vld
+      - name: Test actual mutation, generated Python parity, DAG views and checkpoint replay
+        run: python -m unittest discover -s tests -p test_constructive_data.py -v
+      - name: Construct real-scale model metadata result in six usable formats
+        run: python -m examples.constructive_data_demo --upstream upstream/vl64 --out-dir artifacts/constructed
+      - name: Recheck produced artifact against original full-scale model values
+        run: |
+          python - <<'PY'
+          import json,ast,pathlib
+          base=pathlib.Path('artifacts/constructed')
+          r=json.loads((base/'report.json').read_text())
+          rows=json.loads((base/'constructed_result.json').read_text())
+          assert r['reconstructed_data_state_verified'] is True
+          assert {x['weight_bytes'] for x in rows}=={55562855904,510286023000}
+          assert r['initial_coordinate']!=r['after_edit_coordinate']
+          assert any(x['review_state']=='selected_for_next_experiment' for x in rows)
+          ast.parse((base/'constructed_result.py').read_text())
+          assert r['rendered_views']['state']=='RENDERED'
+          print('VL_I_CONSTRUCTION_VERIFIED',r['checkpoint_head'])
+          PY
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vli-interact001-rendered-model-data-${{ matrix.python-version }}
+          path: artifacts/constructed/
+          if-no-files-found: warn
