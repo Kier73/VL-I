@@ -137,7 +137,7 @@ class TestCausalGroundExpansion(unittest.TestCase):
         with self.assertRaises(ValueError):
             child(parent, altered)
         altered = deepcopy(real)
-        altered["receiver_local_intermediates"][0][0] += .1
+        altered["receiver_local_intermediates"][0] = tuple([altered["receiver_local_intermediates"][0][0]+.1, *altered["receiver_local_intermediates"][0][1:]])
         with self.assertRaises(ValueError):
             child(parent, altered)
         with self.assertRaises(ValueError):
