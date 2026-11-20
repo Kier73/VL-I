@@ -102,3 +102,58 @@ only compact intention, state coordinates, receipts and source authority?
 This experiment tests composition and recovery; it **does not** establish
 that network transport performs the numerical arithmetic or that it is
 cheaper than conventional inference.
+
+## Successful original checkpoint observation (QUALIFIED-006)
+
+The source-backed [GitHub Actions run 44660157399](https://github.com/Kier73/VL-I/actions/runs/44660157399)
+**passed** the full original trained two-layer execution and both
+Python 3.11/3.13 scalar-oracle regression jobs. Original model revision:
+`37561816e66b5b9153b1b64c10968c18c1e6f4a0`.
+
+Two original paragraph tokens, **63204 and 628**, advanced both complete
+trained GDN+SwiGLU layers: four complete layer executions. On **both**
+positions the exact 5,120-value f64 handoff witness from layer 0
+**equals** the input witness for layer 1. Both layer-1 outputs have
+complete, distinct f32/f64 digests. The **first original layer-0 f32
+output digest exactly reproduces** QUALIFIED-005's archived first-layer
+receipt: `b87fe04766701c2433a23b5d40e892c6d84a909c976d4ce18bd842edc8555aa8`.
+The layer-0 recurrent digests for both positions also match the
+original all-48-head experiment.
+
+Observed bounded host cost:
+
+| Observation | Original two-layer causal run |
+| --- | ---: |
+| Completed original trained layer operations | **4** |
+| Qualified original tensor bytes, each layer/token | **766,443,520** |
+| Logical <=64 KiB range reads | **46,866** |
+| Actual pinned HTTPS 206 requests | **391** |
+| Total source HTTPS bytes | **3,279,945,728** |
+| Source block resident budget | **128 MiB** |
+| Recovered GDN causal pages | **200** (100 per layer) |
+| Recovered F64 mathematical state | **13,074,432 bytes** |
+
+Both layer states were independently recovered into **fresh navigators
+and executors within the same worker process** after the first token,
+using two content-addressed state-page sets and a separately pinned
+manifest head. This is not yet process-kill/recovery across an operating
+system host boundary.
+
+The summarized exact digests, original source identity and testable
+observations are archived at
+[`2026-11-19-real-original-qwen-first-two-complete-layers.json`](../experiments/qwen_all_heads/datasets/2026-11-19-real-original-qwen-first-two-complete-layers.json).
+The original full receipt is the Actions artifact
+`vli-qualified-original-qwen-two-complete-causal-layers`
+(artifact ID `14594509188`).
+
+**Reproducibility:** the expensive real-weight job is now manual opt-in
+through workflow dispatch, to prevent 3.28 GB of redundant remote
+source traffic on every ordinary pull-request change. The two
+independent scalar regression matrices and immutable artifact tests
+continue to run automatically.
+
+This result establishes original-weight causal composition across
+**two** complete layers, not independently checked whole-pretrained-layer
+equivalence to the canonical HF framework, nor a full 64-layer
+forward pass, logits, generated text, or communication-native floating
+point operations.
