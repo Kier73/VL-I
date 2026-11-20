@@ -233,3 +233,73 @@ def test_refuse_bad_input_or_excess_nodes(tmp_path):
     with pytest.raises(ValueError, match="Maximum"):
         advance(nav, p["coordinate"], B, 2)
     assert len(nav.nodes) == 1
+
+
+def test_killed_observer_process_recovers_two_futures_then_extends_one(tmp_path):
+    """A different operating-system process rehomes both hybrid causal histories."""
+    import os
+    from pathlib import Path
+    import subprocess
+    import sys
+
+    child = r'''
+import json
+from pathlib import Path
+import sys,time
+from experiments.model_fabric.complete_native_layers import LocalStatePages
+from vli.counterfactual_navigation import CounterfactualCausalGround
+from test_counterfactual_navigation import hybrid_factory, advance, A, B, C, D
+
+root = Path(sys.argv[2])
+pages = LocalStatePages(root)
+if sys.argv[1] == "writer":
+    nav = CounterfactualCausalGround(hybrid_factory, pages)
+    _, prefix, _ = advance(nav, nav.root_coordinate, A, 1)
+    _, left, _ = advance(nav, prefix["coordinate"], B, 2)
+    right_output, right, _ = advance(nav, prefix["coordinate"], C, 3)
+    snapshot = nav.snapshot()
+    (root/"forest.json").write_text(json.dumps(snapshot), encoding="utf8")
+    print("PIN " + snapshot["snapshot_digest"], flush=True)
+    while True:time.sleep(1)
+elif sys.argv[1] == "rehome":
+    snapshot = json.loads((root/"forest.json").read_text(encoding="utf8"))
+    nav = CounterfactualCausalGround.restore(
+        hybrid_factory,pages,snapshot,expected_digest=sys.argv[3])
+    left,right = [nav.nodes[row["coordinate"]] for row in snapshot["nodes"][1:]]
+    sibling = nav.observe(right["coordinate"], expected_head=nav.head)
+    output,node,_ = advance(nav,left["coordinate"],D,4)
+    print(json.dumps({"output":output,"head":node["causal_head"],
+                      "sibling":sibling,"depth":node["depth"],
+                      "retained":len(nav.nodes)}),flush=True)
+'''
+    env=os.environ.copy()
+    env["PYTHONPATH"]=str(Path(__file__).resolve().parent)+os.pathsep+env.get("PYTHONPATH","")
+    cmd=[sys.executable,"-u","-c",child]
+    writer=subprocess.Popen(cmd+["writer",str(tmp_path)],
+                            stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+                            text=True,env=env)
+    try:
+        pin_line=writer.stdout.readline().strip()
+        assert pin_line.startswith("PIN "), (
+            pin_line, writer.poll(), writer.stderr.read() if writer.poll() is not None else "")
+        external_pin=pin_line.removeprefix("PIN ")
+    finally:
+        writer.kill()
+        writer.wait(timeout=10)
+        writer.stdout.close()
+        writer.stderr.close()
+    assert writer.returncode != 0
+    returned=subprocess.run(cmd+["rehome",str(tmp_path),external_pin],
+                           capture_output=True,text=True,env=env,check=True,timeout=60)
+    restored=json.loads(returned.stdout.strip())
+    reference=hybrid_factory()
+    reference.step(A,token_id=1)
+    reference.step(B,token_id=2)
+    expected,receipt=reference.step(D,token_id=4)
+    assert restored["output"]==expected
+    assert restored["head"]==receipt["chain_head"]
+    assert restored["retained"]==4 and restored["depth"]==3
+    other=hybrid_factory()
+    other.step(A,token_id=1)
+    right,_=other.step(C,token_id=3)
+    assert restored["sibling"]==right
