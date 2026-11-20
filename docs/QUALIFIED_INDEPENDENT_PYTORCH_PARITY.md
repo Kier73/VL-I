@@ -98,3 +98,52 @@ unchanged.
 relations, establish which detailed trained transformations are actually
 equivalent to an independent mathematical reference. Only then can a
 new navigation or quotient law claim preserved trained behavior.
+
+## Verified original trained checkpoint result
+
+The independent original-weight CPU PyTorch run
+[44670962184](https://github.com/Kier73/VL-I/actions/runs/44670962184)
+succeeded on the pinned Qwen3.8-27B revision with original paragraph
+token `63204`. Its complete artifact is
+[14599529220](https://github.com/Kier73/VL-I/actions/runs/44670962184/artifacts/14599529220)
+and its compact, assertion-checked evidence is archived under
+`experiments/qwen_all_heads/datasets/2026-11-19-real-original-qwen-layer7-independent-pytorch-parity.json`.
+
+- Actual full original pretrained source-bound layers **0–6** were
+  executed, with their output digests exactly reproducing
+  QUALIFIED-008; in particular, input to layer 7 was the actual
+  **5,120-coordinate** layer-6 output
+  `84bce25d25334bd81510ce756dafb978c7f4501411e42933321082f3d2bbbafa`.
+- Full trained layer 7 through VL-I exactly reproduced original
+  QUALIFIED-008 trained output digest
+  `85f883d2786378dc331d3b23d68b311a5d40c1e5fd25b70a405f78fb4d0f20e4`.
+- An independent original-weight PyTorch F64 whole-layer reference
+  produced an output differing by a **maximum absolute coordinate error
+  of 1.7763568394002505 × 10^-15** and **RMS coordinate error of
+  3.1732128636098387 × 10^-16**, well inside both declared tolerances.
+- The independent PyTorch output's exact binary F64 digest differed
+  from VL-I's, as expected from different floating-point reductions.
+  *Numerical agreement* was established; bit-identical arithmetic
+  was not claimed.
+- The experiment used **884 original HTTPS 206 range requests** and
+  **7,411,560,720 source-transfer bytes** across both implementations.
+  The external weight-bearing host budget was 128 MiB; VL-64 retained
+  no weights.
+
+### Important discovery: the first attention token is degenerate
+
+At causal position 0, there is only one key/value entry. Hence the
+softmax over the attention history is `[1]` independently of trained
+queries and keys. This **real-original-weight** success validates
+full source projections, Q/K normalization execution, gating,
+original FFN and residual/output composition, but cannot alone validate
+competitive attention selection between two genuine prior positions.
+
+The next real-weight falsification experiment should carry **two
+original text tokens** through layers 0–6, then compare independently
+the complete layer 7 at position 1 while retaining separate causal
+KV histories in both mathematical implementations.
+
+This does not weaken the one-token result. It identifies precisely
+which trained mathematical mechanism remains untested by this
+particular original-weight oracle.
