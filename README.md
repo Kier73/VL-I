@@ -179,6 +179,9 @@ See [SHAPE-008 — Observation-inferred laws from original token states](docs/SH
 
 See [SHAPE-009 — Learned Grounds from actual causal interlayer hidden states](docs/SHAPE_009_CAUSAL_HIDDEN_MANIFOLD.md) and [the native two-layer contextual-state experiment](examples/qwen_causal_manifold_demo.py).
 
+**SHAPE-010 extends the source Ground rather than rewriting it.** An actually executed, receipt-verified fourth interlayer causal state that expands the previous affine plane is admitted as a new E-CPU-backed direction. The child Ground carries an immutable SHAPE-009 parent checkpoint, a source revision and exact fourth-state native chain witness. It infers all ten coefficients of a three-variable quadratic normalization energy from ten native observations, challenges them against four further original-operator observations and the independent four-state Gram identity, and generates new sparse observer-only simplex responses before testing them against native normalization. Source-free recovery and forged receipt/page/output refusals run in fixture CI on Python 3.11 and 3.13. This does **not** extrapolate an unexecuted future causal state or claim a full layer is generated. The separate full-size original-Qwen SHAPE-010 experiment remains distinguished from its fabricated-geometry fixture and from independent original-weight PyTorch parity. See [the SHAPE-010 causal-basis expansion contract](docs/SHAPE_010_CAUSAL_BASIS_EXPANSION.md) and [original/fixture experiment driver](examples/qwen_causal_basis_expansion_demo.py).
+
+
 
 
 
