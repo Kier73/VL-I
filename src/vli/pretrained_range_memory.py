@@ -15,6 +15,7 @@ bytes is not equivalent to reusing or bypassing a neural forward pass.
 from __future__ import annotations
 
 from hashlib import sha256
+from copy import deepcopy
 from time import perf_counter_ns
 from typing import Any, Callable
 import json
@@ -181,7 +182,7 @@ class QualifiedPretrainedRangeMemory:
                 "payload":raw,"sha256":witness["observed_payload_sha256"],
                 "cache_disposition":"PINNED_GLANCE_DERIVATION",
                 "glance_ground_head":self._range_head(record),
-                "original_witnesses":[witness]}
+                "original_witnesses":[deepcopy(witness)]}
 
     @staticmethod
     def _range_head(record):
@@ -216,7 +217,7 @@ class QualifiedPretrainedRangeMemory:
         _require(len(self._records)<=MAX_ENTRIES
                  and self._resident<=self.max_resident_bytes,
                  "Retained source exceeds declared snapshot")
-        records=[self._records[key] for key in sorted(self._records)]
+        records=[deepcopy(self._records[key]) for key in sorted(self._records)]
         body={
             "schema":SNAPSHOT,"model":self.model,"revision":self.revision,
             "index_ground_digest":self.index_ground_digest,
@@ -284,7 +285,7 @@ class QualifiedPretrainedRangeMemory:
             raw=obj._store.read_bytes(manifest,max_bytes=65536)
             _require(sha256(raw).hexdigest()==witness["observed_payload_sha256"],
                      "Restored original pretrained observation bytes failed E-CPU CAS")
-            obj._records[key]=record
+            obj._records[key]=deepcopy(record)
             obj._resident+=len(raw)
             _require(obj._resident<=obj.max_resident_bytes,
                      "Persisted range memory exceeds admitted budget")
