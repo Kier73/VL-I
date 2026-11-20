@@ -37,6 +37,16 @@ def test_independent_torch_matches_full_attention_and_causal_history():
         assert got==pytest.approx(want,abs=2e-10)
         assert oracle.position==native.position==pos+1
         assert independent["causal_kv_positions"]==pos+1
+        assert len(independent["attention_probabilities_per_query_head"])==2
+        for weights in independent["attention_probabilities_per_query_head"]:
+            assert len(weights)==pos+1
+            assert sum(weights)==pytest.approx(1.0,abs=1e-12)
+            assert all(0.0<=p<=1.0 for p in weights)
+        if pos==0:
+            assert independent["max_deviation_from_uniform_attention"]==0.0
+            assert independent["max_context_difference_from_current_token_values"]==0.0
+        else:
+            assert independent["max_context_difference_from_current_token_values"]>0.0
         assert actual["kv_history_positions"]==pos+1
         assert independent["complete_output_width"]==len(x)
         assert independent["torch_f64_output_digest"]==_f64_transfer_digest(want)
