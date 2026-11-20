@@ -55,7 +55,10 @@ jobs:
             tests/test_saved_original_qwen_first_hybrid.py
 
   original-pretrained-layer7-torch:
-    if: github.event_name == 'workflow_dispatch' && inputs.run_original_pytorch_parity
+    if: >-
+      (github.event_name == 'pull_request' &&
+       github.head_ref == 'feat/qualified-009-original-qwen-torch-parity') ||
+      (github.event_name == 'workflow_dispatch' && inputs.run_original_pytorch_parity)
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
