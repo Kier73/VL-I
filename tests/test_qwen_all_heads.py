@@ -20,6 +20,14 @@ from test_architecture_probe import nav_for
 from test_complete_native_layers import qwen_fixture
 
 
+def max_nested_numeric_error(a,b):
+    if isinstance(a,(list,tuple)) and isinstance(b,(list,tuple)):
+        assert len(a)==len(b)
+        return max((max_nested_numeric_error(x,y) for x,y in zip(a,b)),
+                   default=0.0)
+    return abs(a-b)
+
+
 def test_qualified_all_head_recurrence_agrees_with_scalar_native_layer():
     one,*_=qwen_fixture()
     two,*_=qwen_fixture()
@@ -31,10 +39,13 @@ def test_qualified_all_head_recurrence_agrees_with_scalar_native_layer():
         observed=host.advance_recurrent(list(x))
         reference.next(list(x))
         assert observed["position"]==n
-        assert observed["full_recurrent_state_digest"]==state_digest(
-            reference.recurrent_state)
-        assert observed["full_convolution_state_digest"]==state_digest(
-            reference.convolution_history)
+        # NumPy BLAS and scalar fsum have different reduction orders.
+        # Compare independent arithmetic numerically; use exact state digests
+        # only when restoring the same host backend.
+        assert max_nested_numeric_error(
+            host.recurrent_state,reference.recurrent_state)<2e-10
+        assert max_nested_numeric_error(
+            host.convolution_history,reference.convolution_history)<2e-10
         assert observed["max_independent_reference_error"]<=2e-7
         assert observed["new_weight_payload_bytes"]>0
         assert observed["new_qualified_ranges"]>0
@@ -153,8 +164,10 @@ def test_vectorized_complete_layer_matches_independent_scalar_layer():
         assert receipt["position"]==index
         assert receipt["complete_Qwen_transformer_layer"] is True
         assert receipt["complete_original_64_layer_decoder"] is False
-        assert receipt["full_recurrent_state_digest"]==state_digest(scalar.recurrent_state)
-        assert receipt["full_convolution_state_digest"]==state_digest(scalar.convolution_history)
+        assert max_nested_numeric_error(
+            fast.recurrent_state,scalar.recurrent_state)<2e-10
+        assert max_nested_numeric_error(
+            fast.convolution_history,scalar.convolution_history)<2e-10
 
 
 def test_complete_layer_rejects_downstream_projection_error_without_advancing():
