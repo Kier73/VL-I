@@ -142,6 +142,47 @@ class SignedSourceTests(unittest.TestCase):
         self.assertEqual(no_op["newly_admitted_in_this_process"],0)
         self.assertEqual(no_op["result_ground_head"],c["result_ground_head"])
 
+    def test_external_forced_os_process_kill_after_fsync_is_recoverable(self):
+        """Parent calls Popen.kill on a real child suspended after fsync."""
+        for x in [1,3,5]:
+            self.emit(x)
+        marker=self.path/"ready-after-commit.json"
+        cmd=[sys.executable,"-m","vli.authenticated_temporal_source",
+             "--journal",str(self.journal),
+             "--checkpoint",str(self.snapshot),
+             "--source",SOURCE,"--public-key",self.public,
+             "--head",self.head,"--count",str(self.count),
+             "--environment",ENV,"--host","killed-external-worker",
+             "--pause-after","1","--pause-marker",str(marker)]
+        child=subprocess.Popen(cmd,stdout=subprocess.PIPE,
+                               stderr=subprocess.PIPE,text=True)
+        try:
+            deadline=time.monotonic()+30
+            while not marker.exists():
+                self.assertIsNone(child.poll(),
+                    "Observer unexpectedly terminated before forced kill point")
+                if time.monotonic()>deadline:
+                    self.fail("Worker did not acknowledge its durable crash point")
+                time.sleep(0.025)
+            signal=load_json(marker)
+            self.assertEqual(signal["committed_index"],1)
+            persisted=load_json(self.snapshot)
+            self.assertEqual(len(persisted["events"]),2)
+            self.assertEqual(signal["ground_head"],persisted["head"])
+            child.kill()  # actual parent-initiated OS-process termination
+            _,stderr=child.communicate(timeout=15)
+            self.assertNotEqual(child.returncode,0,stderr)
+        finally:
+            if child.poll() is None:
+                child.kill()
+                child.communicate(timeout=15)
+        recovered=self.run_worker("recovered-external-worker")
+        self.assertEqual(recovered["restored_source_count"],2)
+        self.assertEqual(recovered["newly_admitted_in_this_process"],1)
+        self.assertEqual(recovered["authenticated_observation_count"],3)
+        self.assertEqual(recovered["source_events_replayed_after_durable_commit"],0)
+        self.assertEqual(len(load_json(self.snapshot)["events"]),3)
+
     def test_hard_crash_before_first_sample_requires_full_recovery(self):
         self.emit(7)
         self.run_worker("A",before=0,expect=71)
