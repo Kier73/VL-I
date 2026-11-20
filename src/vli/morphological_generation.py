@@ -342,6 +342,10 @@ class MorphologySession:
             "original_ground_digest":self.source.manifest["ground_digest"],
             "observer_shape":shape.manifest["ground_digest"],
             "position":position["coordinate"],
+            "prompt":prompt,
+            "action":action,
+            "observer":observer,
+            "requested_views":list(views),
             "source_state":self.state,
             "next_full_source_state":full.target,
             "observed_channels":list(shape.channels),
@@ -353,6 +357,47 @@ class MorphologySession:
         self.state=full.target
         self.turns.append(event)
         return {"position":position,"observation":result,"turn":event}
+
+    @classmethod
+    def restore(cls, source: MorphologySourceGround,
+                shapes: tuple[ObserverMorphology, ...], checkpoint: dict,
+                *, expected_checkpoint_head: str):
+        """Independent pure-history replay; no prior neural observation is trusted.
+
+        Retains the full source state, so later intentions can legitimately
+        refine a previously coarser observer. Replay cost is explicit.
+        """
+        _require(type(checkpoint) is dict and _hex64(expected_checkpoint_head)
+                 and checkpoint.get("schema")==
+                    "vl-i.morphological-session-checkpoint.v1"
+                 and checkpoint.get("checkpoint_digest")==expected_checkpoint_head
+                 and expected_checkpoint_head==_digest(
+                    checkpoint["schema"],{k:v for k,v in checkpoint.items()
+                                          if k!="checkpoint_digest"})
+                 and checkpoint.get("source_ground_digest")==
+                     source.manifest["ground_digest"]
+                 and type(checkpoint.get("turns")) is list
+                 and len(checkpoint["turns"])<=48,
+                 "Changed or unauthenticated morphology session")
+        by_digest = {s.manifest["ground_digest"]:s for s in shapes
+                     if isinstance(s,ObserverMorphology) and s.source is source}
+        _require(len(by_digest)==len(shapes),"Missing or repeated observer shape")
+        new=cls(source)
+        for step in checkpoint["turns"]:
+            _require(type(step) is dict and step.get("schema")==
+                     "vl-i.morphological-session-turn.v1" and
+                     step.get("observer_shape") in by_digest,
+                     "Unqualified historical shape transition")
+            shaped=by_digest[step["observer_shape"]]
+            reproduced=new.step(shaped,action=step["action"],
+                                prompt=step["prompt"],observer=step["observer"],
+                                views=tuple(step["requested_views"]))
+            _require(reproduced["turn"]==step,
+                     "Historical semantic operation differs from certified source")
+        _require(new.state==checkpoint["state"] and
+                 new.head==checkpoint["head"],
+                 "Recovered state differs from external history")
+        return new
 
     def checkpoint(self):
         body={
