@@ -67,6 +67,43 @@ A receipt and its digest are **integrity evidence**, not third-party remote auth
 
 The learned normalization Ground generates genuinely **new observer-in-span state positions** and only requested output coordinates before consulting a native trained reference. The live job measures original source-block traffic, native two-layer bootstrap work, source/proof storage, fitting and falsification, sparse generated versus native full normalization, a full-output negative control and recovery. If real original-weight source execution fails, it reports an unresolved result rather than promoting the fixture as original pretrained proof.
 
+## Live original pretrained proof — November 19, 2026
+
+The [main-branch original-Qwen SHAPE-009 run 44668309457](https://github.com/Kier73/VL-I/actions/runs/44668309457) **succeeded** against the full, pinned **Qwen/Qwen3.8-27B** pretrained weights and the same original tokenizer paragraph previously qualified in VL-I. Original token IDs **63204, 628, 1761 and 33303** were executed through **both complete original native 5,120-dimensional GDN+SwiGLU layers 0 and 1**. The layer-0 outputs, exactly matching the native layer-1 inputs, were source-bound by their complete original semantic chain, recurrent/convolution state and F64 output digests.
+
+**No model downscaling or invented token-derived hidden inputs.** The first three source-basis vectors are genuine contextual outputs of the actual native original-model causal trajectory; the fourth is a withheld true causal counterexample.
+
+Six native layer-1 normalization observations provided the quadratic coefficients. Three more native observations challenged the four possible law families:
+
+| Candidate energy law | Maximum counterexample error |
+| --- | ---: |
+| Constant | 3.1070 |
+| Affine | 0.51239 |
+| Separable quadratic without cross term | 0.33188 |
+| **Complete quadratic with cross term** | **3.55 × 10⁻¹⁵** |
+
+The selected coefficients also independently matched the Gram algebra of the original source-verified contextual state plane. **Three new, previously unobserved in-plane observer intentions** were then assigned distinct causal response coordinates and generated *before* the original VL-64 normalization reference was called.
+
+| Previously unseen in-plane intention (s,t) | Generated sparse observation | Original native full norm reference | Maximum absolute error |
+| --- | ---: | ---: | ---: |
+| (0.13, 0.27) | **0.529 ms** | 3.023 ms | 0 |
+| (0.44, 0.19) | **0.409 ms** | 3.034 ms | 6.94 × 10⁻¹⁸ |
+| (0.08, 0.73) | **0.419 ms** | 3.030 ms | 5.55 × 10⁻¹⁷ |
+
+Each sparse request selected five out of 5,120 original output coordinates. There were **zero original pretrained HTTP range reads and zero native normalization calls during the generation of the new outputs**. The original native reference was called **afterward**, and all results satisfied the declared tolerance.
+
+**Actual fourth causal position as a negative semantic control:** original token 33303 truly advanced the original GDN recurrent layer states and yielded a verified layer-0 output. Its relative residual from the affine plane of the first three genuine contextual states was **0.5343**. The old source-qualified Ground **refused to generate this real next causal state**. The second-to-third source-rank expansion had already been observed with a relative residual of **0.5770** against the initial two-state line. These are empirical observations of evolving native causal topology, not proof of a universal low-dimensional model of that topology.
+
+**Source-free recovery:** E-CPU retained three complete 5,120-dimensional original layer-0 output vectors (**122,880 F64 bytes**) and original layer-1 trained normalization weights/gains, with source and causal proof manifests. An **approximately 373 KB** externally pinned checkpoint independently reconstructed original state pages, the original complete native-layer semantic chain, source trained gains, the learned mathematical law and all previous generated outputs in **15.64 ms**. It then generated an additional **unseen in-plane** state whose independent native error was approximately **2.22 × 10⁻¹⁶**.
+
+**Cost and negative performance result:** actual original model source acquisition plus execution of four causal positions through two complete original GDN layers took about **258 seconds**, with **6.459 GB of original remote HTTPS transfer** and **770 HTTP source blocks** serving 93,679 logical 64 KiB range glances. The learned law's nine native normalization witness calls took about **25.23 ms**. Asking the current interpreter to generate **all 5,120 output coordinates** required **9.571 ms**, whereas the native complete normalization reference required **3.191 ms**. Full-output interpretation was approximately **3× slower**. The sparse warm advantage therefore must be amortized against expensive original source observation and does not constitute a full pretrained decoder acceleration.
+
+**Independent-whole-layer oracle caveat:** this run verifies *original pretrained source-qualified native VL-64 complete layers and their original numeric handoffs*, together with independently checked native **layer-1 normalization** laws. It **does not** compare complete original 27B Qwen layers against a separately implemented original-weight PyTorch/Transformers reference. That separate original-model parity check is still required. It also does not run all 64 decoder layers, compute vocabulary logits or produce generated language.
+
+[Machine-readable live original-model evidence](../experiments/causal_hidden_manifold/results/2026-11-19-original-qwen27b-four-causal-positions.json) contains the exact original source/causal and learned-law evidence, counterexample geometry, performance counters, source-free checkpoint and negative controls **without original model weight payloads**.
+
+The original pretrained job is now **explicit opt-in for repeat experiments**, rather than downloading more than 6 GB again after routine documentation changes; the local native fixture remains in CI.
+
 ## Next architectural move
 
 The ambitious frontier is not merely interpolating contextual states: it is **learning which source observations allow us to navigate to the next true causal state**. A fourth real observed position outside the admitted plane is a concrete active-attention signal to add a new source direction, then search for higher-order or observer-quotient relations that explain the evolving recurrent topology.
