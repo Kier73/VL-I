@@ -95,5 +95,5 @@ def test_observer_pin_and_mutated_coordinate_rejected():
     with pytest.raises(ValueError,match="Missing"):
         realize_binary_context(quotient,head=0,prior_values=[1.0],current_values=[])
     observed[0]=[1.0,0.0]
-    with pytest.raises(ValueError,match="Unqualified"):
+    with pytest.raises(ValueError,match="unqualified"):
         binary_softmax_source_digest(observed)
