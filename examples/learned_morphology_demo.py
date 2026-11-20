@@ -12,7 +12,10 @@ import json
 from pathlib import Path
 from time import perf_counter_ns
 
-from vli.learned_morphology import LearnedObserverGround, LearnedMorphologyConversation
+from vli.learned_morphology import (
+    LearnedObserverGround, LearnedMorphologyConversation, LearnedObserverIntentionRouter
+)
+from vli.intent_topology import TopologyWitness
 
 
 def run():
@@ -75,6 +78,29 @@ def run():
             "token_count":len(rendered[2]["content"]),
             "generated_neural_steps":resp["response"]["neural_steps_executed_this_formation"],
         })
+    witnessed=(
+        TopologyWitness("report only the phase observation",("phase",)),
+        TopologyWitness("show the current phase state",("phase",)),
+        TopologyWitness("report only the micro observation",("micro",)),
+        TopologyWitness("show the current micro state",("micro",)),
+        TopologyWitness("report both phase and micro observations",("phase","micro")),
+        TopologyWitness("show the complete state with both channels",("phase","micro")),
+    )
+    observer_session=LearnedMorphologyConversation(
+        (groups["phase"],groups["micro"],groups["full"]))
+    router=LearnedObserverIntentionRouter(observer_session)
+    requested=router.propose(
+        witnessed,"report only the phase observation")
+    narrowed=router.accept_and_respond(
+        witnessed,requested,
+        expected_proposal_head=requested["proposal_digest"],action="advance",
+        views=("text","tokens"))
+    revised=router.propose(
+        witnessed,"report both phase and micro observations")
+    widened=router.accept_and_respond(
+        witnessed,revised,
+        expected_proposal_head=revised["proposal_digest"],action="inspect",
+        views=("text","code","tokens"))
     original=session.checkpoint()
     replay_start=perf_counter_ns()
     restored=LearnedMorphologyConversation.restore(
@@ -94,6 +120,19 @@ def run():
         "observer_models":snapshots,
         "model_acquisition_and_compilation_ns":t1-t0,
         "interactions":outputs,
+        "prompt_to_learned_shape": {
+            "first_intention_status":requested["status"],
+            "first_intention_evidence_tier":
+                requested["ecpu_intention"]["ecpu_prediction"]["evidence_tier"],
+            "first_learned_channels":narrowed["event"]["observer_channels"],
+            "first_learned_values":narrowed["event"]["observed_values"],
+            "first_response_position":narrowed["event"]["position"],
+            "followup_learned_channels":widened["event"]["observer_channels"],
+            "followup_observed_values":widened["event"]["observed_values"],
+            "followup_response_position":widened["event"]["position"],
+            "causal_symbolic_history":list(observer_session.history),
+            "status":"source_bound_E0_intention_plus_exact_independent_model_certificate",
+        },
         "causal_history_actions":list(session.history),
         "restored_checkpoint_digest":original["checkpoint_digest"],
         "source_free_learning_ledger_recovery_available":True,
