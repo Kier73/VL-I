@@ -35,7 +35,7 @@ The worker never receives the signing private key.
 Before admitting an observation, it independently:
 
 - Checks the Ed25519 signature over canonical source bytes and identity.
-- Verifies strict source sequence, increasing measured monotonic clock and
+- Verifies strict source sequence, nondecreasing measured monotonic clock and
   logical environmental coordinate.
 - Reconstructs the source journal hash chain from genesis and refuses
   mismatch with the externally supplied pinned head/count.
@@ -84,7 +84,10 @@ equivalence.
 
 A controlled source publisher emits 1,3,5,100,101,104,109 while recording
 physically observed capture times. The experiment measures source
-inter-sample intervals using publisher monotonic nanosecond timestamps. All
+inter-sample intervals using publisher monotonic nanosecond timestamps. Consecutive
+captures may have *equal* clock readings on coarse-resolution OS timers; such
+a zero-duration reading means unresolved precision, never an assertion that no
+time elapsed. All
 these gaps are **unobserved intervals between discrete samples** and are
 reported as such. The rational 0,1,2,... source coordinate is a logical
 sample index, NOT the physical wall-clock time of the source.
