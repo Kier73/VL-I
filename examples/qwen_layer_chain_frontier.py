@@ -62,8 +62,11 @@ def run(*, positions=2, text=DEFAULT_TEXT,
         tok_source["revision"]!=revision or
         tok_source["filename"]!="tokenizer.json"):
         raise ValueError("Original tokenizer and weight Ground revisions differ")
-    raw_tok=_fetch_metadata(
-        _url(model,revision,"tokenizer.json"),MAX_ASSET_BYTES)
+    # The index URL helper intentionally admits safetensors-index assets
+    # only; tokenizer.json is a different, separately qualified asset.
+    tokenizer_url=(f"https://huggingface.co/{model}/resolve/"
+                   f"{revision}/tokenizer.json")
+    raw_tok=_fetch_metadata(tokenizer_url,MAX_ASSET_BYTES)
     token_ground,tokenizer=admit(g,raw_tok)
     intent=text_intention(token_ground,text)
     observed=tokenize(token_ground,tokenizer,intent)
