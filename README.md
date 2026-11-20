@@ -143,6 +143,13 @@ On one 12-state source, the learner discovered **three different observer-depend
 
 See [SHAPE-003 — Observation-learned intelligence shape](docs/SHAPE_003_LEARNED_OBSERVER_GROUND.md) and [the executable black-box model-learning experiment](examples/learned_morphology_demo.py).
 
+**SHAPE-004 closes a concrete cost loop:** an observer-host can now keep **verified structural memory of source-state action prefixes** while the IFS black-box learner continues to see only its usual action/output observations. The same three learning tasks originally executed **1,067 source transitions**; with shared, source-pinned prefix memory they executed **136** (**7.85× fewer**), with **exactly identical IFS evidence ledgers, learned observer models and generated VLD neural weights**. The memory retains 137 prefix positions and is reconstructed under a pinned checkpoint by independently rechecking every cached edge.
+
+This is **reduced underlying transition work**, but not a demonstrated total runtime win in this local Python control. Six alternating-order warm trials measured about **34.78 ms uncached versus 37.05 ms cached** across learning and compilation—roughly **6.5% slower** due to cache/source setup and interpreter overhead. We preserve the negative result: a faster computational path must outperform *all* of its costs, not just reduce its mathematical steps. The next useful substrate is a costly observer-host, communication path or actual model operation, where retaining previously verified computation may outweigh the navigation overhead.
+
+Read [SHAPE-004 — Verified structural observation memory](docs/SHAPE_004_VERIFIED_OBSERVATION_MEMORY.md) and [its source-work versus wall-time benchmark](examples/observation_memory_demo.py).
+
+
 
 
 ## The model-to-intention path
