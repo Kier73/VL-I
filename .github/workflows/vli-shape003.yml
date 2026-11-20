@@ -1,0 +1,57 @@
+name: VL-I SHAPE-003 observed-only generative morphology learning
+
+on:
+  push:
+    branches: ["main", "feat/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  shape-learning:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin IFS COG-007/008 observation-only learner
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/In-Formation-Space
+          ref: 0c712a83a33d14a0de630e26facd74cb487e102e
+          path: upstream/ifs
+          persist-credentials: false
+      - name: Pin actual VLD reference and original generated neural compiler
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/Virtual-Layer-Dynamics
+          ref: 985ba5c2fbcc40842aed9f45f42587749620b98e
+          path: upstream/vld
+          persist-credentials: false
+      - name: Pin actual E-CPU exact byte-ground
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install exact source authorities
+        run: python -m pip install -e . -e upstream/vld -e upstream/ecpu
+      - name: Run black-box learning, counterexamples, source-free recovery and neural output tests
+        env:
+          PYTHONPATH: upstream/ifs/experiments/codonic-capability-atlas
+        run: python -m unittest discover -s tests -p test_learned_morphology.py -v
+      - name: Perform observed-only learning and four-turn generative experiment
+        env:
+          PYTHONPATH: upstream/ifs/experiments/codonic-capability-atlas
+        run: python -m examples.learned_morphology_demo --out artifacts/shape003-learned-morphology.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vli-shape003-black-box-learning-neural-evidence
+          path: artifacts/shape003-learned-morphology.json
+          if-no-files-found: warn
