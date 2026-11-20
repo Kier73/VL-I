@@ -128,6 +128,44 @@ tokenizer/embedding relation, and full model decoder remain
 distinct research milestones. A virtual categorical readout is
 not a model's exact next token.
 
+## Measured original-topology fixture experiment — Python 3.11
+
+The pinned [NAV-003 GitHub Actions run 44672739391](https://github.com/Kier73/VL-I/actions/runs/44672739391)
+completed both original-operation **synthetic-F32** fixture experiments.
+All declared observer outputs were compared against independent fresh
+qualified numerical execution after virtual prediction.
+
+| Measured work (ms, single Actions run) | Two GDN layers | Three GDN + gated GQA |
+| --- | ---: | ---: |
+| Construct first two genuinely different neural states | 10.64 | 16.54 |
+| Execute/qualify all 12 future transitions | 118.97 | 176.48 |
+| Independently reverify full positive certificate | 22.90 | 26.15 |
+| Navigate one new two-step virtual observer history | 22.93 | 26.08 |
+| Reverify its virtual observation receipt | 22.30 | 26.39 |
+| Independently execute corresponding original-topology numerical path | 2.55 | 3.95 |
+| Refute coordinate-0 observer using retained evidence | 57.09 | 46.77 |
+
+Coordinate-2 observer returned a certified projection of [1] then [0]
+for both geometries. The initial states' complete F64 state keys
+**differed**; every one of six action histories from each was
+qualified. The coordinate-0 observer instead yielded a counterexample:
+the two-GDN case diverged on (negative, positive), while the gated-GQA
+case diverged on (positive). These are distinct, intention-dependent
+outcomes from the **same state pairs**.
+
+This is a **negative end-to-end speed result on these small fixtures**.
+Even navigation alone (22.93 / 26.08 ms) was slower than independent
+native replay (2.55 / 3.95 ms), and the one-time proof required much
+more work. The useful advance is the capability to certify
+observer-relative equivalence between different internal states and
+later answer only the certified projection from that evidence—not a
+current runtime acceleration. No original 27B weights were acquired.
+
+The workflow retains both machine-readable numerical experiment reports
+and the independently checked source/observer identity receipts. These
+single-run measurements are not claimed to generalize to larger hosts
+or pretrained models.
+
 ## Reproduce
 
 Use upstream VL-64 pinned to revision:
