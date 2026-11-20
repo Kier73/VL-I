@@ -235,6 +235,40 @@ state checking plus repeated page verification are charged as work.
 See [NAV-002 — Exact Causal-State Quotient](docs/NAV_002_EXACT_STATE_QUOTIENT.md)
 and [its source-bound/negative-control tests](tests/test_exact_state_quotient.py).
 
+## NAV-003 — Different neural states, equivalent observer futures
+
+**The same observer-relevant future can sometimes emerge from different
+complete neural computational states.** NAV-003 makes this a falsifiable
+finite-horizon theorem rather than a vague similarity claim: a specified
+categorical observer, exact action alphabet and horizon are pinned
+*before* proof; both real Qwen model-worker states execute **every**
+action history in that horizon. A positive certificate proves only
+that all declared observer outputs match; a mismatch publishes the
+shortest action-prefix counterexample instead of an admitted quotient.
+
+The original-topology two-GDN and four-layer gated-attention fixtures
+now exercise two genuinely different causal states. A sign observer
+of output coordinate 2 is certified over two explicit inputs and
+horizon 2, with **12 fully executed qualifying transitions**; a
+coordinate-0 observer is **refuted by a real future counterexample**.
+After successful certification, a new history address with qualified
+identical F64 action vectors but different token-ID labels can return
+only the promised observer projection, without another trained
+forward transition. The verifier preserves independent source
+receipts, full causal-state pages and externally pinned proof
+authority, including across process death.
+
+**Scope:** the tests use synthetic trained tensor fixtures in original
+Qwen numerical topology, not original 27B checkpoint weights or
+tokenizer-proven embedding rows. The result is not an unrestricted
+neural bisimulation, full hidden-state prediction or a complete
+decoder. Exhaustive finite proof generation and verification have
+real costs; there is no claim of lower total inference time.
+
+See [NAV-003 — Observer-Relative Future Equivalence](docs/NAV_003_OBSERVER_FUTURE_EQUIVALENCE.md),
+the [adversarial tests](tests/test_future_observer_quotient.py) and
+the [cost-accounted experiment](examples/future_observer_quotient_demo.py).
+
 ## The model-to-intention path
 
 ~~~text
