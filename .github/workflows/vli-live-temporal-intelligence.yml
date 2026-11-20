@@ -1,0 +1,38 @@
+name: TIME-002 live environment-derived intelligence
+
+on:
+  push:
+    paths:
+      - 'src/vli/live_temporal_intelligence.py'
+      - 'tests/test_live_temporal_intelligence.py'
+      - 'examples/live_temporal_intelligence_demo.py'
+      - '.github/workflows/vli-live-temporal-intelligence.yml'
+  pull_request:
+    paths:
+      - 'src/vli/live_temporal_intelligence.py'
+      - 'tests/test_live_temporal_intelligence.py'
+      - 'examples/live_temporal_intelligence_demo.py'
+      - '.github/workflows/vli-live-temporal-intelligence.yml'
+  workflow_dispatch:
+
+jobs:
+  time-002:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.11', '3.14']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install VL-I package
+        run: python -m pip install -e .
+      - name: Verify active and passive continuous intelligence cases
+        run: python -m unittest discover -s tests -p test_live_temporal_intelligence.py -v
+      - name: Verify inherited TIME-001 source/lineage contracts
+        run: python -m unittest discover -s tests -p test_temporal_intelligence.py -v
+      - name: Run active online world demo
+        run: python -m examples.live_temporal_intelligence_demo
