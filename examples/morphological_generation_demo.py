@@ -17,6 +17,8 @@ from time import perf_counter_ns
 from vli.morphological_generation import (
     MorphologySourceGround, MorphologySession, select_qualified_morphology,
 )
+from vli.morphological_intent import MorphologyIntentionRouter
+from vli.intent_topology import TopologyWitness
 
 
 def run():
@@ -74,6 +76,37 @@ def run():
             "render_ns":out["generate_and_render_ns"],
             "generated_neural_steps":out["generated_neural_steps"],
         })
+    # A separate conversation uses E-CPU's source-qualified witness
+    # prototypes to route the external prompt to a topology, without an
+    # observer manually specifying which channel to use.
+    proposal_session=MorphologySession(source)
+    router=MorphologyIntentionRouter(source)
+    witnesses=(
+        TopologyWitness("report only the phase observation",("phase",)),
+        TopologyWitness("show the current phase state",("phase",)),
+        TopologyWitness("report only the micro observation",("micro",)),
+        TopologyWitness("show the current micro state",("micro",)),
+        TopologyWitness("report both phase and micro observations",("phase","micro")),
+        TopologyWitness("show the complete state with both channels",("phase","micro")),
+    )
+    proposed=router.propose(
+        proposal_session,witnesses,"report only the phase observation",
+        min_confidence=0.35,min_margin=0.001)
+    admitted=router.accept(
+        proposal_session,witnesses,proposed,
+        expected_proposal_head=proposed["proposal_digest"])
+    initial_response=proposal_session.step(
+        source.observer(admitted),action="advance",
+        prompt="report only the phase observation")
+    refined=router.propose(
+        proposal_session,witnesses,"report both phase and micro observations",
+        min_confidence=0.35,min_margin=0.001)
+    refined_channels=router.accept(
+        proposal_session,witnesses,refined,
+        expected_proposal_head=refined["proposal_digest"])
+    completed_response=proposal_session.step(
+        source.observer(refined_channels),action="inspect",
+        prompt="report both phase and micro observations")
     saved=session.checkpoint()
     t2=perf_counter_ns()
     recovered=MorphologySession.restore(source,tuple(shapes.values()),saved,
@@ -91,6 +124,19 @@ def run():
         "micro_intention_cost_selection":micro_view,
         "different_intention_refuses_phase_only_for_micro":
             micro_view["options"][0]["status"]=="REFUSED_INSUFFICIENT_OBSERVER_SCOPE",
+        "prompt_driven_shape_revision": {
+            "initial_prompt_proposal_head":proposed["proposal_digest"],
+            "initial_evidence_tier":proposed["ecpu_intention_proposal"]["ecpu_prediction"]["evidence_tier"],
+            "first_observer_channels":list(admitted),
+            "first_observer_states":shapes["phase"].manifest["qualified_state_dimension"],
+            "first_response_state":initial_response["observation"]["coordinate"],
+            "next_prompt_proposal_head":refined["proposal_digest"],
+            "next_observer_channels":list(refined_channels),
+            "next_observer_states":shapes["full"].manifest["qualified_state_dimension"],
+            "next_observer_observed_values":completed_response["observation"]["observed_channel_values"],
+            "next_response_state":completed_response["observation"]["coordinate"],
+            "source_state_retained_across_morphology_change":proposal_session.state,
+        },
         "turns":rendered,
         "all_turn_coordinates_unique":len({r["position"] for r in rendered})==len(rendered),
         "checkpoint_digest":saved["checkpoint_digest"],
