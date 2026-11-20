@@ -1,0 +1,42 @@
+name: TIME-004 qualified reflective environment processor
+
+on:
+  push:
+    paths:
+      - 'src/vli/reflective_environment_processor.py'
+      - 'tests/test_reflective_environment_processor.py'
+      - 'examples/reflective_environment_processor_demo.py'
+      - '.github/workflows/vli-reflective-environment-processor.yml'
+  pull_request:
+    paths:
+      - 'src/vli/reflective_environment_processor.py'
+      - 'tests/test_reflective_environment_processor.py'
+      - 'examples/reflective_environment_processor_demo.py'
+      - '.github/workflows/vli-reflective-environment-processor.yml'
+  workflow_dispatch:
+
+jobs:
+  reflected-environment:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.11', '3.14']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install VL-I and pinned Navigable-Compute NCR-002
+        run: |
+          python -m pip install -e .
+          python -m pip install "git+https://github.com/Kier73/Navigable-Compute.git@9572cdea273aa5e22b2f5d4a83296492a941eab5"
+      - name: Verify source-derived processor and second-level reflection
+        run: python -m unittest discover -s tests -p test_reflective_environment_processor.py -v
+      - name: Verify inherited evolving-language contracts
+        run: python -m unittest discover -s tests -p test_evolving_environment_language.py -v
+      - name: Verify inherited temporal source contracts
+        run: python -m unittest discover -s tests -p test_temporal_intelligence.py -v
+      - name: Demonstrate source-qualified interpreter succession
+        run: python -m examples.reflective_environment_processor_demo
