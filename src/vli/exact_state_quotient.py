@@ -195,6 +195,14 @@ class ExactCausalStateQuotient:
             raise ValueError("Stale or unpinned original trained causal forest head")
         self.ground._audit()
 
+    def _validate_node(self, coordinate):
+        """Recheck the exact state pages used in a proof, not just cached hashes."""
+        node = self.ground.nodes[coordinate]
+        self.ground._inspect(node, verify_checkpoint=True)
+        recalculated, _ = _state_key(self.ground, node, self.fingerprint)
+        if self.keys[coordinate] != recalculated:
+            raise ValueError("Stored Markov equivalence class changed after admission")
+
     def _anchor(self, parent, digest):
         ground = self.ground
         if parent == ground.root_coordinate:
@@ -203,6 +211,7 @@ class ExactCausalStateQuotient:
             if parent not in ground.nodes:
                 raise ValueError("Unknown exact causal anchor coordinate")
             actual_digest = ground.nodes[parent]["node_digest"]
+            self._validate_node(parent)
         if digest != actual_digest:
             raise ValueError("Stale or substituted exact Markov causal parent pin")
         return self.keys[parent]
@@ -225,6 +234,9 @@ class ExactCausalStateQuotient:
             if source is None:
                 raise ValueError("UNRESOLVED: no equivalent trained future was observed")
             node = original.nodes[source]
+            if node["parent"] != original.root_coordinate:
+                self._validate_node(node["parent"])
+            self._validate_node(source)
             next_key = self.keys[source]
             projected = original._coordinate(current, token_id, input_digest)
             if projected in original.nodes:
