@@ -1,0 +1,69 @@
+{
+  "schema": "vl-i.saved-original-qwen-two-causal-layers.v1",
+  "date_local": "2026-11-19",
+  "source_run": "https://github.com/Kier73/VL-I/actions/runs/44660157399",
+  "source_artifact_id": 14594509188,
+  "source_pr": "https://github.com/Kier73/VL-I/pull/28",
+  "status": "REAL_PINNED_QWEN_TWO_CAUSAL_GDN_LAYERS_NO_INDEPENDENT_REAL_ORACLE",
+  "model": "Qwen/Qwen3.8-27B",
+  "revision": "37561816e66b5b9153b1b64c10968c18c1e6f4a0",
+  "layer_coordinates": [0,1],
+  "causal_positions": 2,
+  "original_token_ids": [63204,628],
+  "original_weight_bytes_per_layer_token": 766443520,
+  "original_first_layer_prior_digest_exactly_reproduced": true,
+  "positions": [
+    {
+      "position": 0,
+      "token_id": 63204,
+      "layer_0_input_f64_digest": "86d46123eaf2ab2cb644d0e0e82c74fa72feda725cead3e8d9bdee1d3e77f807",
+      "layer_0_output_f64_digest": "7f8abcbe75c429851ef049dc1501c87762fefc7194aa4feb52aa97e57df78f45",
+      "layer_0_output_f32_digest": "b87fe04766701c2433a23b5d40e892c6d84a909c976d4ce18bd842edc8555aa8",
+      "layer_1_input_f64_digest": "7f8abcbe75c429851ef049dc1501c87762fefc7194aa4feb52aa97e57df78f45",
+      "layer_1_output_f64_digest": "39ba32ebfb547d4caf8b70b6d30282c00708c6214a27d75ee5c8c36409c86ba9",
+      "layer_1_output_f32_digest": "f7851e007d6d60d2ba383cbd2d6cd42d7c67bbf2d2453227819f75cdf441c51f",
+      "layer_0_recurrent_digest": "a54a77d7d0155ab755f4c2d58d750d1f9d5ff5bdf4e6057fdb0c6f883e55c6bd",
+      "layer_1_recurrent_digest": "e9a86cf01f1d880280a4dc43bf9a1334208c3e9ca721f5a66ba24e3b418f68f0",
+      "causal_chain_head": "9e67b8be3fb587953a4fb1c7280aef10f8c36f58c78ab35cb60e4530a74d2be4"
+    },
+    {
+      "position": 1,
+      "token_id": 628,
+      "layer_0_input_f64_digest": "fe7c3361657db2f3d25f7a502ca1d286baeede6f37aa61676dcd4b78c8befa76",
+      "layer_0_output_f64_digest": "f61fc8b6487d6a667fa9576904b3c5d601e680a1cda6ce82b45150fd73011773",
+      "layer_0_output_f32_digest": "c86623ceb0b0d6b570a0fdb2c08a121cf775fc1465af78c1814eafa139f1149c",
+      "layer_1_input_f64_digest": "f61fc8b6487d6a667fa9576904b3c5d601e680a1cda6ce82b45150fd73011773",
+      "layer_1_output_f64_digest": "6b5cf42aba4805e43a0554e35fa292df863aa196a10a871673ddee3bb8d50eab",
+      "layer_1_output_f32_digest": "9aa9c2ff0adc8d47a4511ce7d3f16122216e344c597c09638667f9920a33ba88",
+      "layer_0_recurrent_digest": "7d3d028cd5190d5ce19baa11b2e2e6b247a667c9121c183811c6920403524a61",
+      "layer_1_recurrent_digest": "62ec169b145f0e189a0a7f57eebedc312d54db13559d279072c5f01e94843bf1",
+      "causal_chain_head": "876143cf7e35b9bd788bb9820e4ece049925a3c80adf722fb72d5aecf880062f"
+    }
+  ],
+  "causal_checkpoint": {
+    "position": 1,
+    "externally_pinned_manifest_digest": "16e5e110006f79393a20b04b78b1b17654b4656ad3b08786354ad7d4a080fb74",
+    "per_layer_state_checkpoint_digests": [
+      "c723a497f44a9846a7527868f5f74846b1ab1629e2d3758d928ff3b47b50f943",
+      "1bd642b225c08d6fe39a9c470a8c8a3ead5ad1f263b4b9e55f1fc30961677707"
+    ],
+    "state_pages_per_layer": [100,100],
+    "state_f64_bytes": 13074432,
+    "fresh_navigator_and_executor_recovery": true,
+    "separate_os_process_recovery": false
+  },
+  "model_worker_traffic": {
+    "logical_64k_ranges": 46866,
+    "logical_range_bytes": 3066297056,
+    "actual_https_206_requests": 391,
+    "remote_https_bytes": 3279945728,
+    "source_block_budget_bytes": 134217728,
+    "source_blocks_reused_by_logical_reads": 46475,
+    "model_weights_stored_in_vl64_interpreter_bytes": 0
+  },
+  "independent_scalar_math_fixture_oracle": true,
+  "independent_original_weight_pytorch_oracle": false,
+  "full_64_layer_decoder_completed": false,
+  "vocabulary_logits_computed": false,
+  "scope": "two original pretrained causal GDN+SwiGLU layers across two natural-language tokens, with exact layer-to-layer handoff and two-layer causal checkpoint; no independent real-weight whole-layer oracle"
+}
