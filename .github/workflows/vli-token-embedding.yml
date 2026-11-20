@@ -6,6 +6,8 @@ on:
       - 'src/vli/operative_model.py'
       - 'src/vli/token_embedding_ground.py'
       - 'tests/test_token_embedding_ground.py'
+      - 'tests/test_saved_original_token_rows.py'
+      - 'experiments/token_embedding/datasets/**'
       - 'examples/token_embedding_demo.py'
       - 'docs/ORIGINAL_TOKEN_EMBEDDING_GROUNDS.md'
       - '.github/workflows/vli-token-embedding.yml'
@@ -55,7 +57,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu -e upstream/vld
       - name: Verify trained-token source, independent embedding decoder and state construction
-        run: python -m unittest discover -s tests -p test_token_embedding_ground.py -v
+        run: |
+          python -m unittest discover -s tests -p test_token_embedding_ground.py -v
+          python -m unittest discover -s tests -p test_saved_original_token_rows.py -v
       - name: Preserve original synthetic-control trained subgraphs regression
         run: python -m unittest discover -s tests -p test_operative_model.py -v
 
