@@ -161,6 +161,13 @@ The first **real TCP, synthetic-BF16** control passed 13 tests (with additional 
 
 See [SHAPE-006 — Verified trained result as navigable state](docs/SHAPE_006_VERIFIED_TRAINED_RESULT_GROUND.md) and [its real-TCP and original-checkpoint trained-mathematics experiment](examples/trained_result_memory_demo.py).
 
+**SHAPE-007 now tests generative mathematics for previously unobserved intentions, not just retained results.** A source-qualified mathematical Ground combines the **original Qwen trained normalization coefficients** with a finite trigonometric orbit identity for the already-supported analytic sin/cos hidden-state input family. Instead of re-evaluating the entire hidden input's squared norm, the interpreter derives its sufficient statistic in bounded scalar work and generates only the observer-requested output coordinates, reading the needed original coefficient pages through E-CPU's already verified content-addressed store. A response-state coordinate is established before these new values are formed.
+
+Four original native VL-64 witness evaluations select among a constant, an equidistributed approximation and the exact finite-orbit candidate. The first control **rejected the two inadequate laws**, then generated novel coordinates for **four held-out unseen intentions** before independently verifying them with original native arithmetic. Its **11 focused tests passed**, including source-free recovery that generated a fifth never-seen response and adversarial falsification. **The 64-dimensional synthetic TCP test was slower than native execution**, despite avoiding the native normalization pass: E-CPU page validation and Python interpreter overhead matter. The separate original-size Qwen3.8-27B 5,120-dimensional experiment checks whether sparse intentions change that cost relation, without substituting a smaller model or claiming full pretrained decoder/language capability.
+
+See [SHAPE-007 — New computational states from a generative trained-operator Ground](docs/SHAPE_007_GENERATIVE_OPERATOR_GROUND.md) and [its original-source held-out and sparse/full work benchmark](examples/generative_operator_demo.py).
+
+
 
 
 
