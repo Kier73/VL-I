@@ -206,7 +206,8 @@ class AdaptiveLanguageTests(unittest.TestCase):
         self.assertEqual(histories[4][1]["family"],"recurrence2")
         self.assertEqual(live.accepted_in_lifetime,6)
         self.assertIs(learner.ground,live.ground)
-        self.assertEqual(g.epochs[-1]["status"],"INSUFFICIENT" if False else g.epochs[-1]["status"])
+        self.assertEqual(len(g.events),6)
+        self.assertEqual(histories[-1][1]["heldout_samples"],2)
 
     def test_old_receipt_is_not_a_new_lineage_authority(self):
         g=TemporalIntelligenceGround("lang:stale")
