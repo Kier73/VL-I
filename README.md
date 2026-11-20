@@ -167,6 +167,13 @@ Four original native VL-64 witness evaluations select among a constant, an equid
 
 See [SHAPE-007 — New computational states from a generative trained-operator Ground](docs/SHAPE_007_GENERATIVE_OPERATOR_GROUND.md) and [its original-source held-out and sparse/full work benchmark](examples/generative_operator_demo.py).
 
+**SHAPE-008 advances from procedural inputs to actual token-conditioned computational states.** It joins the existing **INTERACT-003 original Qwen token-row reader** to the original **VL-64 native trained layer-0 normalization** and **E-CPU content-addressed memory**. An observer chooses a position in the *affine span of two source-qualified pretrained token embedding rows*. Rather than supplying the normalizer's polynomial coefficients, the interpreter infers them from **three original trained observations**, challenges three candidate polynomial degrees with **two additional original observations**, and admits only the uniquely verified quadratic relation. A separately known algebraic identity for affine-span energy supports the selected law's domain. A new unseen mixture creates a fresh response coordinate **before** its output values exist, then generates only the selected coordinate projections; original native reference arithmetic is consulted *after* the prediction for independent verification.
+
+The first **real TCP, synthetic-BF16** control passed **10 adversarial tests**, rejected both constant and affine laws, and generated **four unseen mixtures × eight coordinates** with maximum native verification error **6.66 × 10⁻¹⁶**; source-free recovery formed a fifth unseen result. That control does **not** establish original trained model semantics. The separate pinned original **Qwen3.8-27B live experiment** uses original token IDs **63204 and 628**, already evidenced by VL-I's actual paragraph tokenizer, and the original **5,120-dimensional** pretrained embedding and normalization rows. Its scope remains *token-embedding mixtures*, **not a genuine attention-conditioned paragraph prefill state, unconstrained neural law discovery, or language generation**.
+
+See [SHAPE-008 — Observation-inferred laws from original token states](docs/SHAPE_008_ORIGINAL_TOKEN_LAW.md) and [the source-pinned held-out experiment](examples/token_conditioned_law_demo.py).
+
+
 
 
 

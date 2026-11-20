@@ -1,0 +1,91 @@
+name: VL-I SHAPE-008 original-token learned operator law
+
+on:
+  push:
+    paths:
+      - "src/vli/token_conditioned_law.py"
+      - "tests/test_token_conditioned_law.py"
+      - "examples/token_conditioned_law_demo.py"
+      - "examples/token_span_fixture.py"
+      - "docs/SHAPE_008_ORIGINAL_TOKEN_LAW.md"
+      - ".github/workflows/vli-shape008.yml"
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_original:
+        type: boolean
+        default: false
+        description: "Observe original pretrained Qwen 27B token rows, infer operator law and test held-out states"
+
+permissions:
+  contents: read
+
+jobs:
+  token-law-adversarial:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    env:
+      PYTHONPATH: upstream/vl64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Use original VL-64 and E-CPU source authorities
+        run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu
+      - name: Adversarial token-conditioned native-law discovery / source-free recovery
+        run: python -m unittest discover -s tests -p test_token_conditioned_law.py -v
+      - name: Source-unknown law inference on real loopback TCP synthetic token rows
+        run: python -m examples.token_conditioned_law_demo --mode loopback --out artifacts/shape008-synthetic-TCP.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shape008-synthetic-token-law
+          path: artifacts/shape008-synthetic-TCP.json
+          if-no-files-found: warn
+
+  original-Qwen27B-token-law:
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.run_original)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: true
+    env:
+      PYTHONPATH: upstream/vl64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu
+      - name: Original Qwen token-pair checkpoint, learned energy law, unseen hidden-state predictions
+        run: python -m examples.token_conditioned_law_demo --mode live --out artifacts/shape008-original-token-learned.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shape008-original-token-conditioned-law
+          path: artifacts/shape008-original-token-learned.json
+          if-no-files-found: warn
