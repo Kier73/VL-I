@@ -155,6 +155,13 @@ A first **real loopback TCP experiment using fabricated BF16 safetensors bytes**
 
 See [SHAPE-005 — Pretrained observer-host structural memory](docs/SHAPE_005_PRETRAINED_OBSERVER_MEMORY.md) and [the local TCP / live original pretrained range experiment](examples/pretrained_range_memory_demo.py).
 
+**SHAPE-006 now makes the next distinction operational:** original pretrained *weight bytes* are not the same thing as an already **verified trained computational result**. A new `VerifiedTrainedResultGround` uses original VL-64 `centered_rms_norm` neural mathematics and its exact input interpreter, qualifies the full output under the original model source, input, intention, native implementation and independent algebraic check, then retains the actual entire numerical vector in **E-CPU's original content-addressed object store**. A repeated intention navigates to that retained mathematical result with **zero original-host reads and zero new trained arithmetic**. A changed numerical intention re-executes the native trained operator, even when its original weights were already obtained.
+
+The first **real TCP, synthetic-BF16** control passed 13 tests (with additional causal-restore adversarial checks added subsequently), produced **three original source requests and one native evaluation** on its first observation, **zero source requests and zero native evaluations** on exact reuse, and **one new trained evaluation** on an altered intention. Each observation has a distinct causal state-position coordinate; result bytes, original source evidence and the history survive an independently pinned, source-free checkpoint recovery. The separate live original-scale probe must use the **actual 5,120-dimensional original Qwen3.8-27B trained normalization tensor**, not the synthetic fixture or a substitute smaller model. The retained result never claims that full pretrained decoding, arbitrary language generation or complete model equivalence has been achieved.
+
+See [SHAPE-006 — Verified trained result as navigable state](docs/SHAPE_006_VERIFIED_TRAINED_RESULT_GROUND.md) and [its real-TCP and original-checkpoint trained-mathematics experiment](examples/trained_result_memory_demo.py).
+
+
 
 
 
