@@ -7,8 +7,14 @@ on:
       - 'tests/test_causal_basis_expansion.py'
       - 'docs/SHAPE_010_CAUSAL_BASIS_EXPANSION.md'
       - '.github/workflows/vli-shape010.yml'
+      - 'examples/qwen_causal_basis_expansion_demo.py'
   pull_request:
   workflow_dispatch:
+    inputs:
+      run_original:
+        type: boolean
+        default: false
+        description: 'Execute full original Qwen27B four-position two-layer SHAPE-010 expansion'
 
 permissions:
   contents: read
@@ -44,3 +50,48 @@ jobs:
       - run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu 'numpy>=1.26' 'pytest>=8'
       - name: SHAPE-009 parent + SHAPE-010 witnessed counterexample expansion
         run: python -m pytest -q tests/test_causal_hidden_manifold.py tests/test_causal_basis_expansion.py tests/test_qwen_layer_chain.py
+      - name: Execute native trained causal SHAPE-010 fixture with unseen generations
+        run: python -m examples.qwen_causal_basis_expansion_demo --mode fixture --out artifacts/shape010-fixture.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shape010-fixture-${{ matrix.python-version }}
+          path: artifacts/shape010-fixture.json
+          if-no-files-found: warn
+
+  original-pretrained-27b-four-state-simplex:
+    # Original pretrained bytes are expensive: one-time explicit commit marker or
+    # manual workflow_dispatch. All ordinary PR and docs runs remain fixture-only.
+    if: (github.event_name == 'workflow_dispatch' && inputs.run_original) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[shape010-original]'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests:tests
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu 'numpy>=1.26' 'tokenizers>=0.20,<1'
+      - name: Original 5120-wide 27B four witnessed causal states grow source-rank-three Ground
+        run: python -m examples.qwen_causal_basis_expansion_demo --mode live --out artifacts/shape010-original-qwen27b.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shape010-original-qwen27b-four-state-simplex
+          path: artifacts/shape010-original-qwen27b.json
+          if-no-files-found: warn
