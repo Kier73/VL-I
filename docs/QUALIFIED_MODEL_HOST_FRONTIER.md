@@ -190,3 +190,60 @@ The first Qwen **transformer layer** is still **not** complete in this
 SwiGLU and residual remain to be executed. An independent accelerated
 whole-layer fixture passes; a separate actual-original-checkpoint whole-layer
 job is the stronger next qualification.
+
+## Second live result: the first entire pretrained Qwen layer executed
+
+The expensive opt-in experiment also **succeeded**:
+[GitHub Actions 44656513031](https://github.com/Kier73/VL-I/actions/runs/44656513031).
+This is the unchanged first **Gated DeltaNet + SwiGLU transformer layer** of
+the 27B pretrained checkpoint, with actual paragraph token ID `63204`.
+
+| Exact observed property | Real pretrained experiment |
+| --- | --- |
+| All 5,120 hidden output coordinates | **Computed** |
+| Full-layer output SHA-256-style state digest | `b87fe04766701c2433a23b5d40e892c6d84a909c976d4ce18bd842edc8555aa8` |
+| Qualified trained tensor bytes | 766,443,520 |
+| Logical <=64 KiB VL reads | 11,719 |
+| Actual original HTTPS 206 block requests | 99 |
+| Total HTTPS transfer bytes | 830,472,192 |
+| Model-side source buffer ceiling | 128 MiB |
+| Model-worker CPU work | 7.239 seconds |
+| Model-worker wall time | 63.925 seconds |
+
+The recurrent and convolution digests **exactly agree** with the
+first-position results from the independently staged all-48-head
+experiment above, demonstrating cross-path consistency on the same
+trained token. Full-layer arithmetic also matches a separate scalar
+oracle across three causal positions in controlled original-geometry
+*fixtures*.
+
+**Important numerical qualification:** the entire 5,120-dim layer output
+was not independently recomputed by a separate real-weight PyTorch/HF
+reference. We therefore distinguish **real original-weight complete
+layer executed** from **independent complete real-weight layer parity
+verified**. The latter remains open; neither result is evidence of
+the full 64-layer decoder, vocabulary logits, generated paragraphs,
+code or autonomous agent tasks.
+
+The exact receipt is archived at
+[`2026-11-19-real-original-qwen-first-complete-layer.json`](../experiments/qwen_all_heads/datasets/2026-11-19-real-original-qwen-first-complete-layer.json).
+The original complete run artifact is available in GitHub Actions.
+
+A key outcome: model-host vectorization and bounded source coalescing
+made the original complete first layer observable in roughly a minute
+of wall time, compared with the earlier pure-scalar workflow that had
+not finished after a much longer execution. This does **not** yet prove
+communication-native compute or a cost advantage over conventional
+well-optimized native inference; it changes the separation and accounting
+of work and allows further experiments to complete.
+
+### New next experiment
+
+For the original Qwen model, execute two *causal* positions with the
+entire first trained layer, preserving and recovering all 48 recurrent
+state matrices, then feed the 5,120-wide output into layer 1's
+qualified original trained mathematics. The same-Ground source,
+tokenizer, layer schedule, mathematical results, and checkpoint
+continuity must remain valid. An independent PyTorch implementation
+must then compare the full layer output before declaring numeric
+equivalence to published Qwen inference.
