@@ -326,6 +326,9 @@ class QwenArchitectureCausalPrefix:
         ]
 
     def step(self,hidden,*,token_id=None):
+        # A mutable caller-owned plan must not silently alter the operation
+        # ordering after construction without a fresh source admission.
+        _admit_plan(self.nav,self.plan)
         if (not isinstance(hidden,(list,tuple)) or len(hidden)!=self.width or
             (type(token_id) not in (int,type(None))) or
             (token_id is not None and not 0<=token_id<2**31) or
@@ -404,6 +407,7 @@ class QwenArchitectureCausalPrefix:
             raise
 
     def checkpoint(self,store,*,input_sequence_digest):
+        _admit_plan(self.nav,self.plan)
         if (not isinstance(store,LocalStatePages) or self.position<1 or
             any(r.position!=self.position for r in self.runners) or
             not _hex64(input_sequence_digest) or
