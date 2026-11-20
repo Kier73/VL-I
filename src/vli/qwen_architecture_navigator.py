@@ -157,6 +157,65 @@ def admit_indexed_qwen_topology(nav, raw_config, *, expected_config_sha256=None)
         opposite_only=opposite-expected
         if actual.intersection(opposite_only):
             raise ValueError("Source index and model topology conflict at layer "+str(idx))
+        # Check *every* planned trained matrix against its authenticated
+        # safetensors header before describing a 64-layer architecture as
+        # admitted. Names alone are not enough: a model can advertise the
+        # right operator name with an incompatible numerical shape.
+        prefix=f"model.language_model.layers.{idx}."
+        h=txt["hidden_size"]
+        inter=txt["intermediate_size"]
+        if kind=="GDN":
+            kh=txt["linear_num_key_heads"]
+            vh=txt["linear_num_value_heads"]
+            kd=txt["linear_key_head_dim"]
+            vd=txt["linear_value_head_dim"]
+            mixed=2*kh*kd+vh*vd
+            kernel=txt.get("linear_conv_kernel_dim")
+            checks={
+                "input_layernorm.weight":[h],
+                "linear_attn.in_proj_qkv.weight":[mixed,h],
+                "linear_attn.in_proj_z.weight":[vh*vd,h],
+                "linear_attn.in_proj_a.weight":[vh,h],
+                "linear_attn.in_proj_b.weight":[vh,h],
+                "linear_attn.A_log":[vh],
+                "linear_attn.dt_bias":[vh],
+                "linear_attn.norm.weight":[vd],
+                "linear_attn.out_proj.weight":[h,vh*vd],
+                "post_attention_layernorm.weight":[h],
+                "mlp.gate_proj.weight":[inter,h],
+                "mlp.up_proj.weight":[inter,h],
+                "mlp.down_proj.weight":[h,inter],
+            }
+        else:
+            q=txt["num_attention_heads"]*txt["head_dim"]
+            kv=txt["num_key_value_heads"]*txt["head_dim"]
+            hd=txt["head_dim"]
+            checks={
+                "input_layernorm.weight":[h],
+                "post_attention_layernorm.weight":[h],
+                "self_attn.q_proj.weight":[2*q,h],
+                "self_attn.k_proj.weight":[kv,h],
+                "self_attn.v_proj.weight":[kv,h],
+                "self_attn.o_proj.weight":[h,q],
+                "self_attn.q_norm.weight":[hd],
+                "self_attn.k_norm.weight":[hd],
+                "mlp.gate_proj.weight":[inter,h],
+                "mlp.up_proj.weight":[inter,h],
+                "mlp.down_proj.weight":[h,inter],
+            }
+        for part,shape in checks.items():
+            descriptor=nav.locate(prefix+part)
+            if (descriptor["shape"]!=shape or
+                descriptor["dtype"] not in ("BF16","F16","F32")):
+                raise ValueError("Original source tensor shape contradicts indexed architecture at layer "+str(idx))
+        if kind=="GDN":
+            conv=nav.locate(prefix+"linear_attn.conv1d.weight")
+            kernel_dim=conv["shape"][-1] if len(conv["shape"])==3 else -1
+            if (conv["dtype"] not in ("BF16","F16","F32") or
+                conv["shape"]!=[mixed,1,kernel_dim] or
+                not 1<=kernel_dim<=64 or
+                (kernel is not None and kernel!=kernel_dim)):
+                raise ValueError("Original convolution shape contradicts source config")
         layer_plan.append({"layer":idx,"kind":kind})
     geom={
         "hidden":txt["hidden_size"],"intermediate":txt["intermediate_size"],
