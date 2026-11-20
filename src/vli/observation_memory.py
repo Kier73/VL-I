@@ -37,6 +37,10 @@ class StructuralPrefixMemory:
         self.reference=source
         self.source_sha256=sha256(source_bytes).hexdigest()
         self.source_fingerprint=source.fingerprint
+        # The admitted VLD transition system is a frozen dataclass; retain
+        # its original identity rather than rehashing every source cell at
+        # every black-box membership query.
+        self._reference_anchor=source
         self.alphabet=tuple(source.actions)
         # Prefix -> (opaque source state for receiver, full output at last edge).
         # Only the source owner reads this; the learner sees projected outputs.
@@ -59,8 +63,8 @@ class StructuralPrefixMemory:
                  and len(channels)==len(set(channels))
                  and all(type(c) is str and c in self.reference.channels for c in channels),
                  "Unqualified observer cannot read a hidden channel")
-        _require(self.reference.fingerprint==self.source_fingerprint,
-                 "Original source changed under cached observation memory")
+        _require(self.reference is self._reference_anchor,
+                 "Admitted reference object was replaced under structural memory")
         return tuple(word),tuple(self.reference.channels.index(c) for c in channels)
 
     def observe(self,word:Sequence[str],channels:tuple[str,...]):
@@ -87,6 +91,9 @@ class StructuralPrefixMemory:
         return tuple(out)
 
     def checkpoint(self):
+        _require(self.reference is self._reference_anchor and
+                 self.reference.fingerprint==self.source_fingerprint,
+                 "Original Ground identity changed before durable memory publication")
         entries=[]
         for word in sorted(self._nodes,key=lambda w:(len(w),w)):
             state,output=self._nodes[word]
