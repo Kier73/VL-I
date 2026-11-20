@@ -14,6 +14,11 @@ on:
 permissions:
   contents: read
 
+# Multiple agents and push/PR triggers must not accumulate stale proof jobs.
+concurrency:
+  group: nav003-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   finite-future-observer-verification:
     runs-on: ubuntu-latest
