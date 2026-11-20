@@ -40,6 +40,11 @@ class MorphologySourceGround:
 
     def __init__(self, source_bytes: bytes):
         from vld.signal.transitions import GroundTransitionSystem
+        # Qualify the compiler backend at source-admission/bootstrap time:
+        # every alternative model must be compared under the same initialized
+        # interpreter, rather than making the first candidate alone pay its
+        # Python module import cost. Source admission timing charges this work.
+        from vld.models.procedural import compile_fsm_to_neural
         _require(type(source_bytes) is bytes and 0 < len(source_bytes) <= MAX_SOURCE_BYTES,
                  "Missing or excessive descriptive Ground")
         source = GroundTransitionSystem.from_dict(_strict_json(source_bytes))
