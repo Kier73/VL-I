@@ -1,0 +1,100 @@
+{
+  "schema": "vl-i.saved-operative-pretrained-observations.v1",
+  "source": "successful_real_pretrained_GitHub_Actions_artifacts_and_job_logs",
+  "run_id": 44646397252,
+  "run_url": "https://github.com/Kier73/VL-I/actions/runs/44646397252",
+  "models": {
+    "qwen-27b": {
+      "model": "Qwen/Qwen3.8-27B",
+      "revision": "37561816e66b5b9153b1b64c10968c18c1e6f4a0",
+      "job_id": 135989968751,
+      "artifact_id": 14589415422,
+      "operator": "48 trained Gated DeltaNet beta/log_decay scalar relations at layer 0",
+      "observations": [
+        {
+          "coordinate": "state://vli/a213900bbc1e663514f3baf914e03b4a2efa72d8d7255e917ceeab4076a3ea32",
+          "intent_digest": "fe40b2674d1e125c4be282e654be69b7003136e0ac26152e7f290558a5693a9a",
+          "observation_digest": "e303e765725760d58629035b1642df31ff1c4a2ad66b2153dd4eef041a824e4e",
+          "range_chain": "63ab3039c184614721b7386cc0102f12509fbe64d8323f765a4cdf237edd79da",
+          "weight_bytes": 993472,
+          "range_reads": 21,
+          "rendered": "RENDERED",
+          "constructed": {
+            "heads": 48,
+            "mean_beta": 0.474123902994,
+            "beta_above_half": 17
+          },
+          "reference_error": 0
+        },
+        {
+          "coordinate": "state://vli/105c8b850f60545fafb60f5654007f402ceb5a5044355124338c37fa609dd450",
+          "intent_digest": "ab100a2ca9d99ace7a9f3db2d054f26a0bb4c256ae11b15e6469a1d710ba09ec",
+          "observation_digest": "cdf538c4ddec9b7efbf349e7b0c6e64c42609283e67d5521be68a0a23c224bac",
+          "range_chain": "9929555d6a9d52fed7b6f9ff5dd5807e06f28a82b7d91addd8396ca82017aa22",
+          "weight_bytes": 993472,
+          "range_reads": 19,
+          "rendered": "RENDERED",
+          "constructed": {
+            "heads": 48,
+            "mean_beta": 0.638870522769,
+            "beta_above_half": 40
+          },
+          "reference_error": 0
+        }
+      ]
+    },
+    "deepseek-v41-flash": {
+      "model": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "revision": "1bae0e1088993b9b82de08f59de5be5a34e42170",
+      "job_id": 135989969022,
+      "artifact_id": 14588662058,
+      "operator": "384 trained router logits, six chosen FP4 expert gate/up/down first-channel relations at layer 0",
+      "observations": [
+        {
+          "coordinate": "state://vli/aa765d20de1b97706f9c9e588ded0c89b0a990b1ef665af77effcbbea9b1ed05",
+          "intent_digest": "ed1de3cb94c1a308aa2a3fcde700ac650a5d21022ffa165f40ed55d5645b61f3",
+          "observation_digest": "7515d7eb8645687f9af2cd74c18e6c555de1af784d6fe2ccad5804c6e0d4f007",
+          "range_chain": "ace6cad114c4cf2564d82529d4305bcd716368afb696ebd3b97e337cec958def",
+          "weight_bytes": 3973680,
+          "range_reads": 106,
+          "rendered": "RENDERED",
+          "constructed": {
+            "selected": [
+              92,
+              333,
+              14,
+              295,
+              347,
+              132
+            ],
+            "weighted_partial": -0.000442946949
+          },
+          "reference_error": 0
+        },
+        {
+          "coordinate": "state://vli/cdde7b3ad96ced210b2c9d63a94db3224757ccda088b5056cd9d95fe6e9fc32c",
+          "intent_digest": "f2a2a02e39f1ad0b6bebaf2729c4e9e0dfc26b7d1370c2b2104ff5b1251a7cd9",
+          "observation_digest": "2a3da8316880e62518265c7d810ae341f60a78b64196d5733e699d31c803f31f",
+          "range_chain": "2aa1dc2caebc1a2ee7d8d79b24f87a0b8d6371ebcb451fc13547e068df1cdb10",
+          "weight_bytes": 3973680,
+          "range_reads": 101,
+          "rendered": "RENDERED",
+          "constructed": {
+            "selected": [
+              93,
+              365,
+              150,
+              200,
+              162,
+              229
+            ],
+            "weighted_partial": -0.000068825962
+          },
+          "reference_error": 0
+        }
+      ]
+    }
+  },
+  "scope": "real trained partial mathematical operations from two synthetic observer-selected inputs per model; not model token inference; not full trained layer; not checkpoint-weight attestation",
+  "interpreter_core_changed": false
+}

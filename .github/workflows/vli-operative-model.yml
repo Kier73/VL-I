@@ -1,0 +1,130 @@
+name: VL-I INTERACT-002 operative pretrained model Grounds
+
+on:
+  push:
+    paths:
+      - 'src/vli/operative_model.py'
+      - 'tests/test_operative_model.py'
+      - 'tests/test_saved_operative_evidence.py'
+      - 'experiments/operative_model/datasets/**'
+      - 'examples/operative_trained_demo.py'
+      - 'docs/OPERATIVE_PRETRAINED_GROUNDS.md'
+      - '.github/workflows/vli-operative-model.yml'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_real_ranges:
+        description: 'Execute pinned original Qwen and DeepSeek real trained subgraphs'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  native-trained-operator-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.13']
+    env:
+      PYTHONPATH: upstream/vl64
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin VL-64 original model tensor execution and range admission
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - name: Pin E-CPU byte interpretations
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - name: Pin VLD state renderer
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/Virtual-Layer-Dynamics
+          ref: 985ba5c2fbcc40842aed9f45f42587749620b98e
+          path: upstream/vld
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install original qualified operator and rendering implementations
+        run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu -e upstream/vld
+      - name: Verify operator selection, numeric composition and independent generated Python
+        run: |
+          python -m unittest discover -s tests -p test_operative_model.py -v
+          python -m unittest discover -s tests -p test_saved_operative_evidence.py -v
+      - name: Verify previous constructive table Ground remains unaffected
+        run: python -m unittest discover -s tests -p test_constructive_data.py -v
+
+  public-checkpoint-pretrained-operator:
+    if: (github.event_name == 'pull_request' && github.head_ref == 'feat/operative-trained-ground-20261119') || (github.event_name == 'workflow_dispatch' && inputs.run_real_ranges)
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        model: ['qwen-27b','deepseek-v41-flash']
+    env:
+      PYTHONPATH: upstream/vl64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/Virtual-Layer-Dynamics
+          ref: 985ba5c2fbcc40842aed9f45f42587749620b98e
+          path: upstream/vld
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu -e upstream/vld
+      - name: Real original-size trained numerical operations and constructive rendering
+        run: |
+          python -m examples.operative_trained_demo --model "${{ matrix.model }}" \
+            --out "artifacts/operative-${{ matrix.model }}.json"
+      - name: Distinguish exact trained partial operator from fabricated full-model inference
+        run: |
+          python - <<'PY'
+          import json,os,pathlib
+          model=os.environ["TARGET_MODEL"]
+          r=json.loads(pathlib.Path(f"artifacts/operative-{model}.json").read_text())
+          assert r["status"]=="REAL_PINNED_PRETRAINED_PARTIAL_OPERATIONS_EXECUTED"
+          assert r["all_layer_language_inference_completed"] is False
+          assert r["weight_payload_bytes_stored_in_virtual_ground"]==0
+          assert len(r["state_observations"])==2
+          assert r["state_observations"][0]["coordinate"]!=r["state_observations"][1]["coordinate"]
+          assert all(x["source_weight_bytes_read"]>0 for x in r["state_observations"])
+          assert all(x["rendered_state"]=="RENDERED" for x in r["state_observations"])
+          print("TRAINED_GROUND_NUMERICAL_EXECUTION",r["model"])
+          PY
+        env:
+          TARGET_MODEL: ${{ matrix.model }}
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vli-actual-pretrained-operative-${{ matrix.model }}
+          path: artifacts/operative-*.json
+          if-no-files-found: warn
