@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from statistics import median
 from pathlib import Path
 from time import perf_counter_ns
 
@@ -65,6 +66,31 @@ def run():
     assert restored.checkpoint()==snapshot
     assert total_cached_steps==memory.evaluated_transitions
     assert total_baseline_steps==memory.naive_transition_steps
+
+    # Repeat with *warm imports* and alternate orders so Python's first
+    # module load does not masquerade as a structural-memory speedup.
+    warm_trials=[]
+    for trial in range(6):
+        order=("uncached","cached") if trial%2==0 else ("cached","uncached")
+        sample={"order":list(order)}
+        for mode in order:
+            start=perf_counter_ns()
+            trial_mem=StructuralPrefixMemory(raw) if mode=="cached" else None
+            trial_roots=[]
+            for scope in scopes:
+                m=LearnedObserverGround(
+                    raw,scope,structural_memory=trial_mem)
+                trial_roots.append(m.manifest["ground_digest"])
+            total_ns=perf_counter_ns()-start
+            sample[mode+"_ns"]=total_ns
+            _expected=[baseline[scope].manifest["ground_digest"]
+                       for scope in scopes]
+            assert trial_roots==_expected
+            if mode=="cached":
+                sample["cached_actual_source_steps"]=trial_mem.evaluated_transitions
+        warm_trials.append(sample)
+    median_uncached=median(x["uncached_ns"] for x in warm_trials)
+    median_cached=median(x["cached_ns"] for x in warm_trials)
     return {
         "schema":"vl-i.shape004-verified-prefix-memory-cost.v1",
         "original_source_sha256":memory.source_sha256,
@@ -86,6 +112,12 @@ def run():
         "snapshot_independent_validation_ns":snapshot_verification_ns,
         "whole_baseline_acquisition_and_generation_ns":t1-t0,
         "whole_cached_acquisition_and_generation_ns":t2-t1,
+        "warm_order_alternated_trials":warm_trials,
+        "warm_median_uncached_acquisition_ns":median_uncached,
+        "warm_median_cached_acquisition_ns":median_cached,
+        "warm_median_wall_ratio_uncached_over_cached":(
+            median_uncached/median_cached if median_cached else None),
+        "warm_benchmark_scope":"three_shape_learning_compilation_including_source_parsing_and_cache_bootstrap;_six_alternating_trials",
         "exact_generated_model_and_original_ifs_ledger_equal":True,
         "not_claimed":[
             "a reduction in pretrained language-model forward-pass cost",
