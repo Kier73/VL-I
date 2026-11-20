@@ -97,6 +97,29 @@ class CounterfactualCausalGround:
             raise ValueError("Source, trained geometry or interpreter lineage changed")
         return runner
 
+    def _audit(self):
+        """Recompute the authenticated forest before every public read/write.
+
+        A node can live in mutable worker memory; the caller's external
+        forest-head pin must still reject a rewritten or reordered node map.
+        This is hash verification, not trained numerical re-execution.
+        """
+        committed = _digest(FOREST, {"root": self.root_digest,
+                                    "observer": self.observer})
+        seen = set()
+        for coordinate, node in self.nodes.items():
+            if (type(node) is not dict or node.get("coordinate") != coordinate or
+                    (node.get("parent") != self.root_coordinate and
+                     node.get("parent") not in seen) or
+                    node.get("node_digest") != _digest(
+                        NODE, {k:v for k,v in node.items() if k != "node_digest"})):
+                raise ValueError("Committed causal forest has altered node ancestry")
+            committed = _digest(FOREST, {"previous": committed,
+                                       "node_digest": node["node_digest"]})
+            seen.add(coordinate)
+        if committed != self.head:
+            raise ValueError("Committed causal forest differs from external head")
+
     def _coordinate(self, parent, token_id, input_digest):
         return "state://vli/" + _digest(COORDINATE, {
             "source_root": self.source_root, "parent": parent,
@@ -196,6 +219,7 @@ class CounterfactualCausalGround:
         """Execute one new edge or navigate exactly the same retained future."""
         if expected_head != self.head:
             raise ValueError("Stale counterfactual forest authority head")
+        self._audit()
         if type(token_id) is not int or not 0 <= token_id < 2**31:
             raise ValueError("Original token identifier is required")
         raw, input_digest = _pack(hidden)
@@ -263,10 +287,12 @@ class CounterfactualCausalGround:
         """Retrieve a retained result with no trained transition arithmetic."""
         if expected_head != self.head or coordinate not in self.nodes:
             raise ValueError("Stale forest head or unknown observed state")
+        self._audit()
         return self._inspect(self.nodes[coordinate], verify_checkpoint=False)
 
     def snapshot(self):
         """Publish a serializable DAG requiring a separately retained digest."""
+        self._audit()
         body = {"schema": SNAPSHOT, "source_root": self.source_root,
                 "observer": self.observer, "max_nodes": self.max_nodes,
                 "forest_head": self.head, "nodes": deepcopy(list(self.nodes.values()))}
