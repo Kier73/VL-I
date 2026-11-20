@@ -64,7 +64,7 @@ A digest is an **integrity pin**, not a remote identity attestation. In a deploy
 
 ## Measured test — local TCP, fabricated source bytes
 
-The first passing [SHAPE-005 workflow run 44651969290](https://github.com/Kier73/VL-I/actions/runs/44651969290) executed **10 focused tests** and a real 127.0.0.1 HTTP TCP range endpoint. The server supplied a small, *fabricated* BF16 safetensors shard with the **same type of index and request schema** as the original Qwen model. Its bytes are **not Qwen weights**, regardless of the Qwen-compatible address fields used by the test.
+The first passing [SHAPE-005 workflow run 44651969290](https://github.com/Kier73/VL-I/actions/runs/44651969290) executed **10 focused tests** initially, extended to **11 focused tests** (including caller-mutation isolation) in [the subsequent green PR workflow 44652604234](https://github.com/Kier73/VL-I/actions/runs/44652604234) and a real 127.0.0.1 HTTP TCP range endpoint. The server supplied a small, *fabricated* BF16 safetensors shard with the **same type of index and request schema** as the original Qwen model. Its bytes are **not Qwen weights**, regardless of the Qwen-compatible address fields used by the test.
 
 | Quantity | First fresh observation | Second qualified retained observation |
 | --- | ---: | ---: |
