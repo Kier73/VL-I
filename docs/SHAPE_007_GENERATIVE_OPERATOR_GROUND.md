@@ -112,6 +112,33 @@ The same executable supports \`--mode live\`, using the original full-sized pinn
 
 The original trained model is **not downsized** for that experiment. If live HTTPS is unavailable, results are marked \`UNRESOLVED\` and the synthetic fixture is never substituted as original pretrained proof.
 
+## Original full-size live result — November 19, 2026
+
+The [successful main-branch GitHub Actions run 44660339251](https://github.com/Kier73/VL-I/actions/runs/44660339251) **executed against original, full-scale pinned Qwen3.8-27B trained normalization weights**. It read **55,640 bytes in three original HTTPS range requests** and bound the actual 5,120-element layer-0 trained tensor to E-CPU's content-addressed memory. There was **no model downscaling or pretrained-weight approximation**.
+
+The original native VL-64 operator evaluated four complete 5,120-element *training witnesses* to discriminate three supplied candidate laws. The constant-energy and equidistribution candidates were falsified with maximum deviations of **1.4770** and **0.3614** respectively. The finite-orbit law matched those training witnesses to approximately **4.44 × 10⁻¹⁶** maximum absolute error.
+
+The admitted Ground then formed the outputs of four **previously unseen analytic input intentions**, with eight selected coordinates each, *before* the original native operator was consulted for independent verification.
+
+| Held-out original-Qwen request | Generated sparse state | Native full-normalization reference | Max absolute error |
+| --- | ---: | ---: | ---: |
+| Unseen sine, low frequency | 2.896 ms | 16.494 ms | 0 |
+| Unseen cosine, intermediate frequency | 2.749 ms | 7.188 ms | 4.44 × 10⁻¹⁶ |
+| Unseen sine, higher frequency | 2.686 ms | 7.060 ms | 0 |
+| Unseen cosine, high frequency | 2.663 ms | 7.164 ms | 0 |
+
+**Source HTTPS requests during these new generated responses: zero. Original native pretrained-operator calls during generating the predictions: zero.** The independent original operator ran afterward as the held-out test oracle. All 32 generated output coordinates were accurate to the stipulated tolerance.
+
+The source-bound generative Ground was also **restored without a connected source** in approximately **13.99 ms**, independently validating its original stored trained coefficients and previous state positions, and then generated a **fifth never-requested input** whose independently checked native error was zero.
+
+**Essential negative control:** generating **all 5,120 output coordinates** using the current per-coordinate E-CPU page reads took **49.178 ms**, whereas the corresponding whole-vector original native reference took **7.481 ms**. For a full output, the current interpretation was **about 6.57× slower**. The finite-series energy computation is cheap; requesting a full result incurs proportional output and per-page verification overhead. This is not a universal operator speedup.
+
+**Cost context:** the original source+Ground preparation took **277.67 ms** in that run, including approximately **30.50 ms** of original native training-witness execution. The reported sparse per-request times are **warm qualified-observer** samples, not cold total amortized cost; single-run timings may vary by host. Including bootstrap, one sparse request is not cheaper than a fresh full native evaluation. The benefit becomes material when a source-qualified Ground is reused for many sparse intentions.
+
+The strongest warranted conclusion is **unseen-input sparse trained operator result generation over the original full-scale source with independently verified numerical correctness**, together with a measured warm observer-specific cost reduction and a measured full-output slowdown. This is neither autonomous mathematical-law invention nor full trained decoder/token prediction.
+
+[Raw, machine-readable original-Qwen held-out evidence](../experiments/generative_operator_ground/results/2026-11-19-original-qwen27b-heldout-generative-law.json) records model source and native operator identities, candidate errors, predicted/verified timings, new causal positions, source-free recovery and negative controls. It embeds **no pretrained weight payloads**.
+
 ## Frontier
 
 SHAPE-007 is a bounded **function-shaped Ground** rather than an exact result cache. It establishes that, when the observer's permitted input family has independently qualified sufficient statistics, the interpreter can form new computational states using only the work needed for the observer's requested output.
