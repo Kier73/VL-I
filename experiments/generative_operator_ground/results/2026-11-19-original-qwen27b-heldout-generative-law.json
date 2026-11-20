@@ -1,0 +1,154 @@
+{
+  "ECPU_coefficient_storage": {
+    "bytes": 40960,
+    "manifest": "49758d5f51485c4ee9dec0c7a1946567025fdb2c331d2fc9d81d8b2ec731e691",
+    "source_trained_weight_sha256": "853b5989bfb677b1761540ee97c09bbf8d90fd825c9ae6ca74ef5853cba3c075"
+  },
+  "candidate_law_max_training_errors": {
+    "constant_unit": 1.4770336554255978,
+    "equidistributed": 0.3614361025823394,
+    "finite_orbit_identity": 4.440892098500626e-16
+  },
+  "full_original_trained_norm_width": 5120,
+  "generated_heldout_coordinates": 32,
+  "hard_limits": [
+    "finite sin/cos analytic hidden-state input family only",
+    "not trained token embeddings or arbitrary language-model state",
+    "law selected from supplied symbolic candidates, not autonomously invented",
+    "finitely witnessed; mathematical formula checked numerically on held-outs",
+    "original pretrained normalization only; not complete Qwen attention or decoder",
+    "full output still requires proportional output work; sparse observer can be cheaper",
+    "original-source acquisition, law training and ECPU checkpoint have real costs",
+    "original HTTPS host trust distinct from SHA-256 integrity pins"
+  ],
+  "heldout_max_error": 4.440892098500626e-16,
+  "heldout_samples": [
+    {
+      "generated_without_original_native_math": true,
+      "intent_digest": "595d6d796b61ef01c008f0fb217021ee4b8e7250d99908d8cfa32d697ca0082d",
+      "max_abs_heldout_error": 0,
+      "new_trained_eval_during_prediction": 0,
+      "output_sha256": "145b0fbdecdc70fab4080b94d030f18d81025105490d2face1844bb028f0cfd3",
+      "position": "state://vli/15816eefd3a27b25dc2257400a6dfc436c88cf0b9495ab488fdaccbdc027e6d1",
+      "prediction_ns": 2896213,
+      "requested_indices": [
+        0,
+        1,
+        2,
+        1280,
+        2560,
+        3840,
+        5118,
+        5119
+      ],
+      "source_requests_for_new_output": 0,
+      "unseen_witness": true,
+      "verified_native_reference_ns": 16494308
+    },
+    {
+      "generated_without_original_native_math": true,
+      "intent_digest": "6ad223739c634465286d403c974e46776bafca7f1e5c5cfd789c7a0ac81b9c1a",
+      "max_abs_heldout_error": 4.440892098500626e-16,
+      "new_trained_eval_during_prediction": 0,
+      "output_sha256": "242b421537ca1afde1fbb9aa9c1f95157645616e97df1527aa0da93c14b112f2",
+      "position": "state://vli/801384ea83b657df1078297629cf3ff977b24e5f734fe9eabf8250f68048c43e",
+      "prediction_ns": 2748996,
+      "requested_indices": [
+        0,
+        1,
+        2,
+        1280,
+        2560,
+        3840,
+        5118,
+        5119
+      ],
+      "source_requests_for_new_output": 0,
+      "unseen_witness": true,
+      "verified_native_reference_ns": 7188219
+    },
+    {
+      "generated_without_original_native_math": true,
+      "intent_digest": "77a8255cbbb50c3251a2ebb032e2574e7bd638bd472b49beccfa5f18e016b0c2",
+      "max_abs_heldout_error": 0,
+      "new_trained_eval_during_prediction": 0,
+      "output_sha256": "365db00573976f4719e43992d24ae0481a7749271b9eb2ef882fdd4b880b91c1",
+      "position": "state://vli/4c927df9c500bb52df48ea329d27f4c5e6004e04db67705329e4219fe8132f39",
+      "prediction_ns": 2685708,
+      "requested_indices": [
+        0,
+        1,
+        2,
+        1280,
+        2560,
+        3840,
+        5118,
+        5119
+      ],
+      "source_requests_for_new_output": 0,
+      "unseen_witness": true,
+      "verified_native_reference_ns": 7060148
+    },
+    {
+      "generated_without_original_native_math": true,
+      "intent_digest": "12b2e78410fb1384f2cfbda5507be46e3fe86a5c50af8422bda4ea4dca1c2d07",
+      "max_abs_heldout_error": 0,
+      "new_trained_eval_during_prediction": 0,
+      "output_sha256": "7a8f30c70fa15cbeee2756b50d691c2ba6d2ddfb49f41fcfb8af24ca8f6d176d",
+      "position": "state://vli/a04b159c985a867fad8811d253eba610618f2c6361e91e8af692be971d7e221f",
+      "prediction_ns": 2663486,
+      "requested_indices": [
+        0,
+        1,
+        2,
+        1280,
+        2560,
+        3840,
+        5118,
+        5119
+      ],
+      "source_requests_for_new_output": 0,
+      "unseen_witness": true,
+      "verified_native_reference_ns": 7163803
+    }
+  ],
+  "learned_law": "finite_orbit_identity",
+  "mode": "LIVE_ORIGINAL_27B_UNSEEN_GENERATIVE_OPERATOR_GROUND",
+  "negative_full_output_control": {
+    "coordinates_requested": 5120,
+    "generated_ns": 49177952,
+    "generated_slower_than_native": true,
+    "max_abs_error": 0,
+    "original_full_native_reference_ns": 7480829
+  },
+  "original_bytes_transferred": 55640,
+  "original_checkpoint_advertised_bytes": 55562855904,
+  "original_full_pretrained_checkpoint": true,
+  "original_source_requests_after_bootstrap": 3,
+  "schema": "vl-i.shape007-trained-generative-sufficient-statistic.v1",
+  "source_free_reconstructed_new_unseen_intention": {
+    "max_abs_original_reference_error": 0,
+    "new_input_intention": "e78bb8af3961aa088d405c698b179b4185124b133fd3dd0077791e5a9378652e",
+    "original_native_evaluations": 0,
+    "position": "state://vli/b3c3d874e48c5651a315085ba4d3493c95bb8cca79dd017d97ac031cd1618544",
+    "source_requests": 0
+  },
+  "source_free_restore_ns": 13992466,
+  "source_free_restore_verified": true,
+  "source_index_sha256": "77042094076611b69791a610065f28b7013b8c621795fa86ddccc8bac7d1b9df",
+  "source_model": "Qwen/Qwen3.8-27B",
+  "source_plus_ground_bootstrap_ns": 277674229,
+  "source_qualification_native_ns": 30496824,
+  "source_qualification_native_witness_evaluations": 4,
+  "source_revision": "37561816e66b5b9153b1b64c10968c18c1e6f4a0",
+  "source_root": "6657399e63b3efccef479b2cddb7677f25a8627a54f6e188421177cc518e57d5",
+  "status": "MEASURED",
+  "provenance": {
+    "github_actions_run": "https://github.com/Kier73/VL-I/actions/runs/44660339251",
+    "github_job_id": 136036721792,
+    "main_merge_commit": "ae4045bf05a90ac2decdb76dea8c7d14fa2031c0",
+    "description": "Original pinned Qwen3.8-27B layer-0 5120-width trained norm, unseen analytic hidden input family, sparse/full original reference after generation",
+    "original_weight_payload_bytes_in_report": 0,
+    "source_authenticity": "original pinned HTTPS provider range host, not self-attestation by digest"
+  }
+}
