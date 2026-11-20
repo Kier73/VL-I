@@ -154,7 +154,10 @@ def test_fast_projection_does_not_accept_wrong_width_or_nonfinite_data():
         fast_rows(nav,'layer.linear.weight',[float('nan')]*7)
     with pytest.raises(ValueError,match='Unqualified'):
         fast_rows(nav,'layer.linear.weight',[0]*7,batch_rows=300)
-    assert host.stats()['remote_https_206_blocks']==0
+    # Tensor-shape admission must read and verify the shard *header* first;
+    # invalid vector inputs may not acquire any trained matrix payload.
+    assert host.stats()['remote_https_206_blocks']==1
+    assert nav.weight_bytes==0
 
 
 def test_worker_source_observation_chain_changes_only_after_real_HTTP():
