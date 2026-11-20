@@ -107,7 +107,9 @@ def _scores(coeff, basis, weights, observations):
             x = _vector(basis, p)
             energy = _energy(hypothesis, p)
             if not math.isfinite(energy) or energy + EPS <= 0:
-                worst = float("inf")
+                # Finite falsification sentinel: NOT a measured output error.
+                # Canonical evidence cannot contain NaN/Infinity.
+                worst = 1e300
                 break
             scale = 1 / math.sqrt(energy + EPS)
             worst = max(worst, max(abs(z*(1+w)*scale-y)
@@ -186,6 +188,8 @@ class ExpandedCausalGround:
             "observed_training_energies": [training[p] for p in TRAIN],
             "inferred_coefficients": list(coeff),
             "candidate_max_output_error": scores,
+            "invalid_energy_candidates": [k for k in CANDIDATES
+                                          if scores[k] == 1e300],
             "independent_gram_coefficients": list(algebra),
             "native_norm_observations": len(TRAIN) + len(CHALLENGES),
             "source_revision": 4,
@@ -408,6 +412,9 @@ class ExpandedCausalGround:
             refs.append((p,[v*(1+w)*scale
                             for v,w in zip(x,obj.parent.norm_weights)]))
         scores = _scores(obj.coefficients, basis, obj.parent.norm_weights, refs)
+        _require(obj.proof["invalid_energy_candidates"] ==
+                 [k for k in CANDIDATES if scores[k] == 1e300],
+                 "Recovered native candidate energy admissibility changed")
         _require(all(abs(obj.proof["candidate_max_output_error"][k]-scores[k])
                      <= 3e-8 for k in CANDIDATES) and
                  scores["full_quadratic"] <= TOL and
