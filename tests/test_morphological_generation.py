@@ -259,5 +259,106 @@ class TestCausalShapeChanges(unittest.TestCase):
                 expected_checkpoint_head=checkpoint["checkpoint_digest"])
 
 
+from vli.morphological_intent import MorphologyIntentionRouter
+from vli.intent_topology import TopologyWitness
+
+
+def observer_witnesses():
+    return (
+        TopologyWitness("report only the phase observation",("phase",)),
+        TopologyWitness("show the current phase state",("phase",)),
+        TopologyWitness("report only the micro observation",("micro",)),
+        TopologyWitness("show the current micro state",("micro",)),
+        TopologyWitness("report both phase and micro observations",("phase","micro")),
+        TopologyWitness("show the complete state with both channels",("phase","micro")),
+    )
+
+
+class TestPromptToObserverMorphology(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.ground=MorphologySourceGround(FIXTURE.read_bytes())
+        cls.witnesses=observer_witnesses()
+
+    def test_phase_prompt_discovers_qualified_malleable_shape(self):
+        session=MorphologySession(self.ground)
+        router=MorphologyIntentionRouter(self.ground)
+        proposal=router.propose(
+            session,self.witnesses,"report only the phase observation",
+            min_confidence=0.35,min_margin=0.001)
+        self.assertEqual(proposal["status"],"PROPOSED_NEEDS_OBSERVER_APPROVAL")
+        self.assertEqual(session.state,"p0m0")
+        qualified=router.accept(
+            session,self.witnesses,proposal,
+            expected_proposal_head=proposal["proposal_digest"])
+        self.assertEqual(qualified,("phase",))
+        shaped=self.ground.observer(qualified)
+        reading=session.step(shaped,action="advance",
+                             prompt="report only the phase observation")
+        self.assertEqual(reading["observation"]["observed_channel_values"],[1])
+        self.assertEqual(shaped.manifest["qualified_state_dimension"],3)
+
+    def test_new_prompt_can_select_finer_shape_with_memory_preserved(self):
+        session=MorphologySession(self.ground)
+        router=MorphologyIntentionRouter(self.ground)
+        witnesses=self.witnesses
+        def request(prompt):
+            p=router.propose(session,witnesses,prompt,
+                             min_confidence=0.35,min_margin=0.001)
+            return router.accept(session,witnesses,p,
+                                 expected_proposal_head=p["proposal_digest"])
+        narrow=request("report only the phase observation")
+        session.step(self.ground.observer(narrow),action="advance",prompt="phase")
+        complete=request("report both phase and micro observations")
+        self.assertEqual(complete,("phase","micro"))
+        result=session.step(self.ground.observer(complete),action="inspect",
+                            prompt="Now inspect the full state")
+        self.assertEqual(result["observation"]["observed_channel_values"],[1,1])
+
+    def test_stale_morphology_proposal_rejected_after_source_state_transition(self):
+        session=MorphologySession(self.ground)
+        router=MorphologyIntentionRouter(self.ground)
+        p=router.propose(session,self.witnesses,
+                         "report only the micro observation",
+                         min_confidence=0.35,min_margin=0.001)
+        session.step(self.ground.observer(("phase",)),action="advance",
+                     prompt="Move before accepting")
+        with self.assertRaises(ValueError):
+            router.accept(session,self.witnesses,p,
+                          expected_proposal_head=p["proposal_digest"])
+
+    def test_uncertain_intent_refuses_without_mutation(self):
+        session=MorphologySession(self.ground)
+        router=MorphologyIntentionRouter(self.ground)
+        p=router.propose(session,self.witnesses,
+                         "incomprehensible unobserved unknown purpose",
+                         min_confidence=0.999999,min_margin=0.999999)
+        self.assertEqual(p["status"],"INSUFFICIENT_INTENT_EVIDENCE")
+        with self.assertRaises(ValueError):
+            router.accept(session,self.witnesses,p,
+                          expected_proposal_head=p["proposal_digest"])
+        self.assertEqual(session.state,"p0m0")
+        self.assertEqual(session.turns,[])
+
+    def test_forged_causal_observer_head_and_model_source_rejected(self):
+        session=MorphologySession(self.ground)
+        router=MorphologyIntentionRouter(self.ground)
+        p=router.propose(session,self.witnesses,
+                         "report only the micro observation",
+                         min_confidence=0.35,min_margin=0.001)
+        changed=copy.deepcopy(p)
+        changed["full_source_state"]="p2m3"
+        with self.assertRaises(ValueError):
+            router.accept(session,self.witnesses,changed,
+                          expected_proposal_head=p["proposal_digest"])
+        wrong=copy.deepcopy(p)
+        wrong["original_model_ground_digest"]="0"*64
+        with self.assertRaises(ValueError):
+            router.accept(session,self.witnesses,wrong,
+                          expected_proposal_head=p["proposal_digest"])
+        with self.assertRaises(ValueError):
+            router.accept(session,self.witnesses,p,
+                          expected_proposal_head="0"*64)
+
 if __name__=="__main__":
     unittest.main()
