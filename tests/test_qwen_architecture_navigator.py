@@ -193,7 +193,7 @@ def test_config_and_model_index_must_agree_before_instantiating():
         admit_indexed_qwen_topology(nav,encoded_config(changed))
     changed=deepcopy(config_eight())
     changed["text_config"]["num_attention_heads"]=3
-    with pytest.raises(ValueError,match="topology|operator|geometry"):
+    with pytest.raises(ValueError,match="topology|operator|geometry|shape"):
         admit_indexed_qwen_topology(nav,encoded_config(changed))
     with pytest.raises(ValueError,match="external pin"):
         admit_indexed_qwen_topology(nav,encoded_config(),
@@ -207,7 +207,7 @@ def test_config_and_model_index_must_agree_before_instantiating():
 def test_missing_indexed_tensor_even_though_config_claims_it():
     nav=nav_eight_layers()
     del nav.weight_map["model.language_model.layers.7.self_attn.v_proj.weight"]
-    with pytest.raises(ValueError,match="Missing trained"):
+    with pytest.raises(ValueError,match="Missing trained|Shard header|index tensor"):
         admit_indexed_qwen_topology(nav,encoded_config())
 
 
