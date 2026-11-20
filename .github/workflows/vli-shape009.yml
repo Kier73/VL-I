@@ -59,7 +59,9 @@ jobs:
           if-no-files-found: warn
 
   original-27b-four-causal-token-manifold:
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.run_original)
+    # Original full-size 27B evidence is already pinned and retained under experiments/.
+    # Don't re-download >6 GB on every documentation/code update; require explicit opt-in.
+    if: github.event_name == 'workflow_dispatch' && inputs.run_original
     runs-on: ubuntu-latest
     timeout-minutes: 55
     continue-on-error: true
