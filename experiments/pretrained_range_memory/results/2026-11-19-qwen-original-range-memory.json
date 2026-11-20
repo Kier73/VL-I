@@ -1,0 +1,56 @@
+{
+  "first_observation_wall_ns": 785319240,
+  "first_trained_numeric_probe": {
+    "dimension": 5120,
+    "independent_max_abs_error": 0,
+    "original_range_witness_chain": "16407c7a25cf67a0aa56af4c0416829e95c6d8e655256ab007f7cafef86a0c0a",
+    "tensor": "model.language_model.layers.0.input_layernorm.weight",
+    "trained_weight_bytes": 10240
+  },
+  "full_checkpoint_payload_advertised_bytes": 55562855904,
+  "full_model_forward_pass_executed": false,
+  "full_original_model_not_downscaled": true,
+  "mode": "REAL_PINNED_ORIGINAL_PRETRAINED_RANGE_OVER_HTTPS",
+  "model": "Qwen/Qwen3.8-27B",
+  "receiver_checkpoint_bytes": 139745,
+  "receiver_checkpoint_digest": "9c47d5ace1ad1645dbb1b56067b00614d09fef2639f099745dc6568e5a8c1acf",
+  "receiver_independent_recovery_ns": 2498940,
+  "receiver_restart_without_original_source": true,
+  "revision": "37561816e66b5b9153b1b64c10968c18c1e6f4a0",
+  "schema": "vl-i.shape005-pretrained-range-observer-cost.v1",
+  "scoped_capability": "trained_original_weight_norm_only_not_full_neural_model",
+  "source_identity_pinned_to_original_range_contract": true,
+  "source_index_sha256": "77042094076611b69791a610065f28b7013b8c621795fa86ddccc8bac7d1b9df",
+  "source_observer_memory_metrics": {
+    "ECPU_CAS_read_ns": 232355,
+    "ECPU_CAS_store_ns": 569753,
+    "avoided_upstream_payload_bytes": 55640,
+    "avoided_upstream_requests": 3,
+    "fresh_upstream_payload_bytes": 55640,
+    "fresh_upstream_requests": 3,
+    "index_ground_digest": "059c388b0818e297d54b9ce322312cb93eab30920f0ba250bcbe46839b6f36f3",
+    "retained_object_bytes": 55640,
+    "retained_range_count": 3,
+    "reused_local_bytes": 55640,
+    "reused_local_range_reads": 3,
+    "scope": "actual_original_observed_ranges_not_full_neural_inference",
+    "source_model": "Qwen/Qwen3.8-27B",
+    "source_revision": "37561816e66b5b9153b1b64c10968c18c1e6f4a0",
+    "upstream_call_ns": 778739098
+  },
+  "status": "MEASURED",
+  "trained_original_checkpoint_observed": true,
+  "warm_retained_numeric_probe": {
+    "fresh_HTTPS_or_loopback_source_requests": 0,
+    "local_range_witness_chain": "1229e75b0ce7665ab7cd63316f0609d69a72643face6005c39146d445ae1c8a2",
+    "same_numerical_result": true
+  },
+  "warm_retained_observation_wall_ns": 6291166,
+  "record_provenance": {
+    "run_url": "https://github.com/Kier73/VL-I/actions/runs/44652832592",
+    "job_id": 136011699568,
+    "main_commit": "7fa7f9dac58e37d110ed6bdd030626a39643cb88",
+    "experiment_type": "original_qwen_https_exact_pretrained_norm_and_ecpu_retained_range",
+    "note": "This file retains observed numerical/source-memory metrics, not the pretrained weight payloads or original model forward pass."
+  }
+}
