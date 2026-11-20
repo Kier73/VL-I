@@ -1,0 +1,116 @@
+name: VL-I QUALIFIED-008 architecture-directed original Qwen
+
+on:
+  push:
+    paths:
+      - 'src/vli/qwen_architecture_navigator.py'
+      - 'src/vli/qwen_gated_attention.py'
+      - 'tests/test_qwen_architecture_navigator.py'
+      - 'tests/test_qwen_architecture_process_recovery.py'
+      - 'examples/qwen_architecture_frontier.py'
+      - 'docs/QUALIFIED_ARCHITECTURE_DIRECTED_DECODER.md'
+      - '.github/workflows/vli-qualified-architecture-decoder.yml'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_original_eight:
+        description: 'Original Qwen3.8-27B config-index-driven eight full layers'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+
+jobs:
+  indexed-eight-independent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11','3.13']
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests:tests
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install -e . -e upstream/vl64 'numpy>=1.26' 'pytest>=8'
+      - name: Two independently composed 4-layer blocks, scalar parity and source contradictions
+        run: python -m pytest -q tests/test_qwen_architecture_navigator.py tests/test_qwen_architecture_process_recovery.py tests/test_qwen_hybrid_block.py tests/test_qwen_hybrid_process_recovery.py tests/test_saved_original_qwen_first_hybrid.py
+
+  original-pretrained-eight:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_original_eight
+    runs-on: ubuntu-latest
+    timeout-minutes: 80
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests:tests
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e . -e upstream/vl64 'numpy>=1.26' 'tokenizers>=0.20,<1'
+      - name: Original-weight first eight complete mixed layers; one real paragraph token
+        run: |
+          python -m examples.qwen_architecture_frontier \
+            --layers 8 --positions 1 \
+            --block-bytes 8388608 --host-budget-bytes 134217728 \
+            --layer-budget-bytes 2000000000 \
+            --out artifacts/original-architecture-eight.json
+      - name: Reject any partial trained layer or contradictory source-plan claim
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('artifacts/original-architecture-eight.json').read_text())
+          assert r['status']=='REAL_PINNED_QWEN_ARCHITECTURE_DIRECTED_PREFIX',r
+          assert r['model']=='Qwen/Qwen3.8-27B'
+          assert r['revision']=='37561816e66b5b9153b1b64c10968c18c1e6f4a0'
+          assert r['source_architecture_layers']==64
+          assert r['materialized_original_layers']==8
+          assert r['full_indexed_architecture_layer_types'][:8]==['GDN','GDN','GDN','GATED_GQA']*2
+          assert r['completed_original_positions']==1
+          assert r['trained_positions'][0]['original_token_id']==63204
+          w=r['trained_positions'][0]['architecture_derived_transition']['layer_witnesses']
+          assert len(w)==8
+          assert [x['layer'] for x in w]==list(range(8))
+          assert [x['kind'] for x in w]==['GDN','GDN','GDN','GATED_GQA']*2
+          assert all(x['trained_weight_bytes']>100_000_000 for x in w)
+          assert all(a['output_f64_digest']==b['input_f64_digest'] for a,b in zip(w,w[1:]))
+          assert r['trained_positions'][0]['prior_qualified_007_four_layer_prefix_reproduced']
+          assert w[3]['kv_positions']==1 and w[7]['kv_positions']==1
+          assert len(r['checkpoint']['layer_digests'])==8
+          assert len(r['checkpoint']['state_pages'])==8
+          assert len(r['source_config_sha256'])==64
+          assert len(r['architecture_plan_digest'])==64
+          assert r['model_host_traffic']['remote_https_206_blocks']>0
+          assert r['vl64_persistent_model_weight_bytes']==0
+          assert not r['original_all_64_layer_decoder_complete']
+          assert not r['original_final_norm_and_vocabulary_logits_complete']
+          print('QUALIFIED_008_ORIGINAL_EIGHT_LAYERS_CONFIRMED')
+          print('CONFIG_SHA256',r['source_config_sha256'])
+          print('EIGHT_LAYER_F64_OUTPUT',r['last_f64_output_digest'])
+          PY
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: original-qwen-indexed-eight-complete-layers
+          path: artifacts/original-architecture-eight.json
+          if-no-files-found: warn
