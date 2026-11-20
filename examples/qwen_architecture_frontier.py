@@ -123,8 +123,14 @@ def run(*,layers=8,positions=1,text=DEFAULT_TEXT,
                     "fresh_source_navigator_restore":True,
                     "different_OS_process_on_original_model":False}
                 fresh=navigator()
+                # Reconstruct the *same* source-plan authority grade. A
+                # newly supplied external config pin may change a published
+                # authority receipt even when all semantic model bytes match.
                 fresh_plan=admit_indexed_qwen_topology(
-                    fresh,raw_config,expected_config_sha256=plan["config_sha256"])
+                    fresh,raw_config,
+                    expected_config_sha256=source.get("config_sha256"))
+                if fresh_plan["config_sha256"]!=plan["config_sha256"]:
+                    raise ValueError("Restored config bytes changed")
                 recovered=QwenArchitectureCausalPrefix.restore(
                     fresh,fresh_plan,store,pinned,
                     expected_digest=pinned["checkpoint_digest"],
