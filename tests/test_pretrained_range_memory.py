@@ -231,6 +231,31 @@ class TestExactPretrainedRangeMemory(unittest.TestCase):
                 index_raw=self.index_raw,checkpoint=altered,
                 expected_head=saved["checkpoint_digest"])
 
+    def test_returned_witness_and_saved_checkpoint_are_not_mutable_cache_authorities(self):
+        req={"model":MODEL,"revision":REVISION,
+             "index_ground_digest":self.index["ground_digest"],
+             "shard":SHARD,"byte_begin":0,"byte_end_exclusive":8,
+             "purpose":"header"}
+        self.memory(req)
+        first=self.memory(req)
+        snapshot=self.memory.checkpoint()
+        head=snapshot["checkpoint_digest"]
+        first["original_witnesses"][0]["origin_observer_host"]="attacker"
+        snapshot["records"][0]["original_witness"]["origin_observer_host"]="attacker"
+        self.assertEqual(
+            self.memory(req)["original_witnesses"][0]["origin_observer_host"],
+            "synthetic-qualified-range-host")
+        self.assertEqual(self.memory.checkpoint()["checkpoint_digest"],head)
+        restored=QualifiedPretrainedRangeMemory.restore(
+            index_raw=self.index_raw,
+            checkpoint=self.memory.checkpoint(),
+            expected_head=head,
+            upstream_host=None)
+        another=restored.checkpoint()
+        another["records"][0]["original_witness"]["observed_payload_sha256"]="0"*64
+        self.assertEqual(
+            restored(req)["sha256"],sha256(self.fake_shard[:8]).hexdigest())
+
     def test_no_model_execution_inferred_from_range_memory_alone(self):
         self.assertEqual(self.memory.metrics()["fresh_upstream_requests"],0)
         self.assertEqual(self.memory.metrics()["retained_range_count"],0)
