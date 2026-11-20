@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from fractions import Fraction
 from pathlib import Path
 import tempfile
 import unittest
@@ -42,7 +43,7 @@ class SignedNumericalReflectionTests(unittest.TestCase):
         for i,value in enumerate(values):
             packet=sign_source_observation(
                 self.signer,source=self.source,sequence=i,
-                time=f"{i}/{time_denominator}",
+                time=f"{Fraction(i,time_denominator).numerator}/{Fraction(i,time_denominator).denominator}",
                 value=f"{value}/1")
             head,count=append_signed_observation(
                 journal,packet,expected_head=head,expected_count=i,
