@@ -1,0 +1,129 @@
+name: VL-I INTERACT-003 original pretrained token embedding Grounds
+
+on:
+  push:
+    paths:
+      - 'src/vli/operative_model.py'
+      - 'src/vli/token_embedding_ground.py'
+      - 'tests/test_token_embedding_ground.py'
+      - 'examples/token_embedding_demo.py'
+      - 'docs/ORIGINAL_TOKEN_EMBEDDING_GROUNDS.md'
+      - '.github/workflows/vli-token-embedding.yml'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_real_ranges:
+        type: boolean
+        description: "Run both original Qwen/DeepSeek public checkpoint range probes"
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  exact-token-embedding-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11","3.13"]
+    env:
+      PYTHONPATH: upstream/vl64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/Virtual-Layer-Dynamics
+          ref: 985ba5c2fbcc40842aed9f45f42587749620b98e
+          path: upstream/vld
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu -e upstream/vld
+      - name: Verify trained-token source, independent embedding decoder and state construction
+        run: python -m unittest discover -s tests -p test_token_embedding_ground.py -v
+      - name: Preserve original synthetic-control trained subgraphs regression
+        run: python -m unittest discover -s tests -p test_operative_model.py -v
+
+  live-original-checkpoint-embedding:
+    if: (github.event_name == 'pull_request' && github.head_ref == 'feat/causal-token-embedding-ground-20261119') || (github.event_name == 'workflow_dispatch' && inputs.run_real_ranges)
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        model: ["qwen-27b","deepseek-v41-flash"]
+    env:
+      PYTHONPATH: upstream/vl64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/Virtual-Layer-Dynamics
+          ref: 985ba5c2fbcc40842aed9f45f42587749620b98e
+          path: upstream/vld
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu -e upstream/vld
+      - name: Execute actual pretrained embedding row to trained partial layer
+        run: |
+          python -m examples.token_embedding_demo --model "${{ matrix.model }}" \
+              --tokens 100 101 --out "artifacts/original-token-${{ matrix.model }}.json"
+      - name: Require authentic token row provenance and distinct observations
+        env:
+          TARGET_MODEL: ${{ matrix.model }}
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          route=os.environ["TARGET_MODEL"]
+          result=json.loads(Path(f"artifacts/original-token-{route}.json").read_text())
+          assert result["status"]=="REAL_ORIGINAL_CHECKPOINT_TOKEN_EMBEDDING_PARTIAL_OPERATION"
+          assert result["trained_weight_bytes_stored_inside_ground"]==0
+          assert result["original_vocab_ids_explicit_not_text_tokenized"] is True
+          assert result["all_layers_completed"] is False
+          assert result["complete_logits_computed"] is False
+          assert result["restoration_verified"] is True
+          records=result["per_token"]
+          assert [r["token_id"] for r in records]==[100,101]
+          assert records[0]["embedding_sha256"]!=records[1]["embedding_sha256"]
+          assert all(r["new_weight_bytes"]>r["embedding_bytes"]>0 for r in records)
+          assert all(r["render_state"]=="RENDERED" for r in records)
+          assert all(r["pretrained_full_decoder_completed"] is False for r in records)
+          print("QUALIFIED_ORIGINAL_TOKEN_COMPUTATION",result["model"],result["causal_input_grade"])
+          PY
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vli-original-token-embedding-${{ matrix.model }}
+          path: artifacts/original-token-*.json
+          if-no-files-found: warn
