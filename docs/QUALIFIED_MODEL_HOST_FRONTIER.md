@@ -146,3 +146,47 @@ interpreter process** and compare equivalent trained numerical receipts
 across independent host lifetimes. Only abstractions that prove essential
 for general navigation should be distilled into the unchanged 64 KiB VL64
 core.
+
+## Actual original Qwen checkpoint: 48-head execution verified
+
+The public-checkpoint [GitHub Actions run 44656098976](https://github.com/Kier73/VL-I/actions/runs/44656098976)
+succeeded using the unchanged Qwen3.8-27B source revision, the genuine
+pinned tokenizer and the first two original paragraph IDs `63204`, `628`.
+
+The worker executed **all** 16 Q heads, 16 K heads and 48 value heads with
+their learned projections, 10,240-channel convolution, all 48 recurrent
+128 × 128 value-head states and all 6,144 trained gated head outputs.
+It then projected that combined output through one trained original
+out-projection row. The two causal positions differ:
+
+| Verified source-backed observation | Token 63204 | Token 628 |
+| --- | ---: | ---: |
+| Pretrained tensor payload bytes read | 168,779,776 | 168,779,776 |
+| Qualified logical VL64 ranges | 2,578 | 2,578 |
+| All-head output projection row 0 | -0.057124186479 | -0.034526815025 |
+| Independent numerical max absolute error | 2.7756e-17 | 2.0817e-17 |
+| Model worker CPU seconds | 2.503 | 2.287 |
+| Model worker wall seconds | 34.656 | 33.322 |
+
+Cumulative host-source cost: **170 actual HTTPS 206 block downloads**,
+**5,180 logical <=64 KiB VL read requests**, **356,515,840 remote bytes**,
+**337,876,832 logically requested bytes**, **64 MiB bounded source-block
+memory** and **100 paged causal-state recovery pages** (6,537,216 bytes).
+The latter is a host-side mathematical state, not a 6.5 MB expansion
+of the compact VL64 interpreter core.
+
+The real receipt with selected measurements and exact digests is archived in
+[`2026-11-19-real-original-qwen-48-heads.json`](../experiments/qwen_all_heads/datasets/2026-11-19-real-original-qwen-48-heads.json).
+The original GitHub Actions artifact contains the complete run report.
+
+The ratio of 5,180 logical reads to 170 source HTTP requests demonstrates a
+reduction in *network request count*, not source payload byte compression:
+the host transferred 356.5 MB to satisfy 337.9 MB of logical tensor use.
+Worker CPU and wall time are separate; no external GPU or network-native
+floating-point arithmetic is claimed.
+
+The first Qwen **transformer layer** is still **not** complete in this
+48-head experiment: 5,119 output-projection rows, residual norm, full
+SwiGLU and residual remain to be executed. An independent accelerated
+whole-layer fixture passes; a separate actual-original-checkpoint whole-layer
+job is the stronger next qualification.
