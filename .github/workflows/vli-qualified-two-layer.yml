@@ -1,0 +1,120 @@
+name: VL-I QUALIFIED-006 two-layer causal Qwen execution
+
+on:
+  push:
+    paths:
+      - 'src/vli/qwen_layer_chain.py'
+      - 'tests/test_qwen_layer_chain.py'
+      - 'examples/qwen_layer_chain_frontier.py'
+      - 'docs/QUALIFIED_TWO_LAYER_CAUSAL_CHAIN.md'
+      - '.github/workflows/vli-qualified-two-layer.yml'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_original_two_layers:
+        description: 'Execute two full original 27B GDN layers across two real paragraph tokens'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  qualified-causal-layer-scalar-oracle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.13"]
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install original source + numerical worker
+        run: python -m pip install -e . -e upstream/vl64 'numpy>=1.26' 'pytest>=8'
+      - name: Check exact predecessor handoff, independent scalar reference, recovery and failures
+        run: python -m pytest -q tests/test_qwen_layer_chain.py
+      - name: Regression on original single-layer qualified host
+        run: python -m pytest -q tests/test_qwen_all_heads.py tests/test_saved_original_qwen_first_layer.py
+
+  original-two-layer-trained-execution:
+    if: >-
+      (github.event_name == 'pull_request' &&
+       github.head_ref == 'feat/qualified-006-causal-layer-chain-20261119') ||
+      (github.event_name == 'workflow_dispatch' && inputs.run_original_two_layers)
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e . -e upstream/vl64 'numpy>=1.26' 'tokenizers>=0.20,<1'
+      - name: Original trained Qwen layer 0 output becomes layer 1 input, across two tokens
+        run: |
+          python -m examples.qwen_layer_chain_frontier \
+            --positions 2 --block-bytes 8388608 \
+            --host-budget-bytes 134217728 \
+            --layer-budget-bytes 2000000000 \
+            --out artifacts/qwen-original-two-layer-chain.json
+      - name: Verify real source identity, 2 full causal positions, and qualified handoff
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          r=json.loads(Path('artifacts/qwen-original-two-layer-chain.json').read_text())
+          assert r['status']=='REAL_PINNED_QWEN_TWO_CAUSAL_GDN_LAYERS_NO_INDEPENDENT_REAL_ORACLE'
+          assert r['original_model']=='Qwen/Qwen3.8-27B'
+          assert r['revision']=='37561816e66b5b9153b1b64c10968c18c1e6f4a0'
+          assert r['trained_layer_coordinates']==[0,1]
+          assert r['last_completed_causal_position']==2
+          assert len(r['trained_positions'])==2
+          assert [t['original_token_id'] for t in r['trained_positions']]==[63204,628]
+          assert r['cross_observer_checkpoint']['separate_layer_0_and_1_states']
+          assert len(r['cross_observer_checkpoint']['per_layer_state_pages'])==2
+          for token in r['trained_positions']:
+              t=token['causal_transition']
+              assert t['all_layers_completed'] is True
+              assert len(t['layer_witnesses'])==2
+              a,b=t['layer_witnesses']
+              assert (a['layer'],b['layer'])==(0,1)
+              assert a['output_f64_digest']==b['input_f64_digest']
+              assert a['complete_output_width']==b['complete_output_width']==5120
+              assert a['trained_weight_bytes']>100000000
+              assert b['trained_weight_bytes']>100000000
+              assert not t['original_decoder_completed'] and not t['vocabulary_logits_computed']
+          assert r['model_host_traffic']['remote_https_206_blocks']>0
+          assert r['model_host_traffic']['logical_64k_ranges']>r['model_host_traffic']['remote_https_206_blocks']
+          assert r['VL64_interpreter_persistent_weight_bytes']==0
+          assert r['independent_real_pretrained_whole_layer_reference'] is False
+          assert not r['all_64_decoder_layers_executed']
+          print('ORIGINAL_QWEN_TWO_CAUSAL_TRAINED_GDN_LAYERS_VERIFIED')
+          PY
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vli-qualified-original-qwen-two-complete-causal-layers
+          path: artifacts/qwen-original-two-layer-chain.json
+          if-no-files-found: warn
