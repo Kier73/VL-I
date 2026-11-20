@@ -1,0 +1,90 @@
+name: VL-I SHAPE-007 unseen trained operator generative law
+
+on:
+  push:
+    paths:
+      - 'src/vli/generative_operator_ground.py'
+      - 'tests/test_generative_operator_ground.py'
+      - 'examples/generative_operator_demo.py'
+      - 'docs/SHAPE_007_GENERATIVE_OPERATOR_GROUND.md'
+      - '.github/workflows/vli-shape007.yml'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_original_source:
+        type: boolean
+        default: false
+        description: "Execute original full-size pinned Qwen3.8-27B trained norm and unseen generative-law heldout probes"
+
+permissions:
+  contents: read
+
+jobs:
+  generative-law-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    env:
+      PYTHONPATH: upstream/vl64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install original VL-64 native operator and original E-CPU CAS
+        run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu
+      - name: Verify held-out source qualification and generative state recovery
+        run: python -m unittest discover -s tests -p test_generative_operator_ground.py -v
+      - name: Run source-pinned synthetic original-shape model over actual loopback TCP
+        run: python -m examples.generative_operator_demo --mode loopback --out artifacts/shape007-synthetic-tcp.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shape007-unseen-input-generative-law-fixture
+          path: artifacts/shape007-synthetic-tcp.json
+          if-no-files-found: warn
+
+  original-Qwen-finite-orbit-heldout:
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.run_original_source)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    continue-on-error: true
+    env:
+      PYTHONPATH: upstream/vl64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu
+      - name: Live original full-size 27B trained norm / UNSEEN observer inputs / generated Ground
+        run: python -m examples.generative_operator_demo --mode live --out artifacts/shape007-original-qwen.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shape007-original-Qwen-unseen-input-evidence
+          path: artifacts/shape007-original-qwen.json
+          if-no-files-found: warn
