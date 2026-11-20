@@ -104,6 +104,29 @@ The CI workflow attempts this real original-size experiment on a merged main pus
 
 **Do not conflate:** a real pretrained *single normalization operator* with original full-model decoder inference, language-model next-token parity or universal interpreter execution. In particular, an analytic sinusoidal hidden input is not a trained token embedding or genuine conversation history. The research now has a truthful, executable result-reuse path to extend to the full original trained layer graph.
 
+### Verified live original-checkpoint result — November 19, 2026
+
+The [original pretrained Qwen GitHub Actions run 44655675581](https://github.com/Kier73/VL-I/actions/runs/44655675581) **succeeded with actual original checkpoint weights**, not only the synthetic fixture. It verified the pinned Qwen index SHA-256, model identity, actual 5,120-dimensional trained BF16 layer-0 normalization tensor and every numerical output coordinate.
+
+| Qualified observation | First intention | **Identical intention** | Changed numerical intention |
+| --- | ---: | ---: | ---: |
+| Source HTTPS range requests | **3** | **0** | **0** |
+| Original source bytes transferred | **55,640** | **0** | **0** |
+| Original VL-64 trained operator evaluations | **1** | **0** | **1** |
+| Exact output vector | Newly computed | **Exactly reused** | Newly computed, different digest |
+| Response coordinate | Fresh causal position | **New causal position** | **New causal position** |
+| Observed single-run end-to-end wall time | **793.36 ms** | **2.29 ms** | **19.60 ms** |
+
+The native operator performed original trained mathematics for the first input. On the identical repetition **no new native trained operation was performed**. A changed waveform and phase invoked the trained operator again, reading *previously observed* original model weights locally. The source was not contacted again.
+
+The E-CPU numerical-result bank retained two complete 5,120-element binary64 output vectors, not a catalogue of predictions or manually expected answers. The original output SHA-256 remained **f3d757bf06952c797a1cc07333f968acb5f58c453cb6f5741ae2fc4f11d7f08c**; the independent original-run maximum error was **0**.
+
+Externally pinned recovery reconstructed both source and result Grounds from an approximately **314 KB checkpoint** in **8.70 ms**. The revived observer produced the original result with **zero external calls and zero new arithmetic**.
+
+**Scope of performance evidence:** The single-run first/repeat ratio is about **346×**, but it is mainly an avoided external HTTPS transfer and interpretation cost for *one partial normalization operator*, **not a 346× pretrained model inference acceleration**, nor a statistical benchmark. The first and changed-intention observations perform different work by design. No full 64-layer Qwen decoder, tokenizer, next-token inference or conversational language generation was executed.
+
+[Machine-readable live evidence](../experiments/trained_result_memory/results/2026-11-19-original-qwen27b-result-navigation.json) retains original source and implementation fingerprints, result digests, cost counters and distinct state positions **without copying pretrained tensor bytes**. The HTTPS receiver provides original-host qualification; SHA-256 content digests alone are not remote identity attestations. This job did not exercise distributed multi-host mutual TLS.
+
 ## 6. Where to take the interpreter
 
 The hard next stage is to lift *reusable mathematical laws* into Grounds that can address many future result states **without** retaining each full output vector separately:
