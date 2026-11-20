@@ -158,6 +158,7 @@ def main(argv=None):
         out={"schema":"vl-i.pinned-text-causal-construction-lab.v1",
              "status":"UNRESOLVED","model":a.model,
              "error_type":type(e).__name__,
+             "failure_reason":str(e)[:300],
              "no_claim_of_numerical_completion":True}
     dest.write_text(json.dumps(out,sort_keys=True,indent=2,
                      allow_nan=False)+"\n",encoding="utf-8")
