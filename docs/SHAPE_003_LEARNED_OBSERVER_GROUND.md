@@ -59,7 +59,7 @@ The original reference model contains twelve physical states and 36 declared sta
 
 ## Experimental result
 
-The first successful [GitHub Actions run 44647162211](https://github.com/Kier73/VL-I/actions/runs/44647162211) ran the original pinned IFS, VLD and E-CPU implementations, passed **14 focused tests**, and produced a machine-readable [experimental artifact](https://github.com/Kier73/VL-I/actions/runs/44647162211/artifacts/14589670951).
+The first successful [GitHub Actions run 44647162211](https://github.com/Kier73/VL-I/actions/runs/44647162211) ran the original pinned IFS, VLD and E-CPU implementations, passed **18 focused tests**, and produced a machine-readable [experimental artifact](https://github.com/Kier73/VL-I/actions/runs/44647162211/artifacts/14589670951).
 
 | Measurement | Phase-only | Microstate-only | Full observer |
 | --- | ---: | ---: | ---: |
@@ -69,7 +69,7 @@ The first successful [GitHub Actions run 44647162211](https://github.com/Kier73/
 | Counterexample | advance → inspect | advance → inspect | advance → inspect |
 | Independent full-reference edges in final equivalence check | 36 | 36 | 36 |
 
-The original finite source has **36 directly declared cells**. The 111-query full-observer acquisition is thus *not* evidence of a cheaper model-discovery path. Membership queries also replay prefixes, causing additional underlying transition operations; tests and the updated benchmark count those separately. The value demonstrated here is a **correct learned topology without giving the learner the source transition graph**, not a proven reduction of training/sample acquisition cost.
+The original finite source has **36 directly declared cells**. The 111-query full-observer acquisition is thus *not* evidence of a cheaper model-discovery path. Actual executed source transition steps across membership observations were **91 (phase), 138 (micro), and 838 (full)**, reflecting repeated prefix replay. These costs are **not** neural-generation, output-rendering or independent proof costs; those are measured separately. In the full-observer case, the learner performed considerably more source work than directly enumerating all 36 cells. Optimizing acquisition is a separate frontier, not an established speedup. The value demonstrated here is a **correct learned topology without giving the learner the source transition graph**, not a proven reduction of training/sample acquisition cost.
 
 The original finite source descriptor is 11,398 bytes. The generated model’s actual parameters and code/text/UTF-8 byte-token views are synthesized from the **learned predictive machine**, not from a pretrained checkpoint.
 
@@ -84,6 +84,24 @@ Four causal turns change observer scope from phase-only to micro-only, then to f
 **Generated neural Ground:** contains newly produced, whole-domain checked VLD neural weights and program semantics. Its claims are bounded by the certified observer contract, not interchangeable with arbitrary different observers.
 
 **Conversation memory:** retains symbolic *action histories* so changing from one learned observer model to another cannot incorrectly reuse the old model's numeric class index. This follows IFS' finding that a collapsed state index alone cannot safely recover distinctions for a broader intention. Replay reconstructs the true learned state in the newly selected model from the symbolic history without repeating any external side effects; this prototype has no effectful external calls.
+
+## Prompt-conditioned choice of a learned intelligence shape
+
+The full experiment now includes \`LearnedObserverIntentionRouter\`, composed with the **existing E-CPU \`IntentPrototypeModel\`** through VL-I's \`intent_topology\`. It does not train another independent language model.
+
+From six explicit training witnesses (two examples each for phase-only, micro-only and full-state observation), E-CPU proposes an observer-dependent output topology. This proposal is only **E0 advisory**. A caller must independently pin its exact digest. VL-I then requires:
+
+- identical original source identity and causal conversation head;
+- unchanged symbolic action history;
+- the same admitted list of learned observer-model identities;
+- matching IFS source-observation ledger heads;
+- a separately certified learned neural Ground for the proposed output scope.
+
+On the actual run, a prompt asking only for phase selected the **three-state learned model**, generated a state response, and retained its full symbolic causal history. A follow-up prompt requesting both phase and microstate selected the **twelve-state independently learned model**; it recovered the previous hidden distinction and rendered the qualified [1, 1] observation. Both response-position coordinates were distinct.
+
+The protocol explicitly refuses stale proposals, changed membership evidence, forged external heads and insufficient observer intent evidence. **Automatic response-action semantics are not implied by this view proposal**: the external action (\`advance\`, \`inspect\`, etc.) remains independently specified under the admitted action alphabet.
+
+The companion [GitHub Actions run 44647754297](https://github.com/Kier73/VL-I/actions/runs/44647754297) passed **18 tests**, covering this prompt-conditioned path and the original black-box learner. Its [machine-readable artifact](https://github.com/Kier73/VL-I/actions/runs/44647754297/artifacts/14589457688) records query counts, actual black-box transition steps, model/proof digests, response state coordinates and the prompt-induced shape change.
 
 ## Reproduce
 
