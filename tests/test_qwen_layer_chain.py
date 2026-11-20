@@ -160,3 +160,26 @@ def test_missing_original_layer_refused_before_claiming_a_chain():
                                     value_heads=2,key_dim=2,value_dim=2)
     with pytest.raises(ValueError,match="At least two"):
         QwenCausalGDNChain([first])
+
+
+def test_requested_original_interlayer_observations_have_exact_native_handoff_receipts():
+    chain=QwenCausalGDNChain(
+        executor(two_layer_fixture(),QwenVectorizedCompleteLayer))
+    out,received=chain.step([.5,-.2,.3],token_id=73,
+                            capture_intermediates=True)
+    captured=received["receiver_local_intermediates"]
+    assert len(captured)==2
+    assert all(type(v) is tuple and len(v)==3 for v in captured)
+    assert received["layer_witnesses"][0]["output_f64_digest"]==(
+        _f64_transfer_digest(captured[0]))
+    assert received["layer_witnesses"][1]["input_f64_digest"]==(
+        _f64_transfer_digest(captured[0]))
+    assert received["layer_witnesses"][1]["output_f64_digest"]==(
+        _f64_transfer_digest(captured[1]))
+    assert captured[1]==tuple(out)
+    assert received["all_layers_completed"]
+    assert not received["original_decoder_completed"]
+    with pytest.raises(ValueError):
+        chain.step([.3,.2,.1],token_id=74,capture_intermediates="yes")
+    assert chain.position==1
+

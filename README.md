@@ -173,6 +173,13 @@ The first **real TCP, synthetic-BF16** control passed **10 adversarial tests**, 
 
 See [SHAPE-008 — Observation-inferred laws from original token states](docs/SHAPE_008_ORIGINAL_TOKEN_LAW.md) and [the source-pinned held-out experiment](examples/token_conditioned_law_demo.py).
 
+**SHAPE-009 moves the observation source to actual causal interlayer hidden states.** Instead of starting with static token embeddings or a procedural hidden vector, VL-I now captures genuine native **Qwen GDN layer-0 output vectors as they become layer-1 inputs**, bound to original source/recurrence digests. The existing QUALIFIED-006 two-layer chain retains its semantic contract. Given three verified consecutive causal positions, an observer fits a **two-variable energy law from native layer-1 normalization observations**, independently falsifies constant/affine/separable alternatives, checks the surviving cross-term quadratic against the source-derived Gram geometry, and then generates new response-coordinate projections inside that witnessed family without rerunning native normalization. The original E-CPU content-addressed store retains real causal basis vectors and source-trained coefficients.
+
+**The next actual causal token is not guessed from the polynomial law.** A fourth completed native two-layer position is independently examined; if it falls outside the learned source span, the interpreter records a qualified *counterexample/refusal* rather than pretending an interpolated mathematical state is the real next model state. The first **synthetic-native two-layer control passed 20 tests** with original VL-64 layer code, independent held-out numerical checks, receiver-restoration and adversarial source/position tests. The separate full-size original Qwen3.8-27B run checks four real token positions and the original 5,120-dimensional causal hidden states. **Independent original-weight PyTorch whole-layer parity and complete language decoding remain separate goals**.
+
+See [SHAPE-009 — Learned Grounds from actual causal interlayer hidden states](docs/SHAPE_009_CAUSAL_HIDDEN_MANIFOLD.md) and [the native two-layer contextual-state experiment](examples/qwen_causal_manifold_demo.py).
+
+
 
 
 

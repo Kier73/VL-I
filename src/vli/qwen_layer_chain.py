@@ -67,14 +67,15 @@ class QwenCausalGDNChain:
             "index_ground_digest":self.index_ground_digest,"layers":self.layers})
         self.head=self.genesis
 
-    def step(self, hidden, *, token_id=None):
+    def step(self, hidden, *, token_id=None, capture_intermediates=False):
         """Run one genuine causal position through all consecutive trained layers.
 
         The caller must separately establish that the first input is an
         admitted original token embedding; this generic coordinator verifies
         the exact downstream transfer and commits no partial chain on error.
         """
-        if (type(token_id) not in (int,type(None)) or
+        if (type(capture_intermediates) is not bool or
+            type(token_id) not in (int,type(None)) or
             (token_id is not None and not 0<=token_id<2**31) or
             not isinstance(hidden,(tuple,list)) or len(hidden)!=self.width):
             raise ValueError("Incomplete causal chain input or original token ID")
@@ -87,6 +88,7 @@ class QwenCausalGDNChain:
         old_head,old_output=self.head,self.last_output_digest
         current=list(hidden)
         witnesses=[]
+        captured=[]
         try:
             for runner in self.runners:
                 before=_f64_transfer_digest(current)
@@ -101,6 +103,10 @@ class QwenCausalGDNChain:
                     runner.position!=self.position+1):
                     raise ValueError("Incomplete or contradictory qualified layer receipt")
                 after=_f64_transfer_digest(output)
+                if capture_intermediates:
+                    # Exact receiver-local original trained layer output. The
+                    # caller must still bind its digest to the original receipt.
+                    captured.append(tuple(output))
                 witnesses.append({
                     "layer":runner.layer,"position":self.position,
                     "input_f64_digest":before,"output_f64_digest":after,
@@ -134,10 +140,20 @@ class QwenCausalGDNChain:
             self.position+=1
             self.head=next_head
             self.last_output_digest=witnesses[-1]["output_f64_digest"]
-            return current,{**body,"chain_head":next_head,
-                            "all_layers_completed":True,
-                            "original_decoder_completed":False,
-                            "vocabulary_logits_computed":False}
+            response={**body,"chain_head":next_head,
+                      "all_layers_completed":True,
+                      "original_decoder_completed":False,
+                      "vocabulary_logits_computed":False}
+            if capture_intermediates:
+                if (len(captured)!=len(witnesses) or
+                    any(_f64_transfer_digest(vec)!=w["output_f64_digest"]
+                        for vec,w in zip(captured,witnesses))):
+                    raise ValueError("Captured trained state failed receipt digest")
+                response["receiver_local_intermediates"]=captured
+                response["intermediate_scope"]=(
+                    "actual_trained_layer_outputs_receiver_local_"
+                    "not_separately_authenticated_full_model_inference")
+            return current,response
         except Exception:
             for runner,(position,conv,delta) in zip(self.runners,saved):
                 runner.position=position

@@ -1,0 +1,95 @@
+name: VL-I SHAPE-009 causal hidden-state generative manifold
+
+on:
+  push:
+    paths:
+      - 'src/vli/causal_hidden_manifold.py'
+      - 'src/vli/qwen_layer_chain.py'
+      - 'tests/test_causal_hidden_manifold.py'
+      - 'tests/test_qwen_layer_chain.py'
+      - 'examples/qwen_causal_manifold_demo.py'
+      - 'docs/SHAPE_009_CAUSAL_HIDDEN_MANIFOLD.md'
+      - '.github/workflows/vli-shape009.yml'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_original:
+        type: boolean
+        default: false
+        description: 'Execute original Qwen27B two-layer 4-position causal hidden manifold and independent heldout law'
+
+permissions:
+  contents: read
+
+jobs:
+  native-causal-context-and-generative-law:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests:tests
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu 'numpy>=1.26' 'pytest>=8'
+      - name: Native two-layer causal transfers, inferred operator law, heldout and adversarial checkpoint
+        run: python -m pytest -q tests/test_causal_hidden_manifold.py tests/test_qwen_layer_chain.py
+      - name: Execute synthetic trained-native two-layer causal observer and negative control
+        run: python -m examples.qwen_causal_manifold_demo --mode fixture --out artifacts/shape009-causal-native-fixture.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shape009-native-causal-fixture
+          path: artifacts/shape009-causal-native-fixture.json
+          if-no-files-found: warn
+
+  original-27b-four-causal-token-manifold:
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.run_original)
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    continue-on-error: true
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests:tests
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu 'numpy>=1.26' 'tokenizers>=0.20,<1'
+      - name: Original 27B complete GDN causal layers 0 and 1 x 4 tokens, unseen grounded law and out-of-span refusal
+        run: python -m examples.qwen_causal_manifold_demo --mode live --out artifacts/shape009-original-qwen27b-causal-manifold.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shape009-original-qwen27b-contextual-interlayer-manifold
+          path: artifacts/shape009-original-qwen27b-causal-manifold.json
+          if-no-files-found: warn
