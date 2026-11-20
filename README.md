@@ -187,6 +187,26 @@ See [SHAPE-009 — Learned Grounds from actual causal interlayer hidden states](
 
 
 
+## NAV-001 — Navigate counterfactual causal futures
+
+VL-I can now branch a qualified causal Qwen prefix into multiple incompatible
+future states and recover any branch without replaying its successful
+predecessor transitions. The same source-bound interface operates over the
+two-complete-GDN-layer chain and the four-layer GDN/GQA hybrid. Its fixed-width
+coordinates distinguish exact F64 inputs, original token-ID labels and **the
+full causal parent**; retained response and recurrent/KV state pages are
+verified before recovery. A state not already visited is actually computed.
+
+The depth-four binary experiment explores **16 futures with 30 unique
+trained transitions rather than 64 full-history replay transitions**.
+This is an operation-count claim, **not** a measured end-to-end speedup or
+unseen-state prediction. Fixture token IDs and synthetic hidden values are
+not original pretrained token embeddings: source-specific input admission
+and original decoder logits are separate research milestones.
+
+See [NAV-001 — Counterfactual Causal State Navigation](docs/NAV_001_COUNTERFACTUAL_CAUSAL_GROUND.md)
+and [its adversarial tests](tests/test_counterfactual_navigation.py).
+
 ## The model-to-intention path
 
 ~~~text
