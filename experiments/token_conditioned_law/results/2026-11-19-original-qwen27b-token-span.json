@@ -1,0 +1,179 @@
+{
+  "ECPU_original_embedding_and_gain_objects": {
+    "complete_bytes": 122880,
+    "objects": {
+      "gains": "49758d5f51485c4ee9dec0c7a1946567025fdb2c331d2fc9d81d8b2ec731e691",
+      "token_left": "d3b897a288deb07ed08e4c71c883fc38304f0d775e8d6a056992456dd94ef4cb",
+      "token_right": "758406fc9bbb242b2d2dcbf558bde1a29f6481b4fef35e919cd5d359337aa08b"
+    }
+  },
+  "candidate_counterexample_errors": {
+    "affine": 2.3632389176257522,
+    "constant": 1.6991416416023721,
+    "quadratic": 3.552713678800501e-15
+  },
+  "full_output_negative_control": {
+    "generated_full_ns": 9297645,
+    "generated_slower_than_native": true,
+    "max_abs_error": 8.881784197001252e-16,
+    "native_original_reference_ns": 7019099,
+    "width": 5120
+  },
+  "heldout": [
+    {
+      "generated_ns": 466447,
+      "generated_sparse_coordinates": 8,
+      "max_abs_error": 2.220446049250313e-16,
+      "mixture": 0.13,
+      "native_calls_during_prediction": 0,
+      "native_original_reference_ns": 18444648,
+      "native_reference_invoked_only_after_prediction": true,
+      "original_network_requests_during_prediction": 0,
+      "original_token_ids": [
+        63204,
+        628
+      ],
+      "position": "state://vli/3e6c0c14e67038ee5e8cf15c8e35db3fe2dc1473775875f5ac1a18ebb45e3cfa",
+      "result_sha256": "fd77075a03b48065fee25b6bd9baabb79b14ab054363ea48d47e5a9ce04f37ac"
+    },
+    {
+      "generated_ns": 380769,
+      "generated_sparse_coordinates": 8,
+      "max_abs_error": 8.881784197001252e-16,
+      "mixture": 0.37,
+      "native_calls_during_prediction": 0,
+      "native_original_reference_ns": 6797695,
+      "native_reference_invoked_only_after_prediction": true,
+      "original_network_requests_during_prediction": 0,
+      "original_token_ids": [
+        63204,
+        628
+      ],
+      "position": "state://vli/5e0397aeda5f7702769d2ca8a3402e55f674a5e30165aba8153890003c016b90",
+      "result_sha256": "ffe0c93cb538562aac5d480745e1238d48057fef630a043e3ac7ae6245ccc65b"
+    },
+    {
+      "generated_ns": 357444,
+      "generated_sparse_coordinates": 8,
+      "max_abs_error": 8.881784197001252e-16,
+      "mixture": 0.67,
+      "native_calls_during_prediction": 0,
+      "native_original_reference_ns": 6676540,
+      "native_reference_invoked_only_after_prediction": true,
+      "original_network_requests_during_prediction": 0,
+      "original_token_ids": [
+        63204,
+        628
+      ],
+      "position": "state://vli/0fce7cf11888f4ba776b246a659608080ec843ae7ecd8b66dc1a7ec12abf4b16",
+      "result_sha256": "3b1485051095e159edc3283a4dc57751d191a6249ddfe8fb68b22f3d7d874573"
+    },
+    {
+      "generated_ns": 346083,
+      "generated_sparse_coordinates": 8,
+      "max_abs_error": 4.440892098500626e-16,
+      "mixture": 0.91,
+      "native_calls_during_prediction": 0,
+      "native_original_reference_ns": 6663677,
+      "native_reference_invoked_only_after_prediction": true,
+      "original_network_requests_during_prediction": 0,
+      "original_token_ids": [
+        63204,
+        628
+      ],
+      "position": "state://vli/c7398c107b30ab50cacb23fd6a455f1ee8f224e84182cfca21afe6f43ae0542f",
+      "result_sha256": "6a98ccd3b836dedfcd6c567ddc73c4bfe210a0906187bafe401b0a604aac1ec1"
+    }
+  ],
+  "heldout_predictions_precede_native_checks": true,
+  "inferred_coefficients": [
+    0.0004311069092040755,
+    -0.0003932650850563482,
+    0.00019900302171713905
+  ],
+  "learned_polynomial_degree": 2,
+  "max_abs_heldout_error": 8.881784197001252e-16,
+  "mode": "LIVE_ORIGINAL_QWEN27B_TOKEN_SPAN_LAW",
+  "native_norm_weight_sha256": "853b5989bfb677b1761540ee97c09bbf8d90fd825c9ae6ca74ef5853cba3c075",
+  "original_checkpoint_advertised_bytes": 55562855904,
+  "original_embedding_witnesses": [
+    {
+      "dtype": "BF16",
+      "embedding_bytes": 10240,
+      "embedding_sha256": "3b6eafbbea137d8ad9abd30e3e376bce9385fb23707ae82e1051920603801047",
+      "new_ranges": 1,
+      "range_chain_head": "7361cd06f0d1e0c14524b60717f9905fab6b4014c724f82eab8409888b368879",
+      "scope": "actual_original_checkpoint_token_embedding_row",
+      "shape": [
+        248320,
+        5120
+      ],
+      "tensor": "model.language_model.embed_tokens.weight",
+      "token_id": 63204
+    },
+    {
+      "dtype": "BF16",
+      "embedding_bytes": 10240,
+      "embedding_sha256": "6770557b2039bca9ce94455add6b092f7ce76a0127a8da6461cfbe7353d19a90",
+      "new_ranges": 1,
+      "range_chain_head": "60bf317fd0b4681db5533d065b4b4e7967ab3bc4e38a113523c99b5a542d266c",
+      "scope": "actual_original_checkpoint_token_embedding_row",
+      "shape": [
+        248320,
+        5120
+      ],
+      "tensor": "model.language_model.embed_tokens.weight",
+      "token_id": 628
+    }
+  ],
+  "original_source_ground": "8ad90c5f1cd463401812c30ac859ecaa63decf2877dd64e1a7dfa37df1da63c0",
+  "original_source_index_sha256": "77042094076611b69791a610065f28b7013b8c621795fa86ddccc8bac7d1b9df",
+  "pinned_revision": "37561816e66b5b9153b1b64c10968c18c1e6f4a0",
+  "real_original_pretrained_checkpoint": true,
+  "real_original_token_id_origins": "INTERACT004_pinned_Qwen_paragraph_tokenizer",
+  "schema": "vl-i.shape008-real-token-conditioned-inferred-law.v1",
+  "scope_limits": [
+    "two original model token rows only, affine mixtures inside their span",
+    "not a real paragraph prefill, not a next-token decoder",
+    "quadratic degree family selected from bounded candidate set",
+    "coefficients learned from actual original operator output probes",
+    "independent algebra supports degree-2 only on this affine span",
+    "new inputs unseen to training probes, reference checked afterward",
+    "original checkpoint not downscaled for live test",
+    "source bytes, probe computation, ECPU page checking costed"
+  ],
+  "source_and_inference_bootstrap_ns": 2609701712,
+  "source_bytes_transferred": 76272,
+  "source_free_recovery": {
+    "checkpoint_digest": "878cc1fdaa00b446182d03222dac5917f9523311967c9aa7b4a7721286eb597a",
+    "checkpoint_serialized_bytes": 470706,
+    "new_generated_ns": 1797633,
+    "new_native_calls_during_prediction": 0,
+    "new_original_source_requests_during_prediction": 0,
+    "new_prediction_max_abs_error": 4.440892098500626e-16,
+    "new_unseen_mixture": 0.83,
+    "recovery_ns": 23043367,
+    "success": true
+  },
+  "source_model": "Qwen/Qwen3.8-27B",
+  "source_network_requests": 7,
+  "status": "MEASURED",
+  "tokens": [
+    63204,
+    628
+  ],
+  "training_native_operator_calls": 5,
+  "training_native_operator_ns": 6610527,
+  "width": 5120,
+  "provenance": {
+    "github_actions_run": "https://github.com/Kier73/VL-I/actions/runs/44665097077",
+    "github_job_id": 136052342602,
+    "implementation_commit": "48caa9590b49012400925eeeb2d7f3207bfcc289",
+    "source_scope": "original_pinned_Qwen3_8_27B_two_original_token_embedding_rows_and_layer0_norm",
+    "source_token_origin": "VL-I INTERACT-004 pinned real paragraph token IDs",
+    "no_original_weight_payload_bytes_in_evidence": true,
+    "training_observations_are_original_VL64_native_math": true,
+    "heldout_reference_queried_only_after_predictions": true,
+    "not_a_real_causal_transformer_prefill_state": true
+  }
+}
