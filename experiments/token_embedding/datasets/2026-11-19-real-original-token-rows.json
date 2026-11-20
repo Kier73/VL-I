@@ -1,0 +1,106 @@
+{
+  "schema": "vl-i.saved-original-token-embedding-evidence.v1",
+  "source_kind": "actual pinned public checkpoint safetensors qualified-range observations; selected report fields",
+  "github_actions_run": 44648895450,
+  "run_url": "https://github.com/Kier73/VL-I/actions/runs/44648895450",
+  "no_pretrained_weight_bytes_stored_in_virtual_ground": true,
+  "native_tokenizer_applied": false,
+  "full_decoder_completed": false,
+  "models": {
+    "qwen-27b": {
+      "model": "Qwen/Qwen3.8-27B",
+      "revision": "37561816e66b5b9153b1b64c10968c18c1e6f4a0",
+      "advertised_weight_bytes": 55562855904,
+      "artifact_id": 14589359408,
+      "scope": "genuine_initial_token_embedding_to_qwen_layer0_gate_partial",
+      "original_embedding_tensor": "model.language_model.embed_tokens.weight",
+      "checkpoint_restoration_verified": true,
+      "states": [
+        {
+          "token_id": 100,
+          "embedding_sha256": "7760db1050091af4955cfbe38a05434eedf13511ae82dac98f78f275bc954694",
+          "embedding_bytes": 10240,
+          "trained_bytes": 1003712,
+          "trained_ranges": 24,
+          "coordinate": "state://vli/049e7c45c0e5ced218ffd9b3c3fcd20953017ad45944dce2dbc5d321ccc34811",
+          "range_chain": "ca1ce507f319b37d97f38c79809ac7937ee95a19dc7aaf3f60c070f1e7b9ef07",
+          "constructed": {
+            "heads": 48,
+            "mean_beta": 0.811621193977,
+            "beta_above_half": 44
+          },
+          "render_state": "RENDERED"
+        },
+        {
+          "token_id": 101,
+          "embedding_sha256": "23f0be6aede82c550dcc239e1ef2bb2d0e791af56acdf5bd6ae4b9bc16ed6917",
+          "embedding_bytes": 10240,
+          "trained_bytes": 1003712,
+          "trained_ranges": 20,
+          "coordinate": "state://vli/275698a373361a2f59ef6c56eb71dd0cb9cc39d13ec27227e4332bab7b9b120c",
+          "range_chain": "45427d75d3ed3ac0982f82c146dfdb1ca1588a92e837e2a46ad16d82bc3497c0",
+          "constructed": {
+            "heads": 48,
+            "mean_beta": 0.824024181167,
+            "beta_above_half": 41
+          },
+          "render_state": "RENDERED"
+        }
+      ]
+    },
+    "deepseek-v41-flash": {
+      "model": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "revision": "1bae0e1088993b9b82de08f59de5be5a34e42170",
+      "advertised_weight_bytes": 510286023000,
+      "artifact_id": 14588864450,
+      "scope": "trained_embedding_fed_router_probe_not_true_moe_causal_input",
+      "original_embedding_tensor": "embed.weight",
+      "checkpoint_restoration_verified": true,
+      "states": [
+        {
+          "token_id": 100,
+          "embedding_sha256": "ccfc0b8766867ef2289e1a79710d3f23a503ecdfae4a7b427c3f2b07e3729855",
+          "embedding_bytes": 10240,
+          "trained_bytes": 3983920,
+          "trained_ranges": 109,
+          "coordinate": "state://vli/b1e80597b6f9dd9a79fe27cf5394094f967f8829176a16362190797d79127b0d",
+          "range_chain": "75580565a57cbb29c43d39c60614f84ec1371e3267c5676d6d6d4eeea8979c53",
+          "constructed": {
+            "selected": [
+              94,
+              182,
+              21,
+              233,
+              139,
+              292
+            ],
+            "weighted_partial": 0.000061885839
+          },
+          "render_state": "RENDERED"
+        },
+        {
+          "token_id": 101,
+          "embedding_sha256": "13e8ecc46c7b0fdcdac1b94701db05e53e05fedf7fbcc5deb71cfecb7b368206",
+          "embedding_bytes": 10240,
+          "trained_bytes": 3983920,
+          "trained_ranges": 102,
+          "coordinate": "state://vli/f2133d9ed8fa31de0c8418224e7dc77c0c798bfb505f35090ffc1864949a8985",
+          "range_chain": "7a26430e762dd94ea9277d3a28d9fda7c004943aeadebdd901b1377e050e04b3",
+          "constructed": {
+            "selected": [
+              94,
+              182,
+              21,
+              292,
+              240,
+              139
+            ],
+            "weighted_partial": -0.000109361655
+          },
+          "render_state": "RENDERED"
+        }
+      ]
+    }
+  },
+  "claim_scope": "pinned token embedding rows and downstream partial native learned operations; no actual tokenizer-to-text validation; no full model causal decoding or logits"
+}

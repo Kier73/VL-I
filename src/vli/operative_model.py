@@ -138,6 +138,18 @@ def _input(spec, width):
             for j in range(width)]
 
 
+def _admit_hidden(values,width):
+    """Admit finite, exact-width observer-supplied model hidden state.
+
+    The caller must bind these values to a qualified source coordinate and
+    record the source receipt. This function does not infer pretrainedness.
+    """
+    _require(type(values) in (list,tuple) and len(values)==width
+             and all(type(x) in (float,int) and math.isfinite(x) for x in values),
+             "Incomplete or unqualified hidden-state input")
+    return list(values)
+
+
 def _sigmoid(value):
     if value >= 0:
         return 1.0/(1.0+math.exp(-value))
@@ -145,7 +157,7 @@ def _sigmoid(value):
     return e/(1.0+e)
 
 
-def _qwen(nav,spec):
+def _qwen(nav,spec,*,hidden=None):
     from experiments.model_fabric.qualified_subgraphs import observed_rows, observed_values
     from experiments.model_fabric.trained_subgraphs import centered_rms_norm
     from experiments.model_fabric.architecture_ops import qwen_gates
@@ -159,7 +171,7 @@ def _qwen(nav,spec):
     a_desc=nav.locate(an); b_desc=nav.locate(bn)
     _require(a_desc["shape"]==[48,5120] and b_desc["shape"]==[48,5120],
              "Original 48-head Qwen gate topology differs")
-    x=_input(spec,5120)
+    x=_input(spec,5120) if hidden is None else _admit_hidden(hidden,5120)
     normalized=centered_rms_norm(x,observed_values(nav,n))
     a=observed_rows(nav,an,normalized,first=0,count=48)
     b=observed_rows(nav,bn,normalized,first=0,count=48)
@@ -185,7 +197,7 @@ def _qwen(nav,spec):
             "scope":"48 real trained Qwen layer-0 gate scalars; no recurrent QKV or full decoder"}
 
 
-def _deepseek(nav,spec):
+def _deepseek(nav,spec,*,hidden=None):
     from experiments.model_fabric.qualified_subgraphs import (
         observed_rows,observed_values,_mx_fp4_row)
     from experiments.model_fabric.architecture_ops import deepseek_sqrtsoftplus_route
@@ -197,7 +209,7 @@ def _deepseek(nav,spec):
     _require(len(desc["shape"])==2 and desc["shape"][0]==384
              and 1 <= desc["shape"][1] <= 32768,
              "Original DeepSeek expert-router geometry differs")
-    x=_input(spec,desc["shape"][1])
+    x=_input(spec,desc["shape"][1]) if hidden is None else _admit_hidden(hidden,desc["shape"][1])
     bias=observed_values(nav,bn)
     _require(len(bias)==384,"Incomplete trained router bias")
     logits=observed_rows(nav,wn,x,count=384)
@@ -227,7 +239,8 @@ def _deepseek(nav,spec):
         _require(d["shape"][0] > 0 and width >= 32
                  and width%32==0 and width<=32768,
                  "Selected FP4 expert is not shape-admitted")
-        eh=_input(spec,width)
+        _require(width==len(x),"Expert input width differs from admitted hidden state")
+        eh=x
         gate,eg=_mx_fp4_row(nav,gate_name,eh)
         up,eu=_mx_fp4_row(nav,up_name,eh)
         activation=gate*_sigmoid(gate)*up
