@@ -27,7 +27,7 @@ No layer, attention operator, full pretrained tokenizer or decoder may be marked
 
 ## Architectural flow
 
-\`\`\`text
+```text
 Observer intention: inspect / realize a qualified original model relation
   |
   v
@@ -50,13 +50,13 @@ VL-64 independently checks exact range, hash and declared lineage
   |
   v
 Bounded original trained operation + new observer response
-\`\`\`
+```
 
 This uses no replacement inference backend. The small numerical probe is the original VL-64 pretrained RMSNorm experiment with independently checked arithmetic.
 
 ### Authority and recovery
 
-Every retained entry binds the exact model, forty-hex revision, index Ground digest, shard, byte start/end, purpose, original receiver-host identifier, byte SHA-256 and E-CPU object manifest identity. Warm reads are given a **local observer-host identity** (not impersonating the external HTTPS host) and are explicitly marked \`PINNED_GLANCE_DERIVATION\`. The original VL-64 receiver incorporates the original witness digest into its execution's range-chain.
+Every retained entry binds the exact model, forty-hex revision, index Ground digest, shard, byte start/end, purpose, original receiver-host identifier, byte SHA-256 and E-CPU object manifest identity. Warm reads are given a **local observer-host identity** (not impersonating the external HTTPS host) and are explicitly marked `PINNED_GLANCE_DERIVATION`. The original VL-64 receiver incorporates the original witness digest into its execution's range-chain.
 
 The checkpoint can be restored with **no original remote host connected** if and only if its externally expected digest, model index, E-CPU object manifests, page contents and preserved original witnesses verify. The revived observer may re-emit only **exact retained ranges**. Previously unobserved ranges refuse until a new source is explicitly connected. A caller can separately **requalify** any previously observed range against its upstream host; if the bytes have drifted under an ostensibly unchanged identity, it refuses rather than silently replacing the original observation.
 
@@ -95,18 +95,40 @@ A saved E-CPU-backed memory snapshot occupied roughly **30 KB** of JSON includin
 
 The same benchmark has a **separate** live mode:
 
-\`\`\`bash
+```bash
 python -m examples.pretrained_range_memory_demo --mode live \
     --out artifacts/shape005-live-qwen.json
-\`\`\`
+```
 
-It retrieves the original, unmodified **Qwen/Qwen3.8-27B** shard index at revision \`37561816e66b5b9153b1b64c10968c18c1e6f4a0\`, checks it against the existing VL-I pinned index SHA-256 \`77042094076611b69791a610065f28b7013b8c621795fa86ddccc8bac7d1b9df\`, then reads an original pretrained normalization tensor using VL-64's source-qualified HTTPS range host. **No smaller model is substituted.** The complete original checkpoint is advertised as **55,562,855,904 bytes**; only exact required ranges are read.
+It retrieves the original, unmodified **Qwen/Qwen3.8-27B** shard index at revision `37561816e66b5b9153b1b64c10968c18c1e6f4a0`, checks it against the existing VL-I pinned index SHA-256 `77042094076611b69791a610065f28b7013b8c621795fa86ddccc8bac7d1b9df`, then reads an original pretrained normalization tensor using VL-64's source-qualified HTTPS range host. **No smaller model is substituted.** The complete original checkpoint is advertised as **55,562,855,904 bytes**; only exact required ranges are read.
 
 The second navigator instance retrieves the **same original observed bytes** from E-CPU's retained byte objects. The numerical verification must produce the identical dimension and error, no additional remote range requests and a distinct provenance-preserving local range chain. A third instance recovers the retained observation after a source-free checkpoint restoration.
 
-**Execution is independently tracked:** the CI workflow runs the deterministic TCP tests on all PRs, and attempts the original Qwen HTTPS probe once on the merged \`main\` push, or via an explicit \`workflow_dispatch.run_real_ranges\` input. The public source could be rate-limited, reject ranges, change or become unavailable. The optional live job reports \`UNRESOLVED\` and does not turn a failed source request into simulated pretrained proof. It uses an explicit \`continue-on-error\` guard because network availability is not an invariant of the artifact's local semantics.
+**Execution is independently tracked:** the CI workflow runs the deterministic TCP tests on all PRs, and attempts the original Qwen HTTPS probe once on the merged `main` push, or via an explicit `workflow_dispatch.run_real_ranges` input. The public source could be rate-limited, reject ranges, change or become unavailable. The optional live job reports `UNRESOLVED` and does not turn a failed source request into simulated pretrained proof. It uses an explicit `continue-on-error` guard because network availability is not an invariant of the artifact's local semantics.
 
-Until that live run reports \`MEASURED\` with \`trained_original_checkpoint_observed=true\`, **only the synthetic local TCP behavior has been experimentally established in this PR**.
+### Live original-checkpoint result — November 19, 2026
+
+The optional original-size HTTPS job **actually completed successfully**, not merely as a simulated or skipped probe. [GitHub Actions run 44652832592](https://github.com/Kier73/VL-I/actions/runs/44652832592) recorded `status=MEASURED`, `trained_original_checkpoint_observed=true`, and `full_model_forward_pass_executed=false`.
+
+| Observed quantity | Original HTTPS reading | Retained E-CPU CAS reading |
+| --- | ---: | ---: |
+| Source model | Qwen/Qwen3.8-27B | **Same pinned source** |
+| Source range requests | **3** | **0** |
+| Original source payload transferred | **55,640 bytes** | **0 bytes** |
+| Numeric operation | Original 5,120-dimensional BF16 layer-0 norm | **Independently matched** |
+| Original trained tensor payload | **10,240 bytes** | **Same exact retained bytes** |
+| Observed single-run wall time | **785.319 ms** | **6.291 ms** |
+| Native numerical cross-check error | **0** | **0** |
+| Trained model decoder | **Not executed** | **Not executed** |
+
+The single-run ratio of source-range observation time is approximately **125×** in this specific network/cache comparison. It is **not a 125× neural inference acceleration**: the prototype executes only the original small numerical normalization operator, not the full decoder, tokenizer or complete Transformer architecture.
+
+The retained E-CPU snapshot preserved **55,640 original observed bytes** across three ranges, with provenance-bound page manifests and an approximately **140 KB serialized checkpoint**. Independently restoring that checkpoint took **2.499 ms** and allowed the same original tensor result to be reproduced without a connected original HTTPS host. The original VL-64 receipt chain distinguishes the new *local derivation* from the earlier *network observation*.
+
+The raw measurement has been retained in the repository without embedding any proprietary, credential-bearing or original tensor payload bytes: [original Qwen evidence JSON](../experiments/pretrained_range_memory/results/2026-11-19-qwen-original-range-memory.json).
+
+**Evidence scope:** one real source-pinned pretrained normalization relation on the full, unmodified 27B architecture; original source acquired over HTTPS, local E-CPU verified reuse, independently checked numerical equivalence. No complete pretrained language inference is claimed.
+
 
 ## Next: cache verified computation, not merely bytes
 
