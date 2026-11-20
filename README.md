@@ -123,6 +123,19 @@ On a measured 256-microstate synthetic expansion, a **verified eight-state obser
 
 See [SHAPE-001 — Connectome-inspired Observer Grounds](docs/SHAPE_001_CONNECTOME_OBSERVER_GROUND.md) and [the measured cross-repository experiment](examples/connectome_shape_demo.py).
 
+**SHAPE-002 now makes the intelligence model itself malleable.** Starting from a **single 12-state, 36-transition description**, VL-I uses VLD's predictive quotient and an independent all-state/action output-equivalence proof to generate **three different neural models** for three different observers:
+
+- Phase-only: **3 observable states, 9 generated neural hidden units**.
+- Microstate-only: **4 observable states, 12 hidden units**.
+- Both channels: **12 observable states, 36 hidden units**.
+
+The same external observer can now **change what they request conversationally**. An E-CPU witnessed-intention proposal, accepted with a source- and causal-head-bound digest, chooses a qualified projection; a broader follow-up automatically selects a finer neural Ground while retaining the underlying original state. All models produce newly generated code, text and byte-token responses, not just hidden/masked columns of one large model. Tests cover all original transitions, longer action histories, altered sources, proof forgeries, new distinguishing outputs and recoverable multi-turn shape changes.
+
+A measured GitHub Actions run found approximately **5.08× lower repeated neural-step-plus-local-oracle time** for the three-state phase network than the full twelve-state model (8.29 μs versus 42.07 μs). We corrected an initial cold-cost confound by charging shared compiler imports to the source-admission bootstrap; after that correction the three-state form also required less separate model compilation work. The one-time source/bootstrap cost remains substantial and is not included in query-only speed comparisons. This is bounded description-native model arithmetic, **not** a verified speedup for pretrained language models or a guarantee of cheaper total deployment.
+
+See [SHAPE-002 — Intention-driven neural morphogenesis](docs/SHAPE_002_INTENTION_MORPHOGENESIS.md) and [its measured generative conversation](examples/morphological_generation_demo.py).
+
+
 ## The model-to-intention path
 
 ~~~text
