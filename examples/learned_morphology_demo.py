@@ -40,6 +40,10 @@ def run():
                                      for row in g.revision_history
                                      if row["counterexample"] is not None],
             "ifs_black_box_membership_calls":g.oracle.external_calls,
+            "ifs_actual_source_transition_steps_for_membership":g.source.direct_transition_steps,
+            "independent_full_reference_edges_across_revisions":
+                sum(round_info["checked_full_source_edges"]
+                    for round_info in g.revision_history),
             "ifs_ledger_head":g.oracle.head,
             "ifs_ledger_digest":g.ledger["digest"],
             "ifs_checkpoint_digest":g.ifs_checkpoint["digest"],
