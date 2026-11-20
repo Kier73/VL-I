@@ -293,6 +293,46 @@ elif sys.argv[1]=="reader":
     assert len(result["observations"])==2
 
 
+@pytest.mark.parametrize("factory",[two_factory,hybrid_factory])
+def test_independent_scalar_oracles_replay_all_certified_futures(tmp_path,factory):
+    """Every certificate witness is checked against different numerical math.
+
+    The GDN reference executes upstream original scalar qualified operators,
+    not VL-I's fast NumPy QwenVectorizedCompleteLayer. The hybrid reference
+    separately executes a hand-written scalar gated-attention/softmax oracle.
+    """
+    from experiments.model_fabric.complete_native_layers import QwenQualifiedLayer
+    from test_qwen_layer_chain import two_layer_fixture,executor
+    from test_qwen_hybrid_block import (
+        nav_hybrid,runners,reference_attention,
+    )
+    ground,navigator,left,right,cert=experiment(tmp_path,factory)
+    assert cert["verdict"]==EQUIVALENT
+    action_vectors={"negative":B,"positive":C}
+    def scalar_reference(prefix, names):
+        if factory is two_factory:
+            native=executor(two_layer_fixture(),QwenQualifiedLayer)
+        else:
+            native=runners(nav_hybrid(),vectorized=False)[:3]
+        timeline=[]
+        output=None
+        for hidden in [prefix]+[action_vectors[x] for x in names]:
+            output=list(hidden)
+            for layer in native:
+                output,_=layer.next(output)
+            if factory is hybrid_factory:
+                output,timeline=reference_attention(output,timeline,len(timeline))
+        return output
+    for row in cert["rows"]:
+        for parent, side in ((A,"left"),(D,"right")):
+            native=scalar_reference(parent,row["path"])
+            retained=ground._inspect(
+                ground.nodes[row[side+"_coordinate"]],verify_checkpoint=True)
+            assert retained==pytest.approx(native,abs=2e-10)
+            assert _readout(cert["observer"],native)==row[side+"_observation"]
+    assert len(cert["rows"])==6
+
+
 def test_invalid_observer_mutation_and_oversized_frontier_refused(tmp_path):
     from vli.future_observer_quotient import action_alphabet
     for channels in ([(0,float("nan"))],[(0,0.0),(0,1.0)],[(1000,0.0)]):
