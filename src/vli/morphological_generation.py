@@ -88,11 +88,13 @@ class ObserverMorphology:
         # VLD triad's state projection considers state-dependent observable
         # signatures, distinct from actual transition outputs. The separate
         # Mealy congruence check below covers the *emitted* channels too.
-        # For this defined source family, state observers read each state's
-        # state-related identity from its self-observation via the first action.
+        # Mealy observer distinguishes all immediate outputs for every
+        # admitted action; VLD then refines for all future action histories.
+        # Starting from the complete output signature is essential: using
+        # only one action could merge states that differ on another action.
         observer = {
-            s: repr(tuple(system.step(s,system.actions[0]).output[i]
-                          for i in positions))
+            s: repr(tuple((a, tuple(system.step(s,a).output[i]
+                                   for i in positions)) for a in system.actions))
             for s in system.states
         }
         t0 = perf_counter_ns()
