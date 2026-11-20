@@ -1,0 +1,57 @@
+name: VL-I SHAPE-004 structural memory for observed intelligence
+
+on:
+  push:
+    branches: ["main", "feat/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verified-prefix-memory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin original IFS black-box learner
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/In-Formation-Space
+          ref: 0c712a83a33d14a0de630e26facd74cb487e102e
+          path: upstream/ifs
+          persist-credentials: false
+      - name: Pin VLD state authority and neural generator
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/Virtual-Layer-Dynamics
+          ref: 985ba5c2fbcc40842aed9f45f42587749620b98e
+          path: upstream/vld
+          persist-credentials: false
+      - name: Pin E-CPU source byte Ground
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install actual source interpretation implementations
+        run: python -m pip install -e . -e upstream/vld -e upstream/ecpu
+      - name: Verify receiver-owned structural memory and source-independent restoration
+        env:
+          PYTHONPATH: upstream/ifs/experiments/codonic-capability-atlas
+        run: python -m unittest discover -s tests -p test_observation_memory.py -v
+      - name: Benchmark same IFS evidence and generated models against uncached acquisition
+        env:
+          PYTHONPATH: upstream/ifs/experiments/codonic-capability-atlas
+        run: python -m examples.observation_memory_demo --out artifacts/shape004-observation-memory.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vli-shape004-verified-structural-memory-acquisition
+          path: artifacts/shape004-observation-memory.json
+          if-no-files-found: warn
