@@ -362,7 +362,11 @@ class FiniteFutureObserverGround:
         if (type(certificate["new_trained_transitions_for_evidence"]) is not int or
                 type(certificate["reused_trained_transitions_for_evidence"]) is not int or
                 certificate["new_trained_transitions_for_evidence"]<0 or
-                certificate["reused_trained_transitions_for_evidence"]<0):
+                certificate["reused_trained_transitions_for_evidence"]<0 or
+                certificate["new_trained_transitions_for_evidence"] !=
+                    len(g.nodes)-certificate["forest_node_count_before"] or
+                certificate["new_trained_transitions_for_evidence"] +
+                    certificate["reused_trained_transitions_for_evidence"] != 2*index):
             raise ValueError("Unqualified trained future evidence costs")
         return {"verdict":verdict,"witness_pairs_verified":index,
                 "horizon":horizon,"observer_digest":observer["observer_digest"],
