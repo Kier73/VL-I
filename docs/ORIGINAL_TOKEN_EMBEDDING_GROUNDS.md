@@ -104,3 +104,24 @@ qualified, recoverable, and expressive as the requested output.
 The VL-64 core is unchanged; VL-I is free to explore the richer relations
 until an irreducible general interpreter primitive can be extracted within
 the 64 KiB budget.
+
+## First real checkpoint measurements (original scale)
+
+The live original-source [run 44648895450](https://github.com/Kier73/VL-I/actions/runs/44648895450)
+passed both model jobs. The complete original output reports remain downloadable
+from that run; selected measured fields are independently archived in
+[`2026-11-19-real-original-token-rows.json`](../experiments/token_embedding/datasets/2026-11-19-real-original-token-rows.json).
+
+| Trained row input | Observed derived relation | Qualified weight bytes per observation |
+| --- | --- | ---: |
+| Qwen token ID 100 | mean beta 0.811621193977; 44 of 48 above 0.5 | 1,003,712 |
+| Qwen token ID 101 | mean beta 0.824024181167; 41 of 48 above 0.5 | 1,003,712 |
+| DeepSeek token ID 100 | experts 94,182,21,233,139,292; partial weighted value 0.000061885839 | 3,983,920 |
+| DeepSeek token ID 101 | experts 94,182,21,292,240,139; partial weighted value -0.000109361655 | 3,983,920 |
+
+Each native token row was precisely 10,240 BF16 bytes. Their SHA-256 values
+differed between ID 100 and ID 101. The result views were actually rendered
+through E-CPU/VLD; the explicit causal interpreter checkpoint was restored.
+These are **real trained partial calculations**, not semantic correctness or
+complete next-token prediction. Most importantly, the DeepSeek experiment
+is explicitly **not** the model's true post-attention expert input.
