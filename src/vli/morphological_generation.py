@@ -304,7 +304,10 @@ class ObserverMorphology:
             "source_recheck_all_cells":source_verify_every_cell,
             "scope":"qualified_observer_output_not_general_LLM",
         }
-        result["observation_digest"]=_digest(OBS_SCHEMA,result)
+        # Host timings are non-semantic and must not alter the state identity
+        # or make independently replayed causal history divergent.
+        result["observation_digest"]=_digest(OBS_SCHEMA,{
+            k:v for k,v in result.items() if k!="generate_and_render_ns"})
         return result
 
 
