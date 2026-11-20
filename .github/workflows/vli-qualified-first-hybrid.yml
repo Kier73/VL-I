@@ -7,6 +7,8 @@ on:
       - 'src/vli/qwen_hybrid_block.py'
       - 'tests/test_qwen_hybrid_block.py'
       - 'tests/test_qwen_hybrid_process_recovery.py'
+      - 'tests/test_saved_original_qwen_first_hybrid.py'
+      - 'experiments/qwen_all_heads/datasets/2026-11-19-real-original-qwen-first-hybrid-block.json'
       - 'examples/qwen_hybrid_block_frontier.py'
       - 'docs/QUALIFIED_FIRST_HYBRID_BLOCK.md'
       - '.github/workflows/vli-qualified-first-hybrid.yml'
@@ -48,7 +50,7 @@ jobs:
       - name: Independently compare full attention, three GDN transitions, and causal KV recovery
         run: python -m pytest -q tests/test_qwen_hybrid_block.py tests/test_qwen_hybrid_process_recovery.py
       - name: Preserve previously successful full original two-layer contract
-        run: python -m pytest -q tests/test_qwen_layer_chain.py tests/test_saved_original_qwen_two_layers.py
+        run: python -m pytest -q tests/test_qwen_layer_chain.py tests/test_saved_original_qwen_two_layers.py tests/test_saved_original_qwen_first_hybrid.py
 
   original-pinned-first-hybrid-block:
     if: github.event_name == 'workflow_dispatch' && inputs.run_original_hybrid
