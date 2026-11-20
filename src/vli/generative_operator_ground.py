@@ -225,6 +225,22 @@ class GenerativeTrainedOperatorGround:
                  and self.witness["gain_bytes_sha256"]==self.gain_sha256,
                  "Generative law, pretrained source or original witnesses changed")
 
+    def _evaluate(self,spec,wanted):
+        from mailcpu.computational_objects import ComputationalObjectManifest
+        factor=1/math.sqrt(_energy(self.chosen_law,spec,self.width)+1e-6)
+        manifest=ComputationalObjectManifest.from_dict(self.gain_manifest)
+        values=[];pages=set()
+        for i in wanted:
+            # Only selected E-CPU pages are fetched and independently checked.
+            # The full original hidden vector is NEVER instantiated here.
+            chunk=(i*8)//manifest.chunk_size
+            gain=struct.unpack("<d",self._store.read_range(manifest,i*8,8))[0]
+            pages.add(chunk)
+            values.append(_element(spec,i)*factor*gain)
+        _require(all(math.isfinite(z) for z in values),
+                 "Generated observer result has nonfinite values")
+        return values,pages
+
     def observe(self,spec,indices,*,expected_head):
         from mailcpu.computational_objects import ComputationalObjectManifest
         _domain(spec,self.width);self._admit()
@@ -242,18 +258,7 @@ class GenerativeTrainedOperatorGround:
         position={"coordinate":"state://vli/"+coord,
                   "position_digest":coord,"scope":list(wanted)}
         first=perf_counter_ns()
-        factor=1/math.sqrt(_energy(self.chosen_law,spec,self.width)+1e-6)
-        manifest=ComputationalObjectManifest.from_dict(self.gain_manifest)
-        values=[];pages=set()
-        for i in wanted:
-            # Read only relevant E-CPU stored coefficient pages; the entire
-            # 5,120-dimensional vector is never materialized per query.
-            chunk=(i*8)//manifest.chunk_size
-            gain=struct.unpack("<d",self._store.read_range(manifest,i*8,8))[0]
-            pages.add(chunk)
-            values.append(_element(spec,i)*factor*gain)
-        _require(all(math.isfinite(z) for z in values),
-                 "Generated observer result has nonfinite values")
+        values,pages=self._evaluate(spec,wanted)
         bits=struct.pack("<"+"d"*len(values),*values)
         work_ns=perf_counter_ns()-first
         self.generated_calls+=1
@@ -262,6 +267,7 @@ class GenerativeTrainedOperatorGround:
             "schema":OBS,"ground":self.ground_digest,
             "position":position["coordinate"],"previous":self.head,
             "intention":spec["intent_digest"],
+            "intention_spec":deepcopy(spec),
             "observer_indices":list(wanted),
             "result_sha256":sha256(bits).hexdigest(),
             "generated_coordinates":len(wanted),
@@ -401,6 +407,24 @@ class GenerativeTrainedOperatorGround:
                      and _digest(OBS,{k:v for k,v in event.items()
                                     if k!="event_digest"})==event["event_digest"],
                      "Generative event chain changed")
+            spec=event.get("intention_spec")
+            _domain(spec,obj.width)
+            indices=event.get("observer_indices")
+            _require(type(indices) is list and 1<=len(indices)<=MAX_POSITIONS
+                     and len(set(indices))==len(indices)
+                     and all(type(i) is int and 0<=i<obj.width for i in indices)
+                     and event.get("intention")==spec["intent_digest"]
+                     and event.get("generated_coordinates")==len(indices),
+                     "Restored intention or requested observer projection changed")
+            basis={"schema":POS,"ground":obj.ground_digest,
+                   "observer":obj.observer,"intent":spec["intent_digest"],
+                   "indices":indices,"causal_head":prev}
+            coordinate="state://vli/"+_digest(POS,basis)
+            generated,_=obj._evaluate(spec,indices)
+            bits=struct.pack("<"+"d"*len(generated),*generated)
+            _require(event.get("position")==coordinate
+                     and event.get("result_sha256")==sha256(bits).hexdigest(),
+                     "Recovered causal position or generated state differs from Ground")
             prev=event["event_digest"]
         _require(prev==obj.head,"Restored generative causal head differs")
         return obj
