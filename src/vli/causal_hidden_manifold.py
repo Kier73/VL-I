@@ -177,6 +177,7 @@ def _qualified_capture(report,expected_width,expected_position,previous,
         "layer1_recurrent_state_digest":ws[1]["recurrent_state_digest"],
         "layer1_convolution_state_digest":ws[1]["convolution_state_digest"],
         "native_complete_layers":True,
+        "semantic_layer_witnesses":deepcopy(semantic_ws),
     }
     return list(states[0]),record
 
@@ -501,6 +502,32 @@ class CausalHiddenManifoldGround:
                      and rec["layer0_output_f64_digest"]==
                          rec["layer1_input_f64_digest"],
                      "Stored observed causal layer transfer or order changed")
+            witnesses=rec["semantic_layer_witnesses"]
+            _require(type(witnesses) is list and len(witnesses)==2
+                     and [w["layer"] for w in witnesses]==[0,1]
+                     and all(w["position"]==pos and
+                             w["complete_output_width"]==obj.width
+                             for w in witnesses)
+                     and witnesses[0]["output_f64_digest"]==
+                         rec["layer0_output_f64_digest"]
+                     and witnesses[1]["input_f64_digest"]==
+                         rec["layer1_input_f64_digest"]
+                     and witnesses[1]["output_f64_digest"]==
+                         rec["layer1_output_f64_digest"]
+                     and witnesses[0]["recurrent_state_digest"]==
+                         rec["layer0_recurrent_state_digest"]
+                     and witnesses[1]["recurrent_state_digest"]==
+                         rec["layer1_recurrent_state_digest"]
+                     and witnesses[1]["convolution_state_digest"]==
+                         rec["layer1_convolution_state_digest"],
+                     "Source semantic layer receipts no longer agree")
+            chain_semantic={
+                "schema":CHAIN,"model":obj.model,"revision":obj.revision,
+                "index_ground_digest":obj.index_ground_digest,
+                "position":pos,"original_token_id":rec["original_token_id"],
+                "previous":expected,"layer_witnesses":witnesses}
+            _require(_digest(CHAIN,chain_semantic)==rec["chain_head"],
+                     "Original native layer causal head no longer reconstructs")
             expected=rec["chain_head"]
             m=ComputationalObjectManifest.from_dict(obj.objects[f"causal_{pos}"])
             raw=obj.store.read_bytes(m,max_bytes=65536)
