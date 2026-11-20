@@ -1,0 +1,90 @@
+name: VL-I SHAPE-006 original trained result memory
+
+on:
+  push:
+    paths:
+      - 'src/vli/trained_result_memory.py'
+      - 'tests/test_trained_result_memory.py'
+      - 'examples/trained_result_memory_demo.py'
+      - 'docs/SHAPE_006_VERIFIED_TRAINED_RESULT_GROUND.md'
+      - '.github/workflows/vli-shape006.yml'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_real_source:
+        description: "Observe original full Qwen 27B norm via pinned HTTPS and compare result-memory to new trained computation"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  result-memory-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PYTHONPATH: upstream/vl64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Reuse original native trained math and E-CPU CAS
+        run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu
+      - name: Validate actual result reuse, independent numeric check and source/intent/implementation refusals
+        run: python -m unittest discover -s tests -p test_trained_result_memory.py -v
+      - name: Run original protocol through real loopback TCP synthetic BF16 fixture
+        run: python -m examples.trained_result_memory_demo --mode loopback --out artifacts/shape006-synthetic-tcp.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shape006-verifiable-trained-result-fixture
+          path: artifacts/shape006-synthetic-tcp.json
+          if-no-files-found: warn
+
+  real-original-qwen-norm-result-memory:
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.run_real_source)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    continue-on-error: true
+    env:
+      PYTHONPATH: upstream/vl64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu
+      - name: Original checkpoint HTTPS pretrained operator fresh/memoized/different input, source-free restore
+        run: python -m examples.trained_result_memory_demo --mode live --out artifacts/shape006-real-qwen.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shape006-original-qwen-trained-result
+          path: artifacts/shape006-real-qwen.json
+          if-no-files-found: warn
