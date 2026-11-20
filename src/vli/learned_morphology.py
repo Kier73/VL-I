@@ -396,3 +396,92 @@ class LearnedMorphologyConversation:
                  and list(restored.history)==saved["symbolic_history"],
                  "Restored causal state changed")
         return restored
+
+
+
+class LearnedObserverIntentionRouter:
+    """Reuse E-CPU's witnessed intent-to-topology on *learned* observer models.
+
+    The intention proposal remains E0 advisory until the exact proposal head
+    is externally approved. The chosen model is separately certified by its
+    IFS observation ledger, independent source conformance and VLD compiler.
+    This adapter does not add an independent classifier or execute tools.
+    """
+
+    def __init__(self, conversation: LearnedMorphologyConversation):
+        from .response_state import ResponseSourceGround, SourceSlot
+        _require(isinstance(conversation,LearnedMorphologyConversation),
+                 "Missing causal learned observer Ground")
+        self.conversation=conversation
+        root=conversation.models[0].source_digest
+        names=tuple(c for m in conversation.models for c in m.channels)
+        names=tuple(sorted(set(names)))
+        self.lenses=ResponseSourceGround(tuple(
+            SourceSlot(c,"text",("learned-observer:"+root+":"+c).encode("utf-8"))
+            for c in names
+        ))
+
+    def propose(self, witnesses, prompt, *, min_confidence=0.35,
+                min_margin=0.001):
+        from .intent_topology import propose_response_topology
+        session=self.conversation
+        p=propose_response_topology(
+            self.lenses,witnesses,prompt,
+            min_confidence=min_confidence,min_margin=min_margin)
+        base={
+            "schema":"vl-i.learned-observer-intention.v1",
+            "original_source_sha256":session.models[0].source_digest,
+            "causal_head":session.head,
+            "history":list(session.history),
+            "admitted_model_digests":[m.manifest["ground_digest"] for m in session.models],
+            "observed_ledger_heads":[m.oracle.head for m in session.models],
+            "ecpu_intention":p,
+            "status":p["status"],
+            "scope":"E0_advisory_requires_receiver_pin_and_independent_model_proof",
+        }
+        base["proposal_digest"]=_digest(base["schema"],base)
+        return base
+
+    def accept(self, witnesses, proposal, *, expected_proposal_head:str):
+        from .intent_topology import admit_response_topology
+        session=self.conversation
+        _require(type(proposal) is dict
+                 and proposal.get("schema")=="vl-i.learned-observer-intention.v1"
+                 and _hex64(expected_proposal_head)
+                 and proposal.get("proposal_digest")==expected_proposal_head
+                 and _digest(proposal["schema"],{
+                     k:v for k,v in proposal.items() if k!="proposal_digest"})==
+                     expected_proposal_head
+                 and proposal.get("original_source_sha256")==
+                     session.models[0].source_digest
+                 and proposal.get("causal_head")==session.head
+                 and proposal.get("history")==list(session.history)
+                 and proposal.get("admitted_model_digests")==[
+                     m.manifest["ground_digest"] for m in session.models]
+                 and proposal.get("observed_ledger_heads")==[
+                     m.oracle.head for m in session.models],
+                 "E-CPU observer proposal refers to another learned model or causal state")
+        e=proposal.get("ecpu_intention")
+        _require(type(e) is dict and
+                 proposal.get("status")=="PROPOSED_NEEDS_OBSERVER_APPROVAL",
+                 "Uncertain observer intention has no admission")
+        typed=admit_response_topology(
+            self.lenses,witnesses,e,
+            expected_proposal_head=e["proposal_digest"],
+            observer="learned-shape-router")
+        channels=tuple(typed["selected_slots"])
+        eligible=[m for m in session.models if m.channels==channels]
+        _require(len(eligible)==1,
+                 "No independently verified learned model for requested channels")
+        model=eligible[0]
+        model.check(expected_certificate_digest=model.certificate["proof_digest"])
+        return model
+
+    def accept_and_respond(self, witnesses, proposal,
+                           *, expected_proposal_head:str, action:str,
+                           views:tuple[str,...]=("text","code","tokens")):
+        model=self.accept(witnesses,proposal,
+                          expected_proposal_head=expected_proposal_head)
+        return self.conversation.respond(
+            model,prompt=proposal["ecpu_intention"]["prompt"],
+            action=action,views=views)
