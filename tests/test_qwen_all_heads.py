@@ -136,3 +136,40 @@ def test_model_host_full_layer_unchanged_and_can_be_executed_with_same_source():
     assert len(result)==3
     assert receipt['scope'].startswith('full GDN layer')
     assert receipt['layer']==0
+
+
+def test_vectorized_complete_layer_matches_independent_scalar_layer():
+    from vli.qwen_all_heads import QwenVectorizedCompleteLayer
+    one,*_=qwen_fixture()
+    two,*_=qwen_fixture()
+    fast=QwenVectorizedCompleteLayer(one,layer=0,key_heads=1,
+                                     value_heads=2,key_dim=2,value_dim=2)
+    scalar=QwenQualifiedLayer(two,layer=0,key_heads=1,
+                              value_heads=2,key_dim=2,value_dim=2)
+    for index,x in enumerate(([.5,-.2,.3],[-.1,.2,.8],[.7,.6,-.3])):
+        accelerated,receipt=fast.next(list(x))
+        reference,_=scalar.next(list(x))
+        assert accelerated==pytest.approx(reference,abs=2e-12)
+        assert receipt["position"]==index
+        assert receipt["complete_Qwen_transformer_layer"] is True
+        assert receipt["complete_original_64_layer_decoder"] is False
+        assert receipt["full_recurrent_state_digest"]==state_digest(scalar.recurrent_state)
+        assert receipt["full_convolution_state_digest"]==state_digest(scalar.convolution_history)
+
+
+def test_complete_layer_rejects_downstream_projection_error_without_advancing():
+    from vli.qwen_all_heads import QwenVectorizedCompleteLayer
+    nav,*_=qwen_fixture()
+    fast=QwenVectorizedCompleteLayer(nav,layer=0,key_heads=1,
+                                     value_heads=2,key_dim=2,value_dim=2)
+    real=fast_rows
+    def reject(nav,name,x,**kwargs):
+        if name.endswith("mlp.down_proj.weight"):
+            raise ValueError("Qualified model host absent for FFN")
+        return real(nav,name,x,**kwargs)
+    with patch("vli.qwen_all_heads.fast_rows",side_effect=reject):
+        with pytest.raises(ValueError,match="host absent"):
+            fast.next([.1,.2,.3])
+    assert fast.position==0
+    assert fast.recurrent_state is None
+    assert fast.convolution_history is None
