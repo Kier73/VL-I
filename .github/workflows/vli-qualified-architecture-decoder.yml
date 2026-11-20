@@ -6,6 +6,7 @@ on:
       - 'src/vli/qwen_architecture_navigator.py'
       - 'src/vli/qwen_gated_attention.py'
       - 'tests/test_qwen_architecture_navigator.py'
+      - 'tests/test_qwen_architecture_process_recovery.py'
       - 'examples/qwen_architecture_frontier.py'
       - 'docs/QUALIFIED_ARCHITECTURE_DIRECTED_DECODER.md'
       - '.github/workflows/vli-qualified-architecture-decoder.yml'
@@ -44,7 +45,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: python -m pip install -e . -e upstream/vl64 'numpy>=1.26' 'pytest>=8'
       - name: Two independently composed 4-layer blocks, scalar parity and source contradictions
-        run: python -m pytest -q tests/test_qwen_architecture_navigator.py tests/test_qwen_hybrid_block.py tests/test_qwen_hybrid_process_recovery.py tests/test_saved_original_qwen_first_hybrid.py
+        run: python -m pytest -q tests/test_qwen_architecture_navigator.py tests/test_qwen_architecture_process_recovery.py tests/test_qwen_hybrid_block.py tests/test_qwen_hybrid_process_recovery.py tests/test_saved_original_qwen_first_hybrid.py
 
   original-pretrained-eight:
     if: github.event_name == 'workflow_dispatch' && inputs.run_original_eight
