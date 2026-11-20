@@ -1,0 +1,46 @@
+name: VL-I SHAPE-010 causal counterexample basis expansion
+
+on:
+  push:
+    paths:
+      - 'src/vli/causal_basis_expansion.py'
+      - 'tests/test_causal_basis_expansion.py'
+      - 'docs/SHAPE_010_CAUSAL_BASIS_EXPANSION.md'
+      - '.github/workflows/vli-shape010.yml'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-source-verified-four-state-simplex:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.13']
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests:tests
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu 'numpy>=1.26' 'pytest>=8'
+      - name: SHAPE-009 parent + SHAPE-010 witnessed counterexample expansion
+        run: python -m pytest -q tests/test_causal_hidden_manifold.py tests/test_causal_basis_expansion.py tests/test_qwen_layer_chain.py
