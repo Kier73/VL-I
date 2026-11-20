@@ -1,0 +1,117 @@
+name: VL-I INTERACT-004 pinned paragraph to trained causal state
+
+on:
+  push:
+    paths:
+      - 'src/vli/pinned_text_ground.py'
+      - 'src/vli/qwen_causal_head.py'
+      - 'tests/test_pinned_text_causal.py'
+      - 'tests/test_saved_pinned_text_causal.py'
+      - 'experiments/pinned_text/datasets/**'
+      - 'examples/pinned_text_causal_demo.py'
+      - 'docs/PINNED_TEXT_CAUSAL_CONSTRUCTION.md'
+      - '.github/workflows/vli-pinned-text-causal.yml'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_real_ranges:
+        description: 'Execute pinned Qwen full-size text-to-causal-head and related DeepSeek probe'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  literal-native-tokenizer-and-causal-head:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11','3.13']
+    env:
+      PYTHONPATH: upstream/vl64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install minimal native tokenizer dependency and existing interpreter
+        run: python -m pip install -e . -e upstream/vl64 'tokenizers>=0.20,<1'
+      - name: Verify actual tokenizer law and fail-closed original causal recurrent state
+        run: |
+          python -m unittest discover -s tests -p test_pinned_text_causal.py -v
+          python -m unittest discover -s tests -p test_saved_pinned_text_causal.py -v
+      - name: Retain previous exact trained token embedding Ground regressions
+        run: python -m unittest discover -s tests -p test_token_embedding_ground.py -v
+
+  original-source-live-text-relations:
+    if: (github.event_name == 'pull_request' && github.head_ref == 'feat/pinned-text-causal-ground-20261119') || (github.event_name == 'workflow_dispatch' && inputs.run_real_ranges)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        model: ['qwen-27b','deepseek-v41-flash']
+    env:
+      PYTHONPATH: upstream/vl64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install only source interpreter and native tokenizer (no full-model runtime)
+        run: python -m pip install -e . -e upstream/vl64 'tokenizers>=0.20,<1'
+      - name: Actual paragraph to original token IDs to native checkpoint math
+        run: |
+          python -m examples.pinned_text_causal_demo --model "${{ matrix.model }}" \
+            --steps 2 --out "artifacts/intent-to-train-${{ matrix.model }}.json"
+      - name: Refuse falsely promoted pretrained decoding and missing tokenizer provenance
+        env:
+          TARGET_MODEL: ${{ matrix.model }}
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          route=os.environ["TARGET_MODEL"]
+          r=json.loads(Path(f"artifacts/intent-to-train-{route}.json").read_text())
+          assert r["full_model_language_inference_completed"] is False
+          assert r["decoded_full_vocab_logits"] is False
+          assert r["weight_bytes_persisted_in_virtual_ground"]==0
+          assert r["tokenizer_roundtrip_exact"] is True
+          assert r["native_token_count"]>=2
+          assert [z["token_id"] for z in r["real_trained_token_steps"]]==r["native_token_ids"][:2]
+          assert len(set(z["embedding_sha256"] for z in r["real_trained_token_steps"]))==2
+          assert all(z["qualified_range_count"]>0 for z in r["real_trained_token_steps"])
+          assert r["causal_state"]["recovery_verified"] is True
+          assert r["causal_state"]["full_layer_completed"] is False
+          if route=="qwen-27b":
+              assert r["status"]=="REAL_PINNED_TEXT_TO_QWEN_CAUSAL_SELECTED_HEAD"
+              assert r["tokenizer_source_grade"]=="SAME_PINNED_CHECKPOINT_TOKENIZER"
+              assert r["real_trained_token_steps"][0]["causal_recurrent_digest"]!=r["real_trained_token_steps"][1]["causal_recurrent_digest"]
+              assert all(z["independent_recurrence_max_abs_error"]<=2e-8 for z in r["real_trained_token_steps"])
+          else:
+              assert r["status"]=="RELATED_TOKENIZER_TEXT_TO_DEEPSEEK_PARTIAL_ROUTER_PROBE"
+              assert r["tokenizer_source_grade"]=="RELATED_FLASH_RELEASE_NOT_PROVEN_IDENTICAL_TO_1017"
+          print("PINNED_TEXT_TO_TRAINED_PARTIAL_VERIFIED",route)
+          PY
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vli-text-to-trained-original-${{ matrix.model }}
+          path: artifacts/intent-to-train-*.json
+          if-no-files-found: warn
