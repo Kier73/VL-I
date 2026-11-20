@@ -13,6 +13,7 @@ import math
 
 from .ground import _digest, _hex64, _require
 from .large_model_comparison import SOURCES
+from .operative_model import _check_ground
 
 SCHEMA="vl-i.qwen-causal-head.v1"
 CHECKPOINT="vl-i.qwen-causal-head-checkpoint.v1"
@@ -38,6 +39,7 @@ def _reference_sample(q,k,v,decay,beta,prior,c):
 class QwenCausalHead:
     """One genuine head; small host-state interpreter, not a complete layer."""
     def __init__(self,trained_ground,*,head=0):
+        _check_ground(trained_ground)
         _require(type(trained_ground) is dict
                  and trained_ground.get("route")=="qwen-27b"
                  and trained_ground.get("model")==SOURCES["qwen-27b"]["model"]
@@ -143,6 +145,8 @@ class QwenCausalHead:
                 "token_id":row_witness["token_id"],
                 "embedding_sha256":row_witness["embedding_sha256"],
                 "output_row0_selected_head_contribution":round(partial,12),
+                "head_beta":round(beta[0],12),
+                "head_log_decay":round(decay[0],12),
                 "independent_recurrence_max_abs_error":error,
                 "causal_convolution_history_digest":history_digest,
                 "causal_recurrent_state_digest":state_digest_value,
@@ -187,8 +191,6 @@ class QwenCausalHead:
                  and _hex64(checkpoint.get("chain")),
                  "Wrong Qwen causal checkpoint genesis/head")
         history=checkpoint["history"];state=checkpoint["state"]
-        _require((s.position==checkpoint["position"] if False else True),
-                 "Impossible checkpoint transition")
         if checkpoint["position"]>0:
             _require(type(history) is list and 1<=len(history)<=3
                      and all(type(x) is list and len(x)==384 for x in history)
