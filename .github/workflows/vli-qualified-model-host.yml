@@ -1,0 +1,159 @@
+name: VL-I QUALIFIED-005 model-host coalescing and Qwen all-head frontier
+
+on:
+  push:
+    paths:
+      - 'src/vli/qualified_projection_host.py'
+      - 'src/vli/qwen_all_heads.py'
+      - 'tests/test_qualified_projection_host.py'
+      - 'tests/test_qwen_all_heads.py'
+      - 'tests/test_saved_original_qwen_all_heads.py'
+      - 'tests/test_saved_original_qwen_first_layer.py'
+      - 'experiments/qwen_all_heads/datasets/**'
+      - 'examples/qwen_model_host_frontier.py'
+      - 'docs/QUALIFIED_MODEL_HOST_FRONTIER.md'
+      - '.github/workflows/vli-qualified-model-host.yml'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_original_weights:
+        description: 'Run Qwen3.8-27B pretrained recurrent-head worker'
+        type: boolean
+        default: false
+      run_full_layer:
+        description: 'Run entire original GDN+SwiGLU layer (large bandwidth, CPU)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  qualified-host-reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11","3.13"]
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install mathematical host and independent scalar reference dependencies
+        run: python -m pip install -e . -e upstream/vl64 'numpy>=1.26' 'pytest>=8'
+      - name: Verify bounded HTTP 206 source receipts, LRU and independent fast matvecs
+        run: python -m pytest -q tests/test_qualified_projection_host.py
+      - name: Verify all 48 recurrent heads and full trained-layer fixtures vs scalar
+        run: |
+          python -m pytest -q tests/test_qwen_all_heads.py
+          python -m pytest -q tests/test_saved_original_qwen_all_heads.py
+          python -m pytest -q tests/test_saved_original_qwen_first_layer.py
+      - name: Preserve original paragraph-to-trained-causal regression
+        run: python -m pytest -q tests/test_saved_pinned_text_causal.py
+
+  original-48-head-trained-work:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_original_weights
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    continue-on-error: true
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -e . -e upstream/vl64 'numpy>=1.26' 'tokenizers>=0.20,<1'
+      - name: Original Qwen tokenizer to all 48 trained causal heads, across two tokens
+        run: |
+          python -m examples.qwen_model_host_frontier --mode recurrent --positions 2 \
+            --block-bytes 2097152 --host-budget-bytes 67108864 \
+            --out artifacts/qwen-48-heads.json
+      - name: Prove original trained numerical and provenance obligations
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("artifacts/qwen-48-heads.json").read_text())
+          assert r["status"]=="REAL_PINNED_QWEN_48_RECURRENT_HEADS_OBSERVED"
+          assert r["VL_interpreter_persistent_weight_bytes"]==0
+          assert r["all_64_decoder_layers_executed"] is False
+          assert r["next_token_logits_executed"] is False
+          assert r["cross_observer_checkpoint"]["page_count"]>=2
+          assert r["tokenizer_source_grade"]=="SAME_PINNED_CHECKPOINT_TOKENIZER"
+          assert len(r["trained_executed_positions"])==2
+          assert len(set(a["trained_embedding_sha256"]
+                    for a in r["trained_executed_positions"]))==2
+          for x in r["trained_executed_positions"]:
+              result=x["computation"]["trained"]
+              assert result["trained_key_heads"]==16
+              assert result["trained_value_heads"]==48
+              assert result["full_recurrent_output_width"]==6144
+              assert result["max_independent_reference_error"]<=2e-7
+              assert result["new_weight_payload_bytes"]>100000000
+              assert result["complete_Qwen_transformer_layer"] is False
+          stats=r["model_host_traffic"]
+          assert stats["remote_https_206_blocks"]>0
+          assert stats["logical_64k_ranges"]>stats["remote_https_206_blocks"]
+          assert stats["model_weights_stored_in_VL_ground_bytes"]==0
+          print("REAL_QWEN_ALL_48_RECURRENT_HEADS_AND_CAUSAL_RESTART_VERIFIED")
+          PY
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vli-qualified-original-qwen-all-heads
+          path: artifacts/qwen-48-heads.json
+          if-no-files-found: warn
+
+  optional-complete-first-layer:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_full_layer
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    continue-on-error: true
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -e . -e upstream/vl64 'numpy>=1.26' 'tokenizers>=0.20,<1'
+      - name: Execute unmodified real Qwen first trained GDN and SwiGLU layer
+        run: |
+          python -m examples.qwen_model_host_frontier --mode complete --positions 1 \
+            --block-bytes 8388608 --host-budget-bytes 134217728 \
+            --layer-budget-bytes 2000000000 --out artifacts/qwen-complete-layer.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vli-qualified-original-qwen-entire-first-layer
+          path: artifacts/qwen-complete-layer.json
+          if-no-files-found: warn

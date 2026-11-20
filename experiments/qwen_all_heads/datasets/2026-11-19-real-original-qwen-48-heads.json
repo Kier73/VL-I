@@ -1,0 +1,70 @@
+{
+  "schema": "vl-i.saved-qwen-original-48-head-causal-evidence.v1",
+  "date": "2026-11-19",
+  "source_run": "https://github.com/Kier73/VL-I/actions/runs/44656098976",
+  "source_artifact_id": 14593556159,
+  "source_scope": "original Qwen3.8-27B trained Gated DeltaNet layer 0, 48 complete recurrent heads across 2 actual literal-text tokens; not complete transformer layer or language generation",
+  "model": "Qwen/Qwen3.8-27B",
+  "revision": "37561816e66b5b9153b1b64c10968c18c1e6f4a0",
+  "original_payload_advertised_bytes": 55562855904,
+  "model_input_grade": "SAME_PINNED_CHECKPOINT_TOKENIZER",
+  "native_paragraph_ids_first_two": [
+    63204,
+    628
+  ],
+  "host_traffic": {
+    "remote_https_206_blocks": 170,
+    "remote_http_bytes": 356515840,
+    "logical_64k_ranges": 5180,
+    "logical_range_bytes": 337876832,
+    "reused_logical_observations": 5010,
+    "resident_model_host_budget_bytes": 67108864,
+    "model_weights_inside_VL_ground_bytes": 0,
+    "network_observation_head": "12f37ba9095d7b225b40053479a4aa3959d320ec174ba1f4c7ffc7a5625ce0e7"
+  },
+  "cross_observer_checkpoint": {
+    "pinned_digest": "c723a497f44a9846a7527868f5f74846b1ab1629e2d3758d928ff3b47b50f943",
+    "state_pages": 100,
+    "state_bytes": 6537216,
+    "restored_into_new_qualified_navigator": true
+  },
+  "trained_positions": [
+    {
+      "position": 0,
+      "token_id": 63204,
+      "head_count": 48,
+      "key_head_count": 16,
+      "query_head_count": 16,
+      "full_recurrent_output_width": 6144,
+      "qualified_range_count": 2578,
+      "trained_weight_bytes": 168779776,
+      "out_proj_row0": -0.057124186479,
+      "reference_error": 2.7755575615628914e-17,
+      "worker_cpu_seconds": 2.502761465,
+      "worker_wall_seconds": 34.656186123,
+      "recurrent_state_digest": "a54a77d7d0155ab755f4c2d58d750d1f9d5ff5bdf4e6057fdb0c6f883e55c6bd",
+      "convolution_digest": "a7a8c6a0abbcd4ef3140de4d809e5b28f5d0a330835d56c417bd1b72e206a33a",
+      "all_head_output_digest": "cc3b1c1ddc14259dae77f36a6f35d6f384d552099e3dde3c1212d2cf9242a9b3"
+    },
+    {
+      "position": 1,
+      "token_id": 628,
+      "head_count": 48,
+      "key_head_count": 16,
+      "query_head_count": 16,
+      "full_recurrent_output_width": 6144,
+      "qualified_range_count": 2578,
+      "trained_weight_bytes": 168779776,
+      "out_proj_row0": -0.034526815025,
+      "reference_error": 2.0816681711721685e-17,
+      "worker_cpu_seconds": 2.286982418,
+      "worker_wall_seconds": 33.32210830699998,
+      "recurrent_state_digest": "7d3d028cd5190d5ce19baa11b2e2e6b247a667c9121c183811c6920403524a61",
+      "convolution_digest": "233ea1c24cc26e77470036b0872400bd2de078dac6b020565bb2cdfeb10e2a64",
+      "all_head_output_digest": "f61a1a7d2b027a472460cc98021e2139118f0296525be756aca1a7290a971b15"
+    }
+  ],
+  "all_layer_output_rows_completed": false,
+  "full_model_logits_generated": false,
+  "notes": "These numerical observations were reproduced via pinned original source HTTP 206 blocks coalesced at host; the model-host worker ran NumPy linear algebra on GitHub Actions CPU and reported separate HTTP/CPU timing."
+}
