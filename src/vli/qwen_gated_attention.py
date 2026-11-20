@@ -101,7 +101,7 @@ class QwenQualifiedGatedAttention:
                  budget_bytes=2_000_000_000, max_positions=4096):
         if not isinstance(nav,QualifiedShardNavigator):
             raise ValueError("Qualified original source navigator required")
-        if (type(layer) is not int or layer<0 or layer%4!=3 or
+        if (type(layer) is not int or layer<0 or
             any(type(v) is not int or v<=0 for v in
                 (query_heads,kv_heads,head_dim,rotary_dim,max_positions,
                  budget_bytes)) or query_heads%kv_heads or
