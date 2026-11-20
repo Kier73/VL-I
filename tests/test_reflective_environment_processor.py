@@ -65,7 +65,7 @@ class ConstructedEnvironmentInterpreterTests(unittest.TestCase):
               expected_identity=self.world.identity))
 
     def test_representation_changes_source_encoding_not_observed_value(self):
-        s,c,other=source(self.world,representation_coordinate=17)
+        s,c,other=source(self.world,coordinate=17)
         self.assertNotEqual(other["generated_interpreter_digest"],
                             self.bridge["generated_interpreter_digest"])
         self.assertEqual(other["result_recorded_value"],self.bridge["result_recorded_value"])
