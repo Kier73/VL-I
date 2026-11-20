@@ -1,0 +1,92 @@
+name: VL-I SHAPE-005 original pretrained range observer-host memory
+
+on:
+  push:
+    paths:
+      - 'src/vli/pretrained_range_memory.py'
+      - 'tests/test_pretrained_range_memory.py'
+      - 'examples/pretrained_range_memory_demo.py'
+      - 'docs/SHAPE_005_PRETRAINED_OBSERVER_MEMORY.md'
+      - '.github/workflows/vli-shape005.yml'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_real_ranges:
+        type: boolean
+        description: "Observe original full-size pinned Qwen pretrained norm via real HTTPS, then reuse E-CPU source-byte memory"
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  verified-range-memory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    env:
+      PYTHONPATH: upstream/vl64
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin VL-64 original pretrained shard observer and receipt protocol
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - name: Pin E-CPU CAS and structural memory page backing
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install the original range reader and E-CPU CAS
+        run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu
+      - name: Verify E-CPU object store lineage, exact retained ranges, restoration and refusals
+        run: python -m unittest discover -s tests -p test_pretrained_range_memory.py -v
+      - name: Measure real loopback TCP range transport with fabricated BF16 fixture
+        run: python -m examples.pretrained_range_memory_demo --mode loopback --out artifacts/shape005-tcp-fixture.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shape005-offline-object-store-and-local-tcp-cost
+          path: artifacts/shape005-tcp-fixture.json
+          if-no-files-found: warn
+
+  live-original-qwen-pretrained-source:
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && inputs.run_real_ranges)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    continue-on-error: true
+    env:
+      PYTHONPATH: upstream/vl64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu
+      - name: Live HTTPS original Qwen 27B exact range and retained CAS observation
+        run: python -m examples.pretrained_range_memory_demo --mode live --out artifacts/shape005-live-qwen.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shape005-original-qwen-live-range-observation
+          path: artifacts/shape005-live-qwen.json
+          if-no-files-found: warn

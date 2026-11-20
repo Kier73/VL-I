@@ -149,6 +149,13 @@ This is **reduced underlying transition work**, but not a demonstrated total run
 
 Read [SHAPE-004 — Verified structural observation memory](docs/SHAPE_004_VERIFIED_OBSERVATION_MEMORY.md) and [its source-work versus wall-time benchmark](examples/observation_memory_demo.py).
 
+**SHAPE-005 now lifts this memory relation into original-scale model communication.** It directly composes **VL-64's original, source-qualified pretrained tensor range protocol** with **E-CPU's existing content-addressed ComputationalObjectStore and StructuralMemoryPageBacking**. A received tensor/header range is admitted under its exact model, revision, shard, byte position, SHA-256, source observer-host identity and original range witness. Later qualified observers retrieve the identical *actual observed bytes* from a local E-CPU immutable object, with a distinct **PINNED_GLANCE_DERIVATION** source-evidence chain—not a fictional new HTTPS observation. The original trusted host may be recontacted to independently check retained bytes; cross-model, forged/changed bytes or unstored ranges refuse.
+
+A first **real loopback TCP experiment using fabricated BF16 safetensors bytes** measured **three original TCP range requests, then zero on warm reuse**, with the exact same 64-dimensional independently checked VL-64 numerical result. One GitHub Actions run measured **3.83 ms cold versus 0.45 ms retained**, but those are single-run fixture timings, *not* a pretrained-model or statistically established speedup. The same experiment has an **original full-size, pinned Qwen3.8-27B live HTTPS probe** that separately verifies the actual checkpoint index and retained source bytes; network failure is reported as unresolved rather than counted as proof. No complete pretrained forward pass or new model tokens are claimed from retained bytes alone.
+
+See [SHAPE-005 — Pretrained observer-host structural memory](docs/SHAPE_005_PRETRAINED_OBSERVER_MEMORY.md) and [the local TCP / live original pretrained range experiment](examples/pretrained_range_memory_demo.py).
+
+
 
 
 
