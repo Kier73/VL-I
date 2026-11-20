@@ -121,7 +121,16 @@ class QwenCausalGDNChain:
                 "index_ground_digest":self.index_ground_digest,
                 "position":self.position,"original_token_id":token_id,
                 "previous":old_head,"layer_witnesses":witnesses}
-            next_head=_digest(SCHEMA,body)
+            # Observer-local range receipt heads and byte/read counts differ
+            # across independently recovered hosts. Bind the semantic trained
+            # transition to identical numerical/state evidence, while retaining
+            # transport provenance separately in the published witness.
+            semantic={**body,"layer_witnesses":[{
+                key:value for key,value in witness.items()
+                if key not in ("range_chain","qualified_ranges",
+                               "trained_weight_bytes")
+                } for witness in witnesses]}
+            next_head=_digest(SCHEMA,semantic)
             self.position+=1
             self.head=next_head
             self.last_output_digest=witnesses[-1]["output_f64_digest"]
