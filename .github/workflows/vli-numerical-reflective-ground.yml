@@ -1,0 +1,43 @@
+name: TIME-006 signed numerical reflective CPU
+
+on:
+  push:
+    paths:
+      - 'src/vli/numerical_reflective_ground.py'
+      - 'tests/test_numerical_reflective_ground.py'
+      - 'examples/numerical_reflective_ground_demo.py'
+      - '.github/workflows/vli-numerical-reflective-ground.yml'
+  pull_request:
+    paths:
+      - 'src/vli/numerical_reflective_ground.py'
+      - 'tests/test_numerical_reflective_ground.py'
+      - 'examples/numerical_reflective_ground_demo.py'
+      - '.github/workflows/vli-numerical-reflective-ground.yml'
+  workflow_dispatch:
+
+jobs:
+  numerical-reflector:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.11', '3.14']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install optional authenticated source and pinned NCR-002 reflection
+        run: |
+          python -m pip install -e .
+          python -m pip install "cryptography>=46,<47"
+          python -m pip install "git+https://github.com/Kier73/Navigable-Compute.git@9572cdea273aa5e22b2f5d4a83296492a941eab5"
+      - name: Independently verify numerical law execution and reflection
+        run: python -m unittest discover -s tests -p test_numerical_reflective_ground.py -v
+      - name: Retest authenticated source and forced process recovery
+        run: python -m unittest discover -s tests -p test_authenticated_temporal_source.py -v
+      - name: Retest generated mathematical language qualification
+        run: python -m unittest discover -s tests -p test_evolving_environment_language.py -v
+      - name: Reproduce signed numerical reflection
+        run: python -m examples.numerical_reflective_ground_demo
