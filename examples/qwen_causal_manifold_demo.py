@@ -114,8 +114,8 @@ def _verify_observer(ground,fourth):
         "ECPU_reusable_hidden_state_ground":{
             "objects":{k:v["manifest_digest"] for k,v in ground.objects.items()},
             "source_causal_hidden_bytes":3*width*8,
-            "native_layer1_trained_weight_bytes":len(
-                bytes.fromhex(ground.native_norm_sha256)) if False else 2*width,
+            "native_layer1_trained_weight_bytes":
+                ground.objects["norm_raw"]["size_bytes"],
             "source_free_restoration_verified":True,
             "checkpoint_digest":checkpoint["checkpoint_digest"],
             "checkpoint_serialized_bytes":len(json.dumps(checkpoint)),
