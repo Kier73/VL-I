@@ -116,3 +116,59 @@ class QwenAllHeadsRecurrentHost(QwenQualifiedLayer):
             "complete_Qwen_transformer_layer":False,
             "scope":"all original Qwen GDN recurrent heads and first output row; FFN and remaining output rows not executed",
         }
+
+
+class QwenVectorizedCompleteLayer(QwenQualifiedLayer):
+    """Same *complete* pretrained GDN + SwiGLU math, fast model-host projections.
+
+    Qualified inputs and atomic causal transitions come from the existing
+    VL-64 implementation; only its projection callback changes. This is
+    independent of the 64 KiB interpreter and requires full trained source
+    parameters for every output coordinate.
+    """
+    def next(self, hidden):
+        from experiments.model_fabric.trained_subgraphs import qwen_gated_delta_layer
+        from experiments.model_fabric.complete_native_layers import _f32_state_digest
+        if (not isinstance(hidden,(list,tuple)) or len(hidden)!=self.hidden
+            or any(type(z) not in (float,int) or not math.isfinite(z) for z in hidden)):
+            raise ValueError("Original full Qwen layer requires exact finite hidden vector")
+        t0=time.perf_counter()
+        cpu0=time.process_time()
+        begin_bytes,begin_ranges=self.nav.weight_bytes,self.nav.range_count
+        def project(name,x):
+            if name not in self.names or len(self.shapes.get(name,()))!=2:
+                raise ValueError("Unqualified trained full-layer projection")
+            return fast_rows(self.nav,self.names[name],x)
+        def vector(name):
+            if name not in self._vectors:
+                raise ValueError("Unqualified original trained vector")
+            return self._vectors[name]
+        out,next_state,evidence=qwen_gated_delta_layer(
+            hidden,project,vector,self._convolution,
+            key_heads=self.kh,value_heads=self.vh,key_dim=self.kd,
+            value_dim=self.vd,conv_history=self.convolution_history,
+            recurrent_state=self.recurrent_state,eps=self.eps)
+        if len(out)!=self.hidden or not all(math.isfinite(x) for x in out):
+            raise ValueError("Incomplete original pretrained full-layer output")
+        before=self.position
+        self.convolution_history=next_state['convolution']
+        self.recurrent_state=next_state['delta']
+        self.position+=1
+        return out, {
+            "schema":"vl-i.qwen-vectorized-qualified-complete-layer.v1",
+            "scope":"complete original trained GDN+SwiGLU layer; not full model or logits",
+            "model":self.nav.index['model'],
+            "revision":self.nav.index['revision'],
+            "layer":self.layer,"position":before,
+            "complete_output_width":len(out),
+            "complete_layer_output_digest":_f32_state_digest(out),
+            "full_recurrent_state_digest":evidence['state_digest'],
+            "full_convolution_state_digest":evidence['conv_digest'],
+            "new_weight_payload_bytes":self.nav.weight_bytes-begin_bytes,
+            "new_qualified_ranges":self.nav.range_count-begin_ranges,
+            "range_chain":self.nav.chain,
+            "host_worker_wall_seconds":time.perf_counter()-t0,
+            "host_worker_cpu_seconds":time.process_time()-cpu0,
+            "complete_Qwen_transformer_layer":True,
+            "complete_original_64_layer_decoder":False,
+        }
