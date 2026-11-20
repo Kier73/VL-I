@@ -1,0 +1,119 @@
+{
+  "schema": "vl-i.saved-original-qwen-first-hybrid-block.v1",
+  "date": "2026-11-19",
+  "source_run": "https://github.com/Kier73/VL-I/actions/runs/44664814333",
+  "source_artifact_id": 14597722183,
+  "source_scope": "original Qwen3.8-27B first GDN,GDN,GDN,gated-GQA hybrid block across two genuine paragraph tokens; not full decoder or independent real-weight PyTorch parity",
+  "model": "Qwen/Qwen3.8-27B",
+  "revision": "37561816e66b5b9153b1b64c10968c18c1e6f4a0",
+  "model_advertised_payload_bytes": 55562855904,
+  "original_token_ids": [
+    63204,
+    628
+  ],
+  "layer_types": [
+    "GDN",
+    "GDN",
+    "GDN",
+    "GATED_GQA"
+  ],
+  "hidden_width": 5120,
+  "complete_pretrained_layer_operations": 8,
+  "worker_source_traffic": {
+    "remote_https_206_requests": 775,
+    "remote_http_bytes": 6501171200,
+    "logical_64k_reads": 93044,
+    "logical_range_bytes": 6088410720,
+    "source_block_budget_bytes": 134217728,
+    "model_weights_stored_in_VL64_core_bytes": 0
+  },
+  "checkpoint": {
+    "externally_pinned_digest": "c2f5b31fcda7550a31d32477536c2727540a78a902a6859ec2265801883122db",
+    "per_layer_pages": [
+      100,
+      100,
+      100,
+      1
+    ],
+    "state_f64_bytes": 19628032,
+    "fresh_navigator_and_executor_recovery": true,
+    "independent_OS_process_kill_recovery_on_real_original_weights": false,
+    "independent_OS_process_kill_recovery_on_fixtures": true,
+    "per_layer_digest": [
+      "c723a497f44a9846a7527868f5f74846b1ab1629e2d3758d928ff3b47b50f943",
+      "1bd642b225c08d6fe39a9c470a8c8a3ead5ad1f263b4b9e55f1fc30961677707",
+      "a815b0308e5664c13251e26d03f8ca13e15ed3c858718764812bbb3c9e4e2df1",
+      "918ce9f22a59353f3fb31a79e4b3c08c6332a37c45b57fa652448f5ab5fab08d"
+    ]
+  },
+  "positions": [
+    {
+      "position": 0,
+      "token_id": 63204,
+      "full_original_output_f32_digests": [
+        "b87fe04766701c2433a23b5d40e892c6d84a909c976d4ce18bd842edc8555aa8",
+        "f7851e007d6d60d2ba383cbd2d6cd42d7c67bbf2d2453227819f75cdf441c51f",
+        "eb0cc543ccf8620a5e60abedb931e062bd150987b4692dbdd7f456480af65752",
+        "ae30bb338e453594d346a73492e3c0a082544be2f57b9ba89a8130ba0506322f"
+      ],
+      "exact_f64_predecessor_input": "86d46123eaf2ab2cb644d0e0e82c74fa72feda725cead3e8d9bdee1d3e77f807",
+      "exact_f64_layer_outputs": [
+        "7f8abcbe75c429851ef049dc1501c87762fefc7194aa4feb52aa97e57df78f45",
+        "39ba32ebfb547d4caf8b70b6d30282c00708c6214a27d75ee5c8c36409c86ba9",
+        "dbfc2c4caa9c49c43438de2b91f456480eafcfdfb7032eafa33b23244bd1ffc5",
+        "4520475bd8a09a228a874a5136f9653f5424ce4e02f40b808097cb4fb7d51cb7"
+      ],
+      "causal_state_digests": [
+        "a54a77d7d0155ab755f4c2d58d750d1f9d5ff5bdf4e6057fdb0c6f883e55c6bd",
+        "e9a86cf01f1d880280a4dc43bf9a1334208c3e9ca721f5a66ba24e3b418f68f0",
+        "0f677cf8e0c22a2c913a7a834eacbae81ad99e4506fef49de0eec4d185f05160",
+        "f062c2b100ca41d62f612bc0532382f4285a4f3684e459324fd8ac69899db411"
+      ],
+      "causal_head": "29008fdd2a6e92e7657df769df9daaf9a6fcb9464be3c7bd7f9b317490f3006f",
+      "original_trained_bytes_per_layer": [
+        766443520,
+        766443520,
+        766443520,
+        744488960
+      ],
+      "kv_history_positions": 1
+    },
+    {
+      "position": 1,
+      "token_id": 628,
+      "full_original_output_f32_digests": [
+        "c86623ceb0b0d6b570a0fdb2c08a121cf775fc1465af78c1814eafa139f1149c",
+        "9aa9c2ff0adc8d47a4511ce7d3f16122216e344c597c09638667f9920a33ba88",
+        "1c6adbbbaf3cc70b7a9c6fd2035f25aa577b6182ba5479cd7b9dae0ec20d7399",
+        "a1833770441c87f071eb21aae44c9e50af7375be4d4af9dc78567a30dcf3092a"
+      ],
+      "exact_f64_predecessor_input": "fe7c3361657db2f3d25f7a502ca1d286baeede6f37aa61676dcd4b78c8befa76",
+      "exact_f64_layer_outputs": [
+        "f61fc8b6487d6a667fa9576904b3c5d601e680a1cda6ce82b45150fd73011773",
+        "6b5cf42aba4805e43a0554e35fa292df863aa196a10a871673ddee3bb8d50eab",
+        "a177957777013e49853f8867dbf0684d6124e7c8e4f834142f1c971027774cb8",
+        "b81940af2b76582d4e5b9ea7a3a72fe7e79c6eeb90c7a94d4300fb1fb53b739c"
+      ],
+      "causal_state_digests": [
+        "7d3d028cd5190d5ce19baa11b2e2e6b247a667c9121c183811c6920403524a61",
+        "62ec169b145f0e189a0a7f57eebedc312d54db13559d279072c5f01e94843bf1",
+        "19694978e35021fb35cd6379d769da74e89dd69b354cc8d545740a5e24f15636",
+        "32fbed5a6325acad33184280b43813a40d02451c77f2a568cfa9f8b1a3df68e5"
+      ],
+      "causal_head": "ec2cac1eb0ecb3271a99d1c7f5ea62f5447d6c7b745ea9d3b0a5b1cf07a953aa",
+      "original_trained_bytes_per_layer": [
+        766443520,
+        766443520,
+        766443520,
+        744488960
+      ],
+      "kv_history_positions": 2
+    }
+  ],
+  "every_interlayer_f64_output_to_input_matches": true,
+  "first_two_layers_reproduce_qualified_006_exactly": true,
+  "independent_scalar_fixture_reference_passes": true,
+  "independent_real_weight_pytorch_reference_verified": false,
+  "full_original_64_layer_decoder_executed": false,
+  "vocabulary_logits_computed": false
+}
