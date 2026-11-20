@@ -22,11 +22,11 @@ This is one material operational step toward **interpreting and navigating state
 
 SHAPE-006 uses:
 
-- **VL-64's original \`_decode_float\` tensor-byte interpreter** for original BF16/F32 weights.
-- **VL-64's original \`centered_rms_norm\`**, the Qwen3.5 zero-centered RMSNorm relation: \(\mathrm{RMSNorm}(x,w)_i = x_i (1+w_i)/\sqrt{\sum_j x_j^2/n + 10^{-6}}\).
-- **VL-I INTERACT-002's existing \`_input\` interpretation** for intentional, parameterized sinusoidal hidden states, not arbitrary pretrained prompt token embeddings.
-- **VL-64's original \`QualifiedShardNavigator\`** and exact shard-range/source-witness contract.
-- **E-CPU's original \`ComputationalObjectStore\` + \`StructuralMemoryPageBacking\`** for original weight-range and trained result bytes.
+- **VL-64's original `_decode_float` tensor-byte interpreter** for original BF16/F32 weights.
+- **VL-64's original `centered_rms_norm`**, the Qwen3.5 zero-centered RMSNorm relation: \(\mathrm{RMSNorm}(x,w)_i = x_i (1+w_i)/\sqrt{\sum_j x_j^2/n + 10^{-6}}\).
+- **VL-I INTERACT-002's existing `_input` interpretation** for intentional, parameterized sinusoidal hidden states, not arbitrary pretrained prompt token embeddings.
+- **VL-64's original `QualifiedShardNavigator`** and exact shard-range/source-witness contract.
+- **E-CPU's original `ComputationalObjectStore` + `StructuralMemoryPageBacking`** for original weight-range and trained result bytes.
 
 An independent algebraic implementation rechecks **each of the \(n\) output coordinates** before any result is admitted into E-CPU. The complete output vector is stored as binary64 values in the original E-CPU content-addressed object format; the response may render a concise projection (width, digest, mean, first/last eight and independent error).
 
@@ -93,14 +93,14 @@ The warm observation **did not execute** the pretrained-style normalization law.
 
 The same code supports:
 
-\`\`\`bash
+```bash
 python -m examples.trained_result_memory_demo --mode live \
   --out artifacts/shape006-real-qwen.json
-\`\`\`
+```
 
 It retrieves the original pinned **Qwen/Qwen3.8-27B** index, verifies the full-scale model identity, and executes original VL-64 native Qwen trained normalization on its entire original 5,120-dimensional input tensor. The next identical intention must re-use the **full binary64 result vector** without either original HTTPS traffic or original trained arithmetic. A third intention changes phase and frequency, and must compute a new distinct vector using the retained original pretrained weights. Finally the result and source memory are reconstructed after a source-free restart.
 
-The CI workflow attempts this real original-size experiment on a merged main push or explicit manual dispatch. If HTTPS fails or source evidence changes, its status must remain \`UNRESOLVED\`; the local fixture is **not** acceptable substitute evidence.
+The CI workflow attempts this real original-size experiment on a merged main push or explicit manual dispatch. If HTTPS fails or source evidence changes, its status must remain `UNRESOLVED`; the local fixture is **not** acceptable substitute evidence.
 
 **Do not conflate:** a real pretrained *single normalization operator* with original full-model decoder inference, language-model next-token parity or universal interpreter execution. In particular, an analytic sinusoidal hidden input is not a trained token embedding or genuine conversation history. The research now has a truthful, executable result-reuse path to extend to the full original trained layer graph.
 
