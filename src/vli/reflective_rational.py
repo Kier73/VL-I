@@ -85,7 +85,13 @@ def _apply_primitive(name,params):
 
 
 def host_run(program,entry,argv,*,fuel=MAX_FUEL):
-    """Small independently testable recursive host bootstrap, no eval/apply."""
+    """An explicit activation-frame source VM, not Python call-stack recursion.
+
+    The frame machine realizes the same source grammar as the independently
+    implemented, instruction/continuation-stack checker below. Both reject
+    unknown arithmetic primitives. Frames are heap-resident, so 2-level
+    reflection is not coupled to Python's recursion limit.
+    """
     _require(type(program) is tuple and 1<=len(program)<=16 and
              type(argv) is tuple and type(entry) is str and
              type(fuel) is int and 0<fuel<=MAX_FUEL,
@@ -98,39 +104,87 @@ def host_run(program,entry,argv,*,fuel=MAX_FUEL):
                  "Invalid named rational function table")
         defs[row[0]]=row[1]
     _require(entry in defs,"Unknown expression program entry")
+    frames=[{"expression":defs[entry],"environment":argv,"phase":"enter"}]
+    produced=[]
     cost=0
-
-    def evaluate(node,frame):
-        nonlocal cost
-        cost+=1
-        if cost>fuel:
-            raise ValueError("Host interpretation exceeded bounded expression fuel")
-        if type(node) is not tuple or not node:
-            raise ValueError("Malformed expression")
-        tag=node[0]
-        if tag=="lit" and len(node)==2:
-            return node[1]
-        if tag=="arg" and len(node)==2 and type(node[1]) is int and 0<=node[1]<len(frame):
-            return frame[node[1]]
-        if tag=="if" and len(node)==4:
-            value=evaluate(node[1],frame)
-            if type(value) is not bool:
-                raise ValueError("Non-Boolean source branch")
-            return evaluate(node[2] if value else node[3],frame)
-        if tag in ("prim","call") and len(node)==3 and type(node[1]) is str and type(node[2]) is tuple:
-            values=tuple(evaluate(t,frame) for t in node[2])
-            if tag=="prim":
-                return _apply_primitive(node[1],values)
-            if node[1] not in defs:
-                raise ValueError("Source called an unknown function")
-            return evaluate(defs[node[1]],values)
-        raise ValueError("Unknown rational expression syntax")
-
-    try:
-        result=evaluate(defs[entry],argv)
-    except (RecursionError,IndexError) as exc:
-        raise ValueError("Unqualified or overly deep finite interpreter") from exc
-    return result,cost
+    while frames:
+        current=frames[-1]
+        phase=current["phase"]
+        if phase=="enter":
+            cost+=1
+            _require(cost<=fuel and len(frames)<=15000,
+                     "Host interpretation exceeded explicit frame or fuel budget")
+            expression=current["expression"]
+            environment=current["environment"]
+            _require(type(expression) is tuple and expression,
+                     "Malformed expression node in host VM")
+            tag=expression[0]
+            if tag=="lit" and len(expression)==2:
+                frames.pop()
+                produced.append(expression[1])
+                continue
+            if tag=="arg" and len(expression)==2 and type(expression[1]) is int and 0<=expression[1]<len(environment):
+                frames.pop()
+                produced.append(environment[expression[1]])
+                continue
+            if tag=="if" and len(expression)==4:
+                current["phase"]="wait-condition"
+                frames.append({"expression":expression[1],
+                               "environment":environment,"phase":"enter"})
+                continue
+            if tag in ("prim","call") and len(expression)==3 and type(expression[1]) is str and type(expression[2]) is tuple:
+                current["phase"]="arguments"
+                current["index"]=0
+                current["children"]=[]
+                continue
+            raise ValueError("Unknown rational expression syntax")
+        if phase=="wait-condition":
+            condition=produced.pop()
+            _require(type(condition) is bool,
+                     "Non-Boolean finite rational source branch")
+            expression=current["expression"]
+            current["phase"]="wait-branch"
+            frames.append({"expression":expression[2] if condition else expression[3],
+                           "environment":current["environment"],"phase":"enter"})
+            continue
+        if phase=="wait-branch":
+            result=produced.pop()
+            frames.pop()
+            produced.append(result)
+            continue
+        if phase=="arguments":
+            node=current["expression"]
+            position=current["index"]
+            if position<len(node[2]):
+                current["phase"]="wait-argument"
+                frames.append({"expression":node[2][position],
+                               "environment":current["environment"],"phase":"enter"})
+                continue
+            params=tuple(current["children"])
+            if node[0]=="prim":
+                result=_apply_primitive(node[1],params)
+                frames.pop()
+                produced.append(result)
+            else:
+                _require(node[1] in defs,
+                         "Source called an unknown function")
+                current["phase"]="wait-function"
+                frames.append({"expression":defs[node[1]],
+                               "environment":params,"phase":"enter"})
+            continue
+        if phase=="wait-argument":
+            current["children"].append(produced.pop())
+            current["index"]+=1
+            current["phase"]="arguments"
+            continue
+        if phase=="wait-function":
+            value=produced.pop()
+            frames.pop()
+            produced.append(value)
+            continue
+        raise ValueError("Unknown VM activation phase")
+    _require(len(produced)==1,"Host VM did not reduce to a single value")
+    return produced[0],cost
 
 
 def _independent_primitive(name,values):
