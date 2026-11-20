@@ -1,0 +1,142 @@
+name: VL-I QUALIFIED-010 real trained Qwen temporal attention oracle
+
+on:
+  pull_request:
+    paths:
+      - 'src/vli/qwen_torch_oracle.py'
+      - 'src/vli/binary_attention_quotient.py'
+      - 'tests/test_qwen_torch_oracle.py'
+      - 'tests/test_qwen_two_position_temporal.py'
+      - 'tests/test_binary_attention_quotient.py'
+      - 'tests/test_saved_original_qwen_temporal_parity.py'
+      - 'experiments/qwen_all_heads/datasets/2026-11-19-real-original-qwen-two-token-trained-attention-parity.json'
+      - 'examples/qwen_two_position_torch_parity.py'
+      - 'docs/QUALIFIED_ORIGINAL_TEMPORAL_ATTENTION.md'
+      - '.github/workflows/vli-qualified-temporal-attention.yml'
+  workflow_dispatch:
+    inputs:
+      run_original_two_tokens:
+        description: 'Run two true pretrained Qwen tokens with independent historical GQA reference'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+
+jobs:
+  independent-temporal-fixture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11','3.13']
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests:tests
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: |
+          python -m pip install -e . -e upstream/vl64 'numpy>=1.26' 'pytest>=8'
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
+      - name: Causal attention and trained 7-layer intermediate reference tests
+        run: |
+          python -m pytest -q \
+            tests/test_qwen_two_position_temporal.py \
+            tests/test_binary_attention_quotient.py \
+            tests/test_saved_original_qwen_temporal_parity.py \
+            tests/test_qwen_torch_oracle.py \
+            tests/test_saved_original_qwen_torch_parity.py \
+            tests/test_saved_original_qwen_first_eight.py
+
+  original-trained-two-token-comparison:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_original_two_tokens
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests:tests
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: |
+          python -m pip install -e . -e upstream/vl64 'numpy>=1.26' 'tokenizers>=0.20,<1'
+          python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
+      - name: Genuine Qwen two-token original full 8-layer causal F64 PyTorch reference
+        run: |
+          python -m examples.qwen_two_position_torch_parity \
+            --block-bytes 8388608 \
+            --host-budget-bytes 134217728 \
+            --layer-budget-bytes 2000000000 \
+            --out artifacts/qwen-original-two-token-temporal-parity.json
+      - name: Verify trained temporal query key and prior V, every original output
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('artifacts/qwen-original-two-token-temporal-parity.json').read_text())
+          assert r['status']=='REAL_ORIGINAL_QWEN_TWO_CAUSAL_TOKENS_TORCH_F64_ATTENTION_PARITY_VERIFIED',r
+          assert r['model']=='Qwen/Qwen3.8-27B'
+          assert r['revision']=='37561816e66b5b9153b1b64c10968c18c1e6f4a0'
+          assert r['original_native_token_ids']==[63204,628]
+          assert r['trained_predecessor_layers']==list(range(7))
+          assert r['independently_compared_full_attention_layer']==7
+          assert r['trained_hidden_width']==5120
+          assert len(r['positions'])==2
+          assert r['positions'][0]['native_full_layer7_F64_digest']=='85f883d2786378dc331d3b23d68b311a5d40c1e5fd25b70a405f78fb4d0f20e4'
+          for i,p in enumerate(r['positions']):
+              assert p['position']==i
+              assert p['original_token_id']==[63204,628][i]
+              assert len(p['original_seven_layer_outputs_F64'])==7
+              assert len(p['attention_probability_by_query_head'])==24
+              assert all(len(row)==i+1 for row in p['attention_probability_by_query_head'])
+              assert all(abs(sum(row)-1.0)<2e-12 for row in p['attention_probability_by_query_head'])
+              assert p['independent_trained_query_heads']==24
+              assert p['independent_trained_kv_heads']==4
+              assert p['independent_historical_key_value_positions']==i+1
+              assert p['max_abs_numeric_error']<=1e-5
+              assert p['max_scaled_numeric_error']<=2e-7
+              assert p['qualified_layer7_source_weight_bytes']==744488960
+              assert p['pytorch_layer7_source_weight_bytes']==744488960
+          assert r['positions'][0]['max_deviation_from_uniform_attention']==0
+          assert r['positions'][0]['max_context_difference_from_current_token_values']==0
+          assert r['positions'][1]['max_deviation_from_uniform_attention']>1e-12
+          assert r['positions'][1]['max_context_difference_from_current_token_values']>1e-12
+          assert r['real_trained_temporal_key_selection_observed']
+          assert r['real_trained_prior_value_contribution_observed']
+          assert r['independent_original_pytorch_F64_parity']
+          assert not r['official_HF_BF16_runtime_parity']
+          assert not r['full_64_layer_decoder_completed']
+          assert not r['vocabulary_logits_computed']
+          assert not r['VL64_core_modified']
+          print('TWO_REAL_ORIGINAL_CAUSAL_TOKEN_TORCH_PARITY_VERIFIED')
+          print('POSITION1_MAX_ABS',r['positions'][1]['max_abs_numeric_error'])
+          print('POSITION1_KEY_SELECTION',r['positions'][1]['max_deviation_from_uniform_attention'])
+          print('POSITION1_PRIOR_VALUE_EFFECT',r['positions'][1]['max_context_difference_from_current_token_values'])
+          PY
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: original-qwen-two-real-causal-tokens-independent-torch
+          path: artifacts/qwen-original-two-token-temporal-parity.json
+          if-no-files-found: warn

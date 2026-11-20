@@ -184,14 +184,22 @@ class OriginalQwenTorchGQA:
         # History is a pair of [KV-heads, dimension] tensors per token.
         all_contexts=self.history+[(key,vraw)]
         channels=[]
+        attention_distributions=[]
+        context_differences=[]
         for h in range(qh):
             kv_idx=h//(qh//kvh)
             history_k=torch.stack([state[0][kv_idx] for state in all_contexts])
             history_v=torch.stack([state[1][kv_idx] for state in all_contexts])
             attn=torch.softmax(
                 torch.mv(history_k,query[h])/math.sqrt(hd),dim=0)
-            channels.append(
-                (attn @ history_v)*torch.sigmoid(qraw[h,hd:]))
+            context=attn @ history_v
+            # Both Q/K selection and actual earlier V contribution are
+            # independent mathematical observations; in position 0 the
+            # history has one item and these quantities are degenerate.
+            attention_distributions.append([float(z) for z in attn.tolist()])
+            context_differences.append(float(
+                torch.max(torch.abs(context-history_v[-1])).item()))
+            channels.append(context*torch.sigmoid(qraw[h,hd:]))
         projected=self._linear(
             "self_attn.o_proj.weight",torch.cat(channels),
             output_width=self.width)
@@ -222,6 +230,11 @@ class OriginalQwenTorchGQA:
             "source_index_ground_digest":self.nav.index["ground_digest"],
             "query_heads":qh,"kv_heads":kvh,
             "causal_kv_positions":self.position,
+            "attention_probabilities_per_query_head":attention_distributions,
+            "max_deviation_from_uniform_attention":max(
+                abs(p-1/self.position) for row in attention_distributions
+                for p in row),
+            "max_context_difference_from_current_token_values":max(context_differences),
             "complete_output_width":len(values),
             "torch_f64_output_digest":_f64_transfer_digest(values),
             "new_source_weight_payload_bytes":self.nav.weight_bytes-start_bytes,
