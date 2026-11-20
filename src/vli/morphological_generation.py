@@ -363,3 +363,89 @@ class MorphologySession:
         }
         body["checkpoint_digest"]=_digest(body["schema"],body)
         return body
+
+
+
+def select_qualified_morphology(
+    source: MorphologySourceGround,
+    candidates: tuple[ObserverMorphology, ...],
+    *, requested_channels: tuple[str, ...],
+    expected_queries: int,
+    warm_sample_count: int = 128,
+):
+    """Choose by measured estimated *cold and warm* cost, not dimension alone.
+
+    All candidates are already independently qualified against the same full
+    Ground. A candidate omitting requested semantic channels cannot be used.
+    Prepared-model timings and repeated neural+local-oracle work are kept
+    separate. This is a workload-specific estimate, not a promised speedup
+    across hosts, hardware or trained LLMs.
+    """
+    _require(isinstance(source, MorphologySourceGround)
+             and type(candidates) is tuple and 1 <= len(candidates) <= 8
+             and all(isinstance(c,ObserverMorphology) and c.source is source
+                     for c in candidates), "Missing common source authority")
+    _require(type(requested_channels) is tuple and requested_channels
+             and all(type(c) is str and c in source.system.channels
+                     for c in requested_channels)
+             and len(requested_channels)==len(set(requested_channels))
+             and type(expected_queries) is int and 1 <= expected_queries <= 1_000_000
+             and type(warm_sample_count) is int and 4 <= warm_sample_count <= 4096,
+             "Invalid requested observer scope or cost budget")
+    options=[]
+    states=source.system.states
+    actions=source.system.actions
+    for shape in candidates:
+        admitted=set(requested_channels).issubset(set(shape.channels))
+        if not admitted:
+            options.append({
+                "channels":list(shape.channels),"status":"REFUSED_INSUFFICIENT_OBSERVER_SCOPE",
+                "proof_digest":shape.proof["proof_digest"],
+            })
+            continue
+        shape._assert_qualified(expected_proof_digest=shape.proof["proof_digest"])
+        samples=[(states[i%len(states)], actions[(i//len(states))%len(actions)])
+                 for i in range(warm_sample_count)]
+        t0=perf_counter_ns()
+        observed=[]
+        for s,a in samples:
+            observed.append(shape.generated_model.generated(shape.class_map[s],a))
+        t1=perf_counter_ns()
+        for (s,a),result in zip(samples,observed):
+            full=source.system.step(s,a)
+            oracle=(shape.class_map[full.target],
+                    tuple(full.output[j] for j in shape.positions))
+            _require(result==oracle,"Timed neural sample failed external source comparison")
+        prep=sum(shape.timings_ns.values())
+        query_ns=(t1-t0)/warm_sample_count
+        options.append({
+            "channels":list(shape.channels),
+            "status":"QUALIFIED",
+            "proof_digest":shape.proof["proof_digest"],
+            "source_state_dimension":len(states),
+            "realized_state_dimension":shape.manifest["qualified_state_dimension"],
+            "neural_hidden_units":shape.manifest["generated_hidden_units"],
+            "preparation_ns":prep,
+            "neural_and_local_oracle_ns_per_query":query_ns,
+            "estimated_total_cold_ns":prep+expected_queries*query_ns,
+            "estimated_total_warm_ns":expected_queries*query_ns,
+            "warm_samples":warm_sample_count,
+            "estimated_query_count":expected_queries,
+        })
+    admitted=[x for x in options if x["status"]=="QUALIFIED"]
+    _require(admitted, "No proven morphology preserves requested semantic channels")
+    cold=min(admitted,key=lambda x:(x["estimated_total_cold_ns"],x["realized_state_dimension"]))
+    warm=min(admitted,key=lambda x:(x["estimated_total_warm_ns"],x["realized_state_dimension"]))
+    body={
+        "schema":"vl-i.morphology-selection-evidence.v1",
+        "source_ground_digest":source.manifest["ground_digest"],
+        "requested_channels":list(requested_channels),
+        "expected_queries":expected_queries,
+        "options":options,
+        "cold_selection_channels":cold["channels"],
+        "warm_selection_channels":warm["channels"],
+        "cost_scope":"single_host_Python_finite_ground_measured_samples_no_energy_or_transport",
+        "qualification":"source_wide_all_action_Mealy_observation_congruence",
+    }
+    body["selection_digest"]=_digest(body["schema"],body)
+    return body
