@@ -44,7 +44,7 @@ The [GitHub Actions SHAPE-004 run 44648975538](https://github.com/Kier73/VL-I/ac
 | Independently qualified learned models | 3 / 4 / 12 states | **Exactly identical** |
 | Generated VLD neural parameters | Baseline | **Exactly identical** |
 
-<text>Source transition work reduction: **7.85×**, avoiding **931** original transition evaluations.</text>
+**Source transition work reduction: 7.85×, avoiding 931 original transition evaluations.**
 
 The cache retained **137 prefix state positions**, including its genesis. A persisted snapshot occupied approximately **19 KB** of JSON and required **136 original transition checks** to independently validate on restore. This is a deliberate memory/computation and repeated-observation tradeoff, not free compression.
 
