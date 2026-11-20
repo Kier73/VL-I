@@ -183,6 +183,53 @@ Install VL-I, VL-64, NumPy, pytest, then run:
 GitHub Actions runs Python 3.11 and 3.13, plus the predecessor
 NAV-001 and original hybrid mathematical fixture suites.
 
+## Measured fixture cost — GitHub Actions, Python 3.11
+
+A pinned numerical experiment was executed on GitHub-hosted
+Python 3.11, against the complete two-GDN-layer and four-layer
+GDN/GQA *synthetic operator-topology fixtures*. It compared all
+16 virtual history outputs with 64 independent qualified
+reference transitions. Every output matched exactly.
+
+After replacing repeated fresh-worker restoration with rechecks
+of the **already admitted full state bytes and exact page hashes**,
+the source-backed worker-free proof path obtained the following
+single-run results (milliseconds):
+
+| Work | Two GDN layers | Three GDN + one gated GQA |
+| --- | ---: | ---: |
+| First four trained transitions, retaining full state pages | 35.05 | 24.67 |
+| One-time quotient admission and complete worker recovery | 13.10 | 14.70 |
+| Navigate 16 different virtual histories | 17.82 | 25.41 |
+| Independently reverify all 16 proofs | 19.88 | 28.43 |
+| **Total including cold admission and re-verification** | **85.86** | **93.20** |
+| Independently recompute 16 full histories (64 trained transitions) | 34.95 | 63.55 |
+
+The **full cold-and-verify cost remains higher** than independent
+replay on these tiny fixtures, despite eliminating repeated neural
+transitions. It would be scientifically wrong to report an end-to-end
+speedup from the four-versus-64 transition count.
+
+The warm hybrid navigation-only path (25.41 ms) was faster than
+64 independent tiny-fixture trained transitions (63.55 ms), but
+this excludes the charged initial observation, quotient admission
+and subsequent independent proof re-verification. Results are
+single-run, host/OS/runtime-specific, and **not evidence of real
+Qwen 27B neural acceleration**.
+
+The core scientific result is different: successful construction of
+a **verifiable numerical-result Ground that remains operational
+after the admitted model worker is unavailable**. State bytes,
+parent identities, source and implementation remain checked,
+without invoking a trained forward pass for the newly described
+history coordinates. The next scaling experiment should benchmark
+the same relation on original-source full-size states and report
+both cold and amortized costs.
+
+[Measured initial and optimized verifier run, Python 3.11](https://github.com/Kier73/VL-I/actions/runs/44670584209).
+Machine-readable evidence is retained as workflow artifacts
+by the NAV-002 CI job.
+
 ## Beyond this milestone
 
 This is exact bisimulation in a *strong* form: every internal causal
