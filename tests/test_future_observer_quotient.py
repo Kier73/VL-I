@@ -333,6 +333,30 @@ def test_independent_scalar_oracles_replay_all_certified_futures(tmp_path,factor
     assert len(cert["rows"])==6
 
 
+def test_self_rehashed_false_certificate_fails_independent_evidence_replay(tmp_path):
+    """A fresh digest is not mathematical authority, even if a caller trusts it."""
+    from vli.future_observer_quotient import CERTIFICATE, EQUIVALENT
+    ground,navigator,left,right,valid=experiment(tmp_path,two_factory)
+    assert valid["verdict"]==EQUIVALENT
+    attempts=[]
+    reduced=deepcopy(valid)
+    reduced["rows"].pop()
+    attempts.append(reduced)
+    altered=deepcopy(valid)
+    altered["rows"][0]["left_observation"]=[9]
+    attempts.append(altered)
+    changed_observer=deepcopy(valid)
+    changed_observer["observer"]=observer_spec(3,[(0,1e12)])
+    attempts.append(changed_observer)
+    for forged in attempts:
+        forged["certificate_digest"]=_digest(CERTIFICATE,{
+            key:value for key,value in forged.items() if key!="certificate_digest"})
+        with pytest.raises(ValueError,match="Missing|Counterexample|forged|Altered|contradictory"):
+            navigator.verify(forged,expected_digest=forged["certificate_digest"],
+                expected_head=ground.head,expected_left_digest=left["node_digest"],
+                expected_right_digest=right["node_digest"])
+
+
 def test_invalid_observer_mutation_and_oversized_frontier_refused(tmp_path):
     from vli.future_observer_quotient import action_alphabet
     for channels in ([(0,float("nan"))],[(0,0.0),(0,1.0)],[(1000,0.0)]):
