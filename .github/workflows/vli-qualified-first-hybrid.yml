@@ -1,0 +1,120 @@
+name: VL-I QUALIFIED-007 first original Qwen hybrid block
+
+on:
+  push:
+    paths:
+      - 'src/vli/qwen_gated_attention.py'
+      - 'src/vli/qwen_hybrid_block.py'
+      - 'tests/test_qwen_hybrid_block.py'
+      - 'examples/qwen_hybrid_block_frontier.py'
+      - 'docs/QUALIFIED_FIRST_HYBRID_BLOCK.md'
+      - '.github/workflows/vli-qualified-first-hybrid.yml'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_original_hybrid:
+        description: 'Execute original Qwen 27B first three GDN layers and gated full-attention layer'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  first-hybrid-independent-scalar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11","3.13"]
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install -e . -e upstream/vl64 'numpy>=1.26' 'pytest>=8'
+      - name: Independently compare full attention, three GDN transitions, and causal KV recovery
+        run: python -m pytest -q tests/test_qwen_hybrid_block.py
+      - name: Preserve previously successful full original two-layer contract
+        run: python -m pytest -q tests/test_qwen_layer_chain.py tests/test_saved_original_qwen_two_layers.py
+
+  original-pinned-first-hybrid-block:
+    if: >-
+      (github.event_name == 'pull_request' &&
+       github.head_ref == 'feat/qualified-007-first-hybrid-block-20261119') ||
+      (github.event_name == 'workflow_dispatch' && inputs.run_original_hybrid)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      PYTHONPATH: upstream/vl64:upstream/vl64/tests
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -e . -e upstream/vl64 'numpy>=1.26' 'tokenizers>=0.20,<1'
+      - name: Original paragraph through original Qwen layer 0, 1, 2, 3 across two causal tokens
+        run: |
+          python -m examples.qwen_hybrid_block_frontier \
+            --mode hybrid4 --positions 2 --block-bytes 8388608 \
+            --host-budget-bytes 134217728 \
+            --layer-budget-bytes 2000000000 \
+            --out artifacts/qwen-original-first-hybrid-block.json
+      - name: Verify exact original source, four layers, fresh recoverable KV and GDN causal state
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('artifacts/qwen-original-first-hybrid-block.json').read_text())
+          assert r['status']=='REAL_PINNED_QWEN_FIRST_COMPLETE_HYBRID_BLOCK',r
+          assert r['original_model']=='Qwen/Qwen3.8-27B'
+          assert r['revision']=='37561816e66b5b9153b1b64c10968c18c1e6f4a0'
+          assert r['trained_layer_coordinates']==[0,1,2,3]
+          assert r['last_completed_position']==2
+          assert [p['original_token_id'] for p in r['trained_positions']]==[63204,628]
+          for token in r['trained_positions']:
+              a=token['complete_hybrid_transition']
+              assert a['all_four_original_layers_completed']
+              w=a['layer_witnesses']
+              assert [x['kind'] for x in w]==['GDN','GDN','GDN','GATED_GQA']
+              assert [x['layer'] for x in w]==[0,1,2,3]
+              assert all(x['trained_weight_bytes']>100000000 for x in w)
+              assert all(x['output_f64_digest']==y['input_f64_digest'] for x,y in zip(w,w[1:]))
+              assert w[-1]['kv_history_positions']==token['position']+1
+              assert not a['vocabulary_logits_computed']
+          checkpoint=r['cross_observer_checkpoint']
+          assert len(checkpoint['layer_digests'])==4
+          assert len(checkpoint['per_layer_state_pages'])==4
+          assert checkpoint['separate_GDN_and_KV_state_authorities']
+          assert checkpoint['fresh_worker_navigator_recovery']
+          assert r['model_host_traffic']['remote_https_206_blocks']>0
+          assert r['model_host_traffic']['logical_64k_ranges']>r['model_host_traffic']['remote_https_206_blocks']
+          assert r['VL64_persistent_model_weight_bytes']==0
+          assert not r['full_64_layer_decoder_executed']
+          print('ORIGINAL_QWEN_FIRST_GATED_HYBRID_BLOCK_VERIFIED')
+          PY
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vli-original-qwen-first-hybrid-block
+          path: artifacts/qwen-original-first-hybrid-block.json
+          if-no-files-found: warn
