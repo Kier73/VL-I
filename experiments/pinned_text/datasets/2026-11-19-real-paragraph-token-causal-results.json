@@ -1,0 +1,132 @@
+{
+  "schema": "vl-i.saved-pinned-text-to-trained-causal-evidence.v1",
+  "source": "successful public-checkpoint jobs from GitHub Actions and their original per-model JSON artifacts",
+  "run_id": 44652875978,
+  "run_url": "https://github.com/Kier73/VL-I/actions/runs/44652875978",
+  "prompt_sha256": "0843b7e159d21d5bf117e95ebc0c2b4ec398faf70d46318de2c346d72410db40",
+  "prompt_description": "Communication can support computation when information is interpreted through a virtual layer.",
+  "scope": "same original large checkpoints; literal text tokenizer, 13 tokens each, first 2 trained operations only; no full decoder or generated response",
+  "model_weights_persisted_inside_ground": 0,
+  "full_pretrained_decoder_completed": false,
+  "complete_logits_observed": false,
+  "original_sources": {
+    "qwen-27b": {
+      "model": "Qwen/Qwen3.8-27B",
+      "revision": "37561816e66b5b9153b1b64c10968c18c1e6f4a0",
+      "full_checkpoint_advertised_bytes": 55562855904,
+      "trained_numeric_scope": "two real first-layer Qwen GDN selected-head causal transitions; remaining 47 heads and downstream FFN not executed",
+      "tokenizer_revision": "37561816e66b5b9153b1b64c10968c18c1e6f4a0",
+      "tokenizer_source": "Qwen/Qwen3.8-27B",
+      "tokenizer_grade": "SAME_PINNED_CHECKPOINT_TOKENIZER",
+      "tokenizer_sha256": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3",
+      "model_index_sha256": "77042094076611b69791a610065f28b7013b8c621795fa86ddccc8bac7d1b9df",
+      "native_token_ids": [
+        63204,
+        628,
+        1761,
+        33303,
+        948,
+        1928,
+        369,
+        31233,
+        1472,
+        264,
+        3972,
+        6000,
+        13
+      ],
+      "token_count": 13,
+      "checkpoint_head": "35720d00aaa7e24121317dc7903c03112790953d7b3d509a0bf47e04d6745cb3",
+      "checkpoint_restored": true,
+      "original_result_artifact_id": 14591981156,
+      "observed_steps": [
+        {
+          "token_id": 63204,
+          "embedding_sha256": "3b6eafbbea137d8ad9abd30e3e376bce9385fb23707ae82e1051920603801047",
+          "embedding_bytes": 10240,
+          "trained_48_gate_beta_mean": 0.712909898786,
+          "trained_head0_beta": 0.252323290489,
+          "selected_head_out_row0_contribution": -0.003374717951,
+          "convolution_digest": "e5e7868a6a6f717cccd68fd484e558271d68a2c8a26b062cda8b11e4674a6be0",
+          "recurrent_state_digest": "878dc82c644eb2d9dd93f86b20f35c744022faf635ed451d2d223f65e9e6452e",
+          "independent_recurrence_max_abs_error": 0,
+          "trained_head_ranges": 98
+        },
+        {
+          "token_id": 628,
+          "embedding_sha256": "6770557b2039bca9ce94455add6b092f7ce76a0127a8da6461cfbe7353d19a90",
+          "embedding_bytes": 10240,
+          "trained_48_gate_beta_mean": 0.684901588467,
+          "trained_head0_beta": 0.177727043071,
+          "selected_head_out_row0_contribution": 0.002284792043,
+          "convolution_digest": "10c96fe8d943b2bd787530a70a025fa90622efad6721bf9f64befaea4fe7581c",
+          "recurrent_state_digest": "83850be95e46a6bc33dc27ff65f8590134e8edcbdf4edf3c87960203aa75a4a7",
+          "independent_recurrence_max_abs_error": 6.776263578034403e-21,
+          "trained_head_ranges": 98
+        }
+      ]
+    },
+    "deepseek-v41-flash": {
+      "model": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "revision": "1bae0e1088993b9b82de08f59de5be5a34e42170",
+      "full_checkpoint_advertised_bytes": 510286023000,
+      "trained_numeric_scope": "real embedding-fed 384-way router and six selected first-neuron FP4 expert fragments; no model-causal post-attention/mHC input",
+      "tokenizer_revision": "dba1be0a40aa45a94ad051997016db3960a90277",
+      "tokenizer_source": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "tokenizer_grade": "RELATED_FLASH_RELEASE_NOT_PROVEN_IDENTICAL_TO_1017",
+      "tokenizer_sha256": "c90dfa01249db1be4245780a052ede752e1361c612ac6d08e2bdada7d599476b",
+      "model_index_sha256": "74b0686a3d2891980d5e303251b075a3bccae2c2ff650747db2620a649b98fa8",
+      "native_token_ids": [
+        75557,
+        588,
+        2123,
+        29285,
+        1082,
+        1951,
+        344,
+        26398,
+        1407,
+        260,
+        10814,
+        7104,
+        16
+      ],
+      "token_count": 13,
+      "checkpoint_head": "6dc2559264ddc630c0458fd6d5b2b5ee0771af3651684ac244fa0cf544b28b15",
+      "checkpoint_restored": true,
+      "original_result_artifact_id": 14591677221,
+      "observed_steps": [
+        {
+          "token_id": 75557,
+          "embedding_sha256": "393d73def653fe48dcbc5560fd03cc4f56e219e07bc0e04e78fc8ee4e5c6ef5a",
+          "embedding_bytes": 10240,
+          "selected_experts": [
+            270,
+            332,
+            155,
+            258,
+            156,
+            32
+          ],
+          "weighted_partial_contribution": 0.000129327881,
+          "qualified_range_count": 109
+        },
+        {
+          "token_id": 588,
+          "embedding_sha256": "2e37251e3c7364aa4a24b8f312e0d0f5e8c911cd20d4676856a6e612e9d0fc47",
+          "embedding_bytes": 10240,
+          "selected_experts": [
+            85,
+            12,
+            61,
+            43,
+            251,
+            144
+          ],
+          "weighted_partial_contribution": 0.000019968239,
+          "qualified_range_count": 102
+        }
+      ]
+    }
+  }
+}
