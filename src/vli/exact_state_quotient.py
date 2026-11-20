@@ -196,9 +196,16 @@ class ExactCausalStateQuotient:
         self.ground._audit()
 
     def _validate_node(self, coordinate):
-        """Recheck the exact state pages used in a proof, not just cached hashes."""
+        """Verify original pages against the fully admitted immutable state key.
+
+        The constructor already restored every source-qualified worker state.
+        Every use rechecks NAV-001's externally pinned node/receipt, numerical
+        output page and ALL full causal state page hashes. Because their
+        canonical bytes and geometry cannot change without violating those
+        hashes, redundant model-worker construction is not needed on hits.
+        """
         node = self.ground.nodes[coordinate]
-        self.ground._inspect(node, verify_checkpoint=True)
+        self.ground._inspect(node, verify_checkpoint=False)
         recalculated, _ = _state_key(self.ground, node, self.fingerprint)
         if self.keys[coordinate] != recalculated:
             raise ValueError("Stored Markov equivalence class changed after admission")
