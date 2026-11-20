@@ -404,6 +404,7 @@ class VerifiedTrainedResultGround:
         previous=_digest(CHECKPOINT,{
             "source_root":result.source_root,
             "observer":result.observer,"genesis":"independent_causal_observer_position"})
+        recovered_intentions=set()
         for event in snapshot["events"]:
             _require(type(event) is dict and event.get("schema")==EVENT
                      and event.get("previous_head")==previous
@@ -413,9 +414,31 @@ class VerifiedTrainedResultGround:
                                        if k!="event_digest"})==
                            event["event_digest"],
                      "Changed previous trained observation chain")
+            key=event.get("intent_digest")
+            _require(key in result.records,
+                     "Recovered observation lacks original source-bound computation")
+            rec=result.records[key]
+            expected_position=result._position(rec["intent"],previous)
+            newly_created=key not in recovered_intentions
+            _require(event.get("position_digest")==expected_position["position_digest"]
+                     and event.get("verified_result_receipt")==
+                         rec["receipt"]["receipt_digest"]
+                     and event.get("output_sha256")==rec["receipt"]["output_sha256"]
+                     and event.get("result_disposition")==(
+                         "NEW_TRAINED_ARITHMETIC" if newly_created else
+                         "RETAINED_TRAINED_RESULT_NO_ARITHMETIC")
+                     and event.get("new_trained_arithmetic_evaluations")==
+                         int(newly_created)
+                     and type(event.get("new_external_source_requests")) is int
+                     and 0<=event["new_external_source_requests"]<=1024
+                     and type(event.get("new_original_source_bytes")) is int
+                     and event["new_original_source_bytes"]>=0,
+                     "Recovered state position or trained-operation claims differ")
+            recovered_intentions.add(key)
             previous=event["event_digest"]
-        _require(snapshot["head"]==previous,
-                 "Recovered trained observation head diverges")
+        _require(snapshot["head"]==previous and
+                 recovered_intentions==set(result.records),
+                 "Recovered trained observation head or admitted result set diverges")
         result.head=previous;result.events=deepcopy(snapshot["events"])
         return result
 
