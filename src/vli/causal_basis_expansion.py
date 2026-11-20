@@ -126,6 +126,17 @@ def _read_whole(store, manifest, width):
     return struct.unpack("<" + "d"*width, raw), raw
 
 
+
+def _qualified_rank(parent, hidden, witness):
+    """A geometric residual is source-qualified only after exact native admission."""
+    probe = parent.off_manifold(hidden)
+    probe["source_qualification"] = "native_original_complete_two_layer_causal_position"
+    probe["causal_position"] = witness["position"]
+    probe["original_token_id"] = witness["original_token_id"]
+    probe["source_native_chain_head"] = witness["chain_head"]
+    probe["actual_layer0_output_f64_digest"] = witness["layer0_output_f64_digest"]
+    return probe
+
 class ExpandedCausalGround:
     """Source revision 4 of a parent SHAPE-009 Ground, independently pinned."""
 
@@ -148,7 +159,7 @@ class ExpandedCausalGround:
             model=self.parent.model, revision=self.parent.revision,
             index_ground_digest=self.parent.index_ground_digest)
         self.fourth_witness = rec
-        self.rank_probe = self.parent.off_manifold(hidden)
+        self.rank_probe = _qualified_rank(self.parent, hidden, rec)
         _require(self.rank_probe["relative_residual"] > 1e-7 and
                  not self.rank_probe["inside_declared_convex_hull"],
                  "Actual new causal position did not expand the affine rank")
@@ -368,7 +379,7 @@ class ExpandedCausalGround:
                     "previous": rec["previous_head"], "layer_witnesses": ws}
         _require(_digest(CHAIN, semantic) == rec["chain_head"],
                  "Fourth actual native causal chain cannot reconstruct")
-        obj.rank_probe = obj.parent.off_manifold(hidden)
+        obj.rank_probe = _qualified_rank(obj.parent, hidden, rec)
         _require(obj.rank_probe == saved["rank_probe"] and
                  obj.rank_probe["relative_residual"] > 1e-7 and
                  not obj.rank_probe["inside_declared_convex_hull"],
