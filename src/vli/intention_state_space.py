@@ -255,7 +255,7 @@ def navigate_intention(space,requested_time,*,allow_projection=False,
     recorded=space["source_observation_count"]
     if k>=recorded:
         _require(allow_projection is True,
-                 "Future intent requires explicit unverified projection consent")
+                 "Future intention projection requires explicit opt-in consent")
     A,V=_compiled(space)
     value,state,metrics=navigate_relation(A,V,k,space["output_coordinate"])
     execution={"method":"COMPOSE_STATE_SPACE_RELATION",
