@@ -212,5 +212,101 @@ class TestCausalShapeRevision(unittest.TestCase):
         self.assertIn("phase=1",outputs[0]["content"])
 
 
+from vli.learned_morphology import LearnedObserverIntentionRouter
+from vli.intent_topology import TopologyWitness
+
+
+def lens_witnesses():
+    return (
+        TopologyWitness("report only the phase observation", ("phase",)),
+        TopologyWitness("show the current phase state", ("phase",)),
+        TopologyWitness("report only the micro observation", ("micro",)),
+        TopologyWitness("show the current micro state", ("micro",)),
+        TopologyWitness("report both phase and micro observations", ("phase","micro")),
+        TopologyWitness("show the complete state with both channels", ("phase","micro")),
+    )
+
+
+class TestLearnedModelPromptIntention(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        raw=RAW.read_bytes()
+        cls.phase=LearnedObserverGround(raw,("phase",))
+        cls.micro=LearnedObserverGround(raw,("micro",))
+        cls.full=LearnedObserverGround(raw,("phase","micro"))
+        cls.witnesses=lens_witnesses()
+
+    def session(self):
+        return LearnedMorphologyConversation((self.phase,self.micro,self.full))
+
+    def test_prompt_navigates_from_black_box_learned_shape_to_new_response(self):
+        session=self.session()
+        router=LearnedObserverIntentionRouter(session)
+        p=router.propose(self.witnesses,"report only the phase observation")
+        self.assertEqual(p["status"],"PROPOSED_NEEDS_OBSERVER_APPROVAL")
+        self.assertEqual(p["ecpu_intention"]["ecpu_prediction"]["evidence_tier"],"E0")
+        self.assertEqual(session.history,())
+        chosen=router.accept(self.witnesses,p,
+                             expected_proposal_head=p["proposal_digest"])
+        self.assertIs(chosen,self.phase)
+        out=router.accept_and_respond(
+            self.witnesses,p,expected_proposal_head=p["proposal_digest"],
+            action="advance")
+        self.assertEqual(out["event"]["observed_values"],[1])
+        self.assertEqual(session.history,("advance",))
+
+    def test_new_prompt_requalifies_finer_neural_model_with_same_causal_history(self):
+        session=self.session()
+        router=LearnedObserverIntentionRouter(session)
+        p=router.propose(self.witnesses,"report only the phase observation")
+        router.accept_and_respond(self.witnesses,p,
+                                  expected_proposal_head=p["proposal_digest"],
+                                  action="advance",views=("text",))
+        broader=router.propose(self.witnesses,
+                               "report both phase and micro observations")
+        picked=router.accept(self.witnesses,broader,
+                             expected_proposal_head=broader["proposal_digest"])
+        self.assertIs(picked,self.full)
+        out=router.accept_and_respond(
+            self.witnesses,broader,
+            expected_proposal_head=broader["proposal_digest"],
+            action="inspect",views=("text","code","tokens"))
+        self.assertEqual(out["event"]["observed_values"],[1,1])
+        self.assertEqual(session.history,("advance","inspect"))
+        self.assertNotEqual(out["event"]["position"],p["proposal_digest"])
+
+    def test_stale_accepted_intention_cannot_skip_causal_change(self):
+        session=self.session()
+        router=LearnedObserverIntentionRouter(session)
+        p=router.propose(self.witnesses,"report only the phase observation")
+        session.respond(self.micro,prompt="micro change",action="advance")
+        head=session.head
+        with self.assertRaises(ValueError):
+            router.accept(self.witnesses,p,
+                          expected_proposal_head=p["proposal_digest"])
+        self.assertEqual(session.head,head)
+        self.assertEqual(len(session.events),1)
+
+    def test_tampered_or_uncertain_intention_does_not_form_state(self):
+        session=self.session()
+        router=LearnedObserverIntentionRouter(session)
+        p=router.propose(self.witnesses,"report only the phase observation")
+        forged=copy.deepcopy(p)
+        forged["observed_ledger_heads"][0]="0"*64
+        with self.assertRaises(ValueError):
+            router.accept(self.witnesses,forged,
+                          expected_proposal_head=p["proposal_digest"])
+        with self.assertRaises(ValueError):
+            router.accept(self.witnesses,p,
+                          expected_proposal_head="0"*64)
+        uncertain=router.propose(
+            self.witnesses,"unseen ambiguous request",
+            min_confidence=0.999999,min_margin=0.999999)
+        self.assertEqual(uncertain["status"],"INSUFFICIENT_INTENT_EVIDENCE")
+        with self.assertRaises(ValueError):
+            router.accept(self.witnesses,uncertain,
+                          expected_proposal_head=uncertain["proposal_digest"])
+        self.assertEqual(session.events,[])
+
 if __name__=="__main__":
     unittest.main()
