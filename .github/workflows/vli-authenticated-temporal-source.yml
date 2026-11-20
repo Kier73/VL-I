@@ -1,0 +1,42 @@
+name: TIME-005 source-signed real process recovery
+
+on:
+  push:
+    paths:
+      - 'src/vli/authenticated_temporal_source.py'
+      - 'tests/test_authenticated_temporal_source.py'
+      - 'examples/authenticated_temporal_source_demo.py'
+      - '.github/workflows/vli-authenticated-temporal-source.yml'
+  pull_request:
+    paths:
+      - 'src/vli/authenticated_temporal_source.py'
+      - 'tests/test_authenticated_temporal_source.py'
+      - 'examples/authenticated_temporal_source_demo.py'
+      - '.github/workflows/vli-authenticated-temporal-source.yml'
+  workflow_dispatch:
+
+jobs:
+  signed-source-recovery:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.11', '3.14']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install VL-I and optional signature verification
+        run: |
+          python -m pip install -e .
+          python -m pip install "cryptography>=46,<47"
+      - name: Verify actual signed-source process crashes and replay safety
+        run: python -m unittest discover -s tests -p test_authenticated_temporal_source.py -v
+      - name: Check interpreter changes preserve source evidence
+        run: python -m unittest discover -s tests -p test_evolving_environment_language.py -v
+      - name: Check previous live-process and Ground recovery contracts
+        run: python -m unittest discover -s tests -p test_live_temporal_intelligence.py -v
+      - name: Exercise publisher and worker process-death demonstration
+        run: python -m examples.authenticated_temporal_source_demo
