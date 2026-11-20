@@ -75,7 +75,14 @@ invalid head shapes and failed downstream projections are all refused.
 `tests/test_qwen_hybrid_block.py` exercises independent scalar attention
 mathematics over multiple causal positions, tests the complete four-layer
 hand-off against the existing independent scalar three-GDN oracle plus
-the separate attention oracle, and tests restart, tampering and rollback.
+the separate attention oracle, and tests restart, tampering and rollback. A separate
+`tests/test_qwen_hybrid_process_recovery.py` test constructs and pins
+the four-layer checkpoint in one Python operating-system process,
+**forcibly terminates that process**, then starts a second independent
+process and verifies byte-for-byte output and exact causal-head parity
+against an uninterrupted worker. The process-kill test currently runs
+on controlled original-topology mathematical fixtures; a real-checkpoint
+process kill/recovery test is a distinct next experiment.
 
 ## Commands
 
