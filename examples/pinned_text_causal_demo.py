@@ -40,7 +40,14 @@ def run(route, *, text=DEFAULT_TEXT, steps=2):
         approved_hosts={"pinned-huggingface-https-range"})
     g=trained_ground(route,nav.index)
     tok_src=TOKENIZER_SOURCES[route]
-    # A separate, explicit, commit-pinned tokenizer asset gate; do not widen\n    # the existing VL-64 weight/shard URL selector to arbitrary files.\n    if tok_src["filename"]!="tokenizer.json" or tok_src["repository"] not in (\n            "Qwen/Qwen3.8-27B","deepseek-ai/DeepSeek-V4.1-Flash"):\n        raise ValueError("Unqualified tokenizer asset source")\n    tokenizer_url=("https://huggingface.co/"+tok_src["repository"]+\n                   "/resolve/"+tok_src["revision"]+"/tokenizer.json")\n    tok_raw=_fetch_metadata(tokenizer_url,MAX_ASSET_BYTES)
+    # The pinned-tokenizer path gate is separate from VL-64's shard reader.
+    if (tok_src["filename"]!="tokenizer.json" or
+            tok_src["repository"] not in
+            ("Qwen/Qwen3.8-27B","deepseek-ai/DeepSeek-V4.1-Flash")):
+        raise ValueError("Unqualified tokenizer asset source")
+    tokenizer_url=("https://huggingface.co/"+tok_src["repository"]+
+                   "/resolve/"+tok_src["revision"]+"/tokenizer.json")
+    tok_raw=_fetch_metadata(tokenizer_url,MAX_ASSET_BYTES)
     tg,runtime=admit(g,tok_raw)
     intent=text_intention(tg,text)
     ids=tokenize(tg,runtime,intent)
