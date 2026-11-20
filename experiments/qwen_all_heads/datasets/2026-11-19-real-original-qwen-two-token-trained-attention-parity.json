@@ -37,7 +37,16 @@
       "rms_F64_error": 1.794115907711174e-16,
       "historical_KV_positions": 1,
       "max_deviation_from_uniform_attention": 0,
-      "max_attention_context_difference_from_current_value": 0
+      "max_attention_context_difference_from_current_value": 0,
+      "complete_predecessor_F64_digests": [
+        "7f8abcbe75c429851ef049dc1501c87762fefc7194aa4feb52aa97e57df78f45",
+        "39ba32ebfb547d4caf8b70b6d30282c00708c6214a27d75ee5c8c36409c86ba9",
+        "dbfc2c4caa9c49c43438de2b91f456480eafcfdfb7032eafa33b23244bd1ffc5",
+        "4520475bd8a09a228a874a5136f9653f5424ce4e02f40b808097cb4fb7d51cb7",
+        "cba3f67ea551ee0876fc2e4327d8c3e1ff108f51f9bcd288e79e03ca5ee27ec9",
+        "c953b588d51c9849a63e0ea0fc9d23eaf7ef7d8708529f059248a7d8671ab006",
+        "84bce25d25334bd81510ce756dafb978c7f4501411e42933321082f3d2bbbafa"
+      ]
     },
     {
       "causal_position": 1,
@@ -76,6 +85,15 @@
         0.8963903470156335,
         0.6301378112555985,
         0.6926522955730866
+      ],
+      "complete_predecessor_F64_digests": [
+        "f61fc8b6487d6a667fa9576904b3c5d601e680a1cda6ce82b45150fd73011773",
+        "6b5cf42aba4805e43a0554e35fa292df863aa196a10a871673ddee3bb8d50eab",
+        "a177957777013e49853f8867dbf0684d6124e7c8e4f834142f1c971027774cb8",
+        "b81940af2b76582d4e5b9ea7a3a72fe7e79c6eeb90c7a94d4300fb1fb53b739c",
+        "027482a8c76ddc9f99e2fcb73fcd85f2ef2a6f92d9577a1c0b8e7cf5d7583b5c",
+        "0b2c9081d5577cca6cd9aab3bfb53955fd8f4ec5df69199dbe9ab1c5dd1b3987",
+        "27980be83692bd36eaca671d972fd10d8b6a44d456ca5622cd830b711f1a388a"
       ]
     }
   ],
