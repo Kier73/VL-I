@@ -5,6 +5,7 @@ on:
     paths:
       - 'src/vli/exact_state_quotient.py'
       - 'tests/test_exact_state_quotient.py'
+      - 'examples/exact_state_quotient_demo.py'
       - 'docs/NAV_002_EXACT_STATE_QUOTIENT.md'
       - '.github/workflows/vli-exact-state-quotient.yml'
   pull_request:
@@ -41,3 +42,14 @@ jobs:
         run: python -m pytest -q tests/test_exact_state_quotient.py
       - name: Preserve verified predecessor causal-worker experiments
         run: python -m pytest -q tests/test_counterfactual_navigation.py tests/test_qwen_layer_chain.py tests/test_qwen_hybrid_block.py tests/test_qwen_hybrid_process_recovery.py
+
+      - name: Measure qualified GDN and hybrid quotient against 64-transition independent oracles
+        run: |
+          python -m examples.exact_state_quotient_demo --mode two_gdn --out artifacts/nav002-two-gdn.json
+          python -m examples.exact_state_quotient_demo --mode gdn_gdn_gdn_gqa --out artifacts/nav002-hybrid.json
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nav002-exact-state-quotient-${{ matrix.python-version }}
+          path: artifacts/nav002-*.json
+          if-no-files-found: warn
