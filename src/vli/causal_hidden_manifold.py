@@ -425,6 +425,31 @@ class CausalHiddenManifoldGround:
                 "source_qualification":"unverified_new_causal_source_until_receipt_pinned",
                 "next_action":"refuse_and_observe_new_original_causal_position"}
 
+    def probe_new_original_causal_position(self,report):
+        """Do NOT extrapolate a fitted Ground to the next true context state.
+
+        The fourth observed position is a held-out actual trained causal
+        transition. Its receiver-local layer-0 output is qualified against
+        the original layer0/layer1 semantic source receipt and previous
+        chain head, then tested geometrically. An out-of-span state is a
+        verified refusal/counterexample, NOT a fabricated trained prediction.
+        """
+        hidden,record=_qualified_capture(
+            report,self.width,3,self.final_chain_head,
+            model=self.model,revision=self.revision,
+            index_ground_digest=self.index_ground_digest)
+        probe=self.off_manifold(hidden)
+        probe["source_qualification"]=(
+            "native_original_complete_two_layer_causal_position")
+        probe["causal_position"]=3
+        probe["original_token_id"]=record["original_token_id"]
+        probe["source_native_chain_head"]=record["chain_head"]
+        probe["actual_layer0_output_f64_digest"]=record[
+            "layer0_output_f64_digest"]
+        probe["would_wrongly_extrapolate"]=not probe[
+            "inside_declared_convex_hull"]
+        return probe
+
     def checkpoint(self):
         body={
             "schema":CHECKPOINT,
