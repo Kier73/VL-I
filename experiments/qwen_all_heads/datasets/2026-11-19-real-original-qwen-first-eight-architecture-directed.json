@@ -64,7 +64,8 @@
       "3f44bf6045cda6be94114a818c191678db5ab966252a26a76f7e77ffaf15a7cc",
       "4d7759124e5a0e686f276557a33194a9a26908edf4323707422ed9dfaafa09e5"
     ],
-    "last_semantic_head": "14e9df0c3d7d2328bd1b70aebfe9a41fead7eb10e8345f4cc0fa07c312a41365"
+    "last_semantic_head": "7bde6b02d0bb73c3c005ac4d8780734d69daf991e6acfd429171a14eda203dd3",
+    "input_f64_digest": "86d46123eaf2ab2cb644d0e0e82c74fa72feda725cead3e8d9bdee1d3e77f807"
   },
   "checkpoint": {
     "externally_pinned_manifest_digest": "08e3cb803fc8a76154607e31544472a9286bceaff8e885cf256a4c20e0022a9f",
@@ -86,5 +87,6 @@
   "first_four_exact_outputs_reproduce_qualified_007": true,
   "independent_original_weight_pytorch_parity": false,
   "full_64_decoder_layers_executed": false,
-  "vocabulary_logits_computed": false
+  "vocabulary_logits_computed": false,
+  "config_external_sha256_pin_supplied": false
 }
