@@ -23,7 +23,7 @@ from vli.evolving_environment_language import (
 from vli.authenticated_temporal_source import (
     SIGNED_SCHEMA, _genesis, _extend, _packet_digest,
     append_signed_observation, public_key_hex,
-    sign_source_observation, verified_source_journal,
+    sign_source_observation, verified_source_journal, _signature_body,
     verify_source_signature, resume_signed_observer,
 )
 
@@ -73,8 +73,8 @@ class SignedSourceTests(unittest.TestCase):
         first=self.emit(1)
         second=self.emit(3)
         self.assertEqual(first["schema"],SIGNED_SCHEMA)
-        self.assertGreater(second["captured_monotonic_ns"],
-                           first["captured_monotonic_ns"])
+        self.assertGreaterEqual(second["captured_monotonic_ns"],
+                                first["captured_monotonic_ns"])
         self.assertGreater(first["captured_wall_ns"],0)
         self.assertTrue(verify_source_signature(
             first,public_key=self.public,source=SOURCE))
@@ -117,7 +117,7 @@ class SignedSourceTests(unittest.TestCase):
         self.assertEqual(c["active_environment_family"],"quadratic")
         self.assertEqual(c["unobserved_intervals_between_samples"],6)
         self.assertEqual(len(c["measured_source_inter_sample_gaps_ns"]),6)
-        self.assertTrue(all(x>0 for x in c["measured_source_inter_sample_gaps_ns"]))
+        self.assertTrue(all(x>=0 for x in c["measured_source_inter_sample_gaps_ns"]))
         after=load_json(self.snapshot)
         recovered=TemporalIntelligenceGround.restore(
             after,expected_head=after["head"],
@@ -198,6 +198,33 @@ class SignedSourceTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     verified_source_journal(self.journal,expected_head=self.head,
                         expected_count=2,source=SOURCE,public_key=self.public)
+
+    def test_equal_source_clock_ticks_are_valid_but_regression_is_refused(self):
+        """Finite OS monotonic clock precision must not fabricate chronology."""
+        first=self.emit(1)
+        raw=sign_source_observation(
+            self.key,source=SOURCE,sequence=1,time="1/1",value="2/1")
+        same={**raw,"captured_monotonic_ns":first["captured_monotonic_ns"]}
+        body={k:v for k,v in same.items() if k!="signature"}
+        same["signature"]=self.key.sign(_signature_body(body)).hex()
+        self.head,self.count=append_signed_observation(
+            self.journal,same,expected_head=self.head,
+            expected_count=self.count,source=SOURCE,public_key=self.public)
+        verified=verified_source_journal(
+            self.journal,expected_head=self.head,
+            expected_count=self.count,source=SOURCE,public_key=self.public)
+        self.assertEqual(verified[0]["captured_monotonic_ns"],
+                         verified[1]["captured_monotonic_ns"])
+        worker=self.run_worker("equal-clock")
+        self.assertEqual(worker["measured_source_inter_sample_gaps_ns"],[0])
+        regressed={**same,"sequence":2,"time":"2/1",
+                   "captured_monotonic_ns":first["captured_monotonic_ns"]-1}
+        contents={k:v for k,v in regressed.items() if k!="signature"}
+        regressed["signature"]=self.key.sign(_signature_body(contents)).hex()
+        with self.assertRaisesRegex(ValueError,"strictly advancing"):
+            append_signed_observation(
+                self.journal,regressed,expected_head=self.head,
+                expected_count=self.count,source=SOURCE,public_key=self.public)
 
     def test_wrong_public_key_or_wrong_source_rejected(self):
         self.emit(1)
