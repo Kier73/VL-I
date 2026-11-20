@@ -66,8 +66,8 @@ class QualifiedPretrainedRangeMemory:
         from mailcpu.structural_memory_pages import StructuralMemoryPageBacking
         from mailcpu.computational_objects import ComputationalObjectStore
 
-        _require(type(index_raw) is bytes and index_raw
-                 and callable(upstream_host) or upstream_host is None,
+        _require(type(index_raw) is bytes and bool(index_raw) and
+                 (callable(upstream_host) or upstream_host is None),
                  "Missing original-shard metadata or host interface")
         index,weights=admit_index(index_raw,model=model,revision=revision)
         _require(type(approved_upstream_hosts) is set and
