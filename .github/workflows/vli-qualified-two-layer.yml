@@ -5,6 +5,8 @@ on:
     paths:
       - 'src/vli/qwen_layer_chain.py'
       - 'tests/test_qwen_layer_chain.py'
+      - 'tests/test_saved_original_qwen_two_layers.py'
+      - 'experiments/qwen_all_heads/datasets/2026-11-19-real-original-qwen-first-two-complete-layers.json'
       - 'examples/qwen_layer_chain_frontier.py'
       - 'docs/QUALIFIED_TWO_LAYER_CAUSAL_CHAIN.md'
       - '.github/workflows/vli-qualified-two-layer.yml'
@@ -47,13 +49,10 @@ jobs:
       - name: Check exact predecessor handoff, independent scalar reference, recovery and failures
         run: python -m pytest -q tests/test_qwen_layer_chain.py
       - name: Regression on original single-layer qualified host
-        run: python -m pytest -q tests/test_qwen_all_heads.py tests/test_saved_original_qwen_first_layer.py
+        run: python -m pytest -q tests/test_qwen_all_heads.py tests/test_saved_original_qwen_first_layer.py tests/test_saved_original_qwen_two_layers.py
 
   original-two-layer-trained-execution:
-    if: >-
-      (github.event_name == 'pull_request' &&
-       github.head_ref == 'feat/qualified-006-causal-layer-chain-20261119') ||
-      (github.event_name == 'workflow_dispatch' && inputs.run_original_two_layers)
+    if: github.event_name == 'workflow_dispatch' && inputs.run_original_two_layers
     runs-on: ubuntu-latest
     timeout-minutes: 50
     env:
