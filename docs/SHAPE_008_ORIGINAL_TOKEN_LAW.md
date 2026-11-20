@@ -98,6 +98,35 @@ The live job performs **five original native normalization observations**, infer
 
 The job records cold source/index/embedding acquisition and candidate fitting, both original pretrained token-row SHA-256 values, source HTTPS requests/bytes, sparse generation versus independent native normalization, held-out error, complete-output performance and E-CPU checkpoint size/cost. HTTPS unavailability is reported `UNRESOLVED`, never replaced with a synthetic “pass.”
 
+## Live original Qwen3.8-27B verified result — November 19, 2026
+
+The merged [SHAPE-008 original-source GitHub Actions run 44665097077](https://github.com/Kier73/VL-I/actions/runs/44665097077) succeeded against the full, pinned original pretrained **Qwen/Qwen3.8-27B** checkpoint. It read actual original 5,120-dimensional embedding rows for token IDs **63204 and 628** and the full original trained layer-0 normalization weights. These IDs were independently observed in VL-I's prior original paragraph-tokenizer experiment.
+
+The receiver admitted **7 exact original HTTPS range requests / 76,272 source bytes**. The original checkpoint was not downsized. Its original-model index identity, token-row source SHA-256 and native operator were qualified before any learned output could be admitted.
+
+**Observation-driven law inference:** five native original VL-64 normalization runs were executed on the actual two-token affine input span: three to infer polynomial coefficients from output observations, two to challenge model degree. Maximum challenge errors were **1.69914 (constant)**, **2.36324 (affine)** and **3.55 × 10⁻¹⁵ (quadratic)**. Only the bounded quadratic hypothesis was admitted, with the fitted coefficients independently checked against the mathematical square-energy identity of the source token span.
+
+Then, four *never-before-observed* mixtures produced eight output coordinates each, **before** the original pretrained operator was called for a reference check.
+
+| Unseen mixture (t) | Generative sparse Ground | Original native full-normalization reference | Maximum held-out absolute error |
+| --- | ---: | ---: | ---: |
+| 0.13 | **0.466 ms** | 18.445 ms | 2.22 × 10⁻¹⁶ |
+| 0.37 | **0.381 ms** | 6.798 ms | 8.88 × 10⁻¹⁶ |
+| 0.67 | **0.357 ms** | 6.677 ms | 8.88 × 10⁻¹⁶ |
+| 0.91 | **0.346 ms** | 6.664 ms | 4.44 × 10⁻¹⁶ |
+
+Every new output was predicted with **zero original HTTPS reads and zero native normalization evaluations during its formation**; the independent native reference executed **after** each output had been committed. The maximum held-out error was **8.88 × 10⁻¹⁶**, and each resulting coordinate occupied a separately causal, original-source/observer/intention-bound state position.
+
+The generated Ground retained three E-CPU original-derived complete coefficient objects: both pretrained token rows and the true layer-0 trained normalization gains, totaling **122,880 binary64 bytes** (excluding content-addressed page geometry). This stores a function's source basis, not an input-to-output lookup table.
+
+**Source-free recovery:** a fully pinned receiver restart independently revalidated the retained original trained token/gain bytes, the fitted law and every previous generated output. Recovering the **~471 KB** serialized checkpoint took **23.04 ms**. Without a source connection and without native original arithmetic during prediction, the recovered Ground formed a **fifth unseen mixture (t = 0.83)**, with independent original native reference error **4.44 × 10⁻¹⁶**.
+
+**Performance accounting and negative control:** original source acquisition and inference preparation together took **2,609.7 ms** in the recorded run, including **6.61 ms** of original native normalization during training. Warm sparse generation can be much quicker than producing a whole original native output, but this advantage is conditional on amortizing those cold costs and asking for only a small observer projection. Requesting all **5,120 coordinates** through the current Ground took **9.298 ms**, **slower** than the **7.019 ms** original full-native reference. These are single-run, GitHub-hosted Python measurements, not a general or full-model speedup claim.
+
+The precise scope is **a quadratic normalization law fitted from original native observations of the affine span of two real pretrained token embeddings**. This is no longer a synthetic hidden-vector input, but also **not** an actual Transformer-attention-conditioned hidden state, complete prefill, layer execution or language generation. The law's polynomial family was **chosen as a bounded hypothesis set**, not discovered with an open-ended search of arbitrary computation.
+
+[Machine-readable original-Qwen evidence](../experiments/token_conditioned_law/results/2026-11-19-original-qwen27b-token-span.json) records source hashes, token identities, learned coefficients, candidate counterexamples, verified unseen outputs, wall time, memory and source-free recovery without copying original pretrained weights into the research report.
+
 ## 6. What SHAPE-008 does and does not establish
 
 **If the live original-model verification succeeds, it establishes:** an output-forming Ground with coefficients fitted from native observations, original pretrained token-derived input state, bounded source-based polynomial semantics, unseen output generation, and independent post-prediction numerical verification.
