@@ -1,0 +1,40 @@
+name: TIME-003 evolving environment language
+
+on:
+  push:
+    paths:
+      - 'src/vli/evolving_environment_language.py'
+      - 'tests/test_evolving_environment_language.py'
+      - 'examples/evolving_environment_language_demo.py'
+      - '.github/workflows/vli-evolving-environment-language.yml'
+  pull_request:
+    paths:
+      - 'src/vli/evolving_environment_language.py'
+      - 'tests/test_evolving_environment_language.py'
+      - 'examples/evolving_environment_language_demo.py'
+      - '.github/workflows/vli-evolving-environment-language.yml'
+  workflow_dispatch:
+
+jobs:
+  evolving-language:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.11', '3.14']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install VL-I
+        run: python -m pip install -e .
+      - name: Test generated interpreters and migration refusals
+        run: python -m unittest discover -s tests -p test_evolving_environment_language.py -v
+      - name: Test retained temporal and continuous lifetime foundations
+        run: python -m unittest discover -s tests -p test_temporal_intelligence.py -v
+      - name: Test source-liveness and persistence seams
+        run: python -m unittest discover -s tests -p test_live_temporal_intelligence.py -v
+      - name: Exercise three language epochs through one living observer
+        run: python -m examples.evolving_environment_language_demo
