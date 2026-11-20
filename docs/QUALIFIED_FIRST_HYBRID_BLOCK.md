@@ -119,3 +119,52 @@ transitions, not a complete 64-layer decoder, final vocabulary logits,
 generated text, physical substrate independence, or network-native
 arithmetic. The next step is independent real-weight reference parity,
 separate process rehosting, and bounded KV navigation over long prefixes.
+
+## Original pretrained first hybrid block — confirmed success
+
+[GitHub Actions run 44664814333](https://github.com/Kier73/VL-I/actions/runs/44664814333)
+**passed** both Python 3.11 and 3.13 independent scalar/recovery jobs and
+the separately executed **original trained 27B first hybrid block**.
+
+Both original natural-language paragraph tokens `63204`, `628`
+were advanced across **all four full 5,120-wide trained layers**,
+yielding eight complete pretrained layer executions:
+three GDN layers and the first gated full-attention layer.
+Their state and output digests are distinct as expected.
+Every F64 layer output was passed exactly to its successor.
+The first two layers, both tokens, **reproduce the QUALIFIED-006
+trained F64/F32 outputs and recurrent digests exactly**.
+
+| Measured source-backed property | Original experiment |
+| --- | ---: |
+| Full original trained layer operations | **8** |
+| Trained bytes each GDN layer/token | **766,443,520** |
+| Trained bytes attention layer/token | **744,488,960** |
+| Qualified logical <=64 KiB ranges | **93,044** |
+| Actual HTTPS 206 source requests | **775** |
+| Remote HTTPS bytes | **6,501,171,200** |
+| Source RAM block budget on worker | **128 MiB** |
+| GDN state pages at first-token checkpoint | **300** |
+| Full-attention KV pages at checkpoint | **1** |
+| Combined checkpoint state F64 bytes | **19,628,032** |
+
+The full pretrained run observed one complete attention KV position,
+checkpointed that historical state together with all three GDN states
+under one externally pinned digest, recovered into fresh qualified
+navigators/executors, and then advanced the second token with two KV
+positions. The separately exercised OS-process-kill recovery is on
+fixture weights, not a claim that a full original-weight worker was
+physically restarted.
+
+The source artifact is
+[GitHub Actions artifact 14597722183](https://github.com/Kier73/VL-I/actions/runs/44664814333/artifacts/14597722183).
+The independently regression-tested exact digest summary is archived at
+[`2026-11-19-real-original-qwen-first-hybrid-block.json`](../experiments/qwen_all_heads/datasets/2026-11-19-real-original-qwen-first-hybrid-block.json).
+
+**Qualification:** This is four original trained layers executed with
+VL-I's numeric semantics, not an independent PyTorch parity result on
+the complete original 27B checkpoint; nor does it establish the remaining
+60 original decoder layers, final norm, logits, generated text or
+communication-native arithmetic. The bandwidth-heavy original run is
+manual opt-in after this completed observation, while scalar and
+archived provenance tests continue automatically.
