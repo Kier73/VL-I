@@ -1,0 +1,46 @@
+name: VL-I SHAPE-002 intention-malleable neural Grounds
+
+on:
+  push:
+    branches: ["main", "feat/**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  morphology:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pin actual E-CPU byte Ground
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - name: Pin original VLD neural/compiler/triad
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/Virtual-Layer-Dynamics
+          ref: 985ba5c2fbcc40842aed9f45f42587749620b98e
+          path: upstream/vld
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install exact predecessor realizer implementations
+        run: python -m pip install -e . -e upstream/ecpu -e upstream/vld
+      - name: Independently prove VLD observer equivalence and changing intention
+        run: python -m unittest discover -s tests -p test_morphological_generation.py -v
+      - name: Run and preserve cold/warm observer-shape neural generation benchmark
+        run: python -m examples.morphological_generation_demo --out artifacts/shape002-morphology.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vli-shape002-intention-malleable-generative-model
+          path: artifacts/shape002-morphology.json
+          if-no-files-found: warn
