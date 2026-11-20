@@ -6,6 +6,8 @@ on:
       - 'src/vli/pinned_text_ground.py'
       - 'src/vli/qwen_causal_head.py'
       - 'tests/test_pinned_text_causal.py'
+      - 'tests/test_saved_pinned_text_causal.py'
+      - 'experiments/pinned_text/datasets/**'
       - 'examples/pinned_text_causal_demo.py'
       - 'docs/PINNED_TEXT_CAUSAL_CONSTRUCTION.md'
       - '.github/workflows/vli-pinned-text-causal.yml'
@@ -44,7 +46,9 @@ jobs:
       - name: Install minimal native tokenizer dependency and existing interpreter
         run: python -m pip install -e . -e upstream/vl64 'tokenizers>=0.20,<1'
       - name: Verify actual tokenizer law and fail-closed original causal recurrent state
-        run: python -m unittest discover -s tests -p test_pinned_text_causal.py -v
+        run: |
+          python -m unittest discover -s tests -p test_pinned_text_causal.py -v
+          python -m unittest discover -s tests -p test_saved_pinned_text_causal.py -v
       - name: Retain previous exact trained token embedding Ground regressions
         run: python -m unittest discover -s tests -p test_token_embedding_ground.py -v
 
