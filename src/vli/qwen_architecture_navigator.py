@@ -389,7 +389,9 @@ class QwenArchitectureCausalPrefix:
             self.head=new_head
             return state,{**body,"chain_head":new_head,
                 "complete_prefix_layers":self.stop_layer,
-                "complete_decoder":self.stop_layer==self.plan["layer_count"],
+                "all_declared_backbone_layers_completed":(
+                    self.stop_layer==self.plan["layer_count"]),
+                "complete_decoder":False,
                 "vocabulary_logits_computed":False}
         except Exception:
             for r,(position,left,right) in zip(self.runners,saved):
