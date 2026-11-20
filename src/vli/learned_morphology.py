@@ -32,7 +32,8 @@ SESSION_SCHEMA = "vl-i.learned-observer-conversation-snapshot.v1"
 class BlackBoxObserver:
     """Separate probe interface: no state graph exposed to IFS learner."""
 
-    def __init__(self, reference, *, channels: tuple[str, ...], source_digest: str):
+    def __init__(self, reference, *, channels: tuple[str, ...], source_digest: str,
+                 structural_memory=None):
         _require(type(channels) is tuple and channels and
                  len(channels)==len(set(channels)) and
                  all(c in reference.channels for c in channels),
@@ -47,11 +48,24 @@ class BlackBoxObserver:
             "channels":list(channels),
         })
         self.direct_transition_steps=0
+        if structural_memory is not None:
+            from .observation_memory import StructuralPrefixMemory
+            _require(isinstance(structural_memory,StructuralPrefixMemory)
+                     and structural_memory.source_sha256==source_digest
+                     and structural_memory.source_fingerprint==reference.fingerprint,
+                     "Cached source Ground identity does not match black-box authority")
+        self.structural_memory=structural_memory
 
     def query(self, actions):
         _require(type(actions) in (tuple,list) and len(actions)<=64
                  and all(a in self.alphabet for a in actions),
                  "Unadmitted black-box path")
+        if self.structural_memory is not None:
+            previous=self.structural_memory.evaluated_transitions
+            result=self.structural_memory.observe(tuple(actions),self.channels)
+            self.direct_transition_steps+=(
+                self.structural_memory.evaluated_transitions-previous)
+            return result
         s=self._reference.initial_state
         outputs=[]
         for a in actions:
@@ -105,7 +119,8 @@ class LearnedObserverGround:
 
     def __init__(self, reference_source: bytes, channels: tuple[str,...],
                  *, seed_suffix: tuple[str,...] = ("reset",),
-                 max_membership: int = 5000, max_revisions: int = 32):
+                 max_membership: int = 5000, max_revisions: int = 32,
+                 structural_memory=None):
         from vld.signal.transitions import GroundTransitionSystem
         from partial_observation import ObservedOracle, fit_table, first_mismatch
         from predictive_state import ActiveMachineLearner
@@ -126,7 +141,8 @@ class LearnedObserverGround:
         self.source_digest=sha256(reference_source).hexdigest()
         self.channels=channels
         self.source=BlackBoxObserver(reference,channels=channels,
-                                     source_digest=self.source_digest)
+                                     source_digest=self.source_digest,
+                                     structural_memory=structural_memory)
         self.original_source_bytes=len(reference_source)
         start=perf_counter_ns()
         oracle=ObservedOracle(self.source,max_queries=max_membership)
