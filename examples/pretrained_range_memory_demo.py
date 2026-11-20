@@ -88,7 +88,7 @@ def _evaluate(index,source_host,approved,*,model=MODEL,revision=REVISION):
         "schema":"vl-i.shape005-pretrained-range-observer-cost.v1",
         "model":model,"revision":revision,
         "source_index_sha256":sha256(index).hexdigest(),
-        "model_not_downscaled":True,
+        "source_identity_pinned_to_original_range_contract":True,
         "first_trained_numeric_probe":{
             "tensor":first["tensor"],"dimension":first["dimension"],
             "trained_weight_bytes":first["actual_weight_bytes"],
@@ -185,6 +185,7 @@ def live():
         {"pinned-huggingface-https-range"},model=model,revision=revision)
     report["mode"]="REAL_PINNED_ORIGINAL_PRETRAINED_RANGE_OVER_HTTPS"
     report["trained_original_checkpoint_observed"]=True
+    report["full_original_model_not_downscaled"]=True
     report["full_checkpoint_payload_advertised_bytes"]=entry["advertised_bytes"]
     report["full_model_forward_pass_executed"]=False
     return report
