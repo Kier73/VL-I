@@ -7,6 +7,8 @@ on:
       - 'src/vli/qwen_all_heads.py'
       - 'tests/test_qualified_projection_host.py'
       - 'tests/test_qwen_all_heads.py'
+      - 'tests/test_saved_original_qwen_all_heads.py'
+      - 'experiments/qwen_all_heads/datasets/**'
       - 'examples/qwen_model_host_frontier.py'
       - 'docs/QUALIFIED_MODEL_HOST_FRONTIER.md'
       - '.github/workflows/vli-qualified-model-host.yml'
@@ -53,7 +55,9 @@ jobs:
       - name: Verify bounded HTTP 206 source receipts, LRU and independent fast matvecs
         run: python -m pytest -q tests/test_qualified_projection_host.py
       - name: Verify all 48 recurrent heads and full trained-layer fixtures vs scalar
-        run: python -m pytest -q tests/test_qwen_all_heads.py
+        run: |
+          python -m pytest -q tests/test_qwen_all_heads.py
+          python -m pytest -q tests/test_saved_original_qwen_all_heads.py
       - name: Preserve original paragraph-to-trained-causal regression
         run: python -m pytest -q tests/test_saved_pinned_text_causal.py
 
