@@ -170,8 +170,8 @@ def verified_source_journal(path, *, expected_head, expected_count,
         verify_source_signature(packet,public_key=public_key,source=source)
         _require(packet["sequence"]==i,
                  "Duplicate, reordered or missing publisher sequence")
-        _require(packet["captured_monotonic_ns"] > last_clock,
-                 "Source clock reading did not advance monotonically")
+        _require(packet["captured_monotonic_ns"] >= last_clock,
+                 "Source clock reading regressed")
         t=_fraction(packet["time"])
         _require(last_time is None or t>last_time,
                  "Environmental coordinate did not advance monotonically")
@@ -197,7 +197,7 @@ def append_signed_observation(path,packet,*,expected_head,expected_count,
     verify_source_signature(packet,public_key=public_key,source=source)
     _require(len(signed)<MAX_SIGNED_EVENTS
              and packet["sequence"] == len(signed)
-             and (not signed or packet["captured_monotonic_ns"] >
+             and (not signed or packet["captured_monotonic_ns"] >=
                   signed[-1]["captured_monotonic_ns"])
              and (not signed or _fraction(packet["time"]) >
                   _fraction(signed[-1]["time"])),
