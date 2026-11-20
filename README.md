@@ -105,6 +105,14 @@ This principle is now exercised in [RESPONSE-001 — Intent as topology and stat
 
 Read [COORD-002 — Description-Native Generative Model and Conversation](docs/COORD_002_DESCRIPTION_NATIVE_GENERATION.md), inspect [the executable experiment](examples/generated_response_demo.py), and follow [the original COORD-002 research issue](https://github.com/Kier73/VL-I/issues/9).
 
+### INTERACT-001 — From recognized relations to constructed results
+
+**A Ground is not merely a catalogue of what can be observed.** The latest constructive-data experiment applies qualified, typed transformations to actual source records, produces new values, and forms usable Markdown, JSON, CSV, text, tokens and **independently executable generated Python** from the same intention. An explicitly authorized data edit creates a new source Ground, so a subsequent question and its renderable coordinate reflect the **changed reality**, not stale observed content.
+
+The operation is causal and testable: location of a state position precedes computation, E-CPU and VLD's **existing** response DAG renders the built output, and a pinned checkpoint independently replays prior constructions and revisions. The demonstration works against VL-64's **actual archived, original-scale Qwen and DeepSeek structural observations**, not their unobserved pretrained weight values. This is verified data interaction and artifact formation, **not** full language-model inference or unconstrained natural-language intention understanding.
+
+Read [INTERACT-001 — Constructive Data Grounds](docs/CONSTRUCTIVE_DATA_GROUNDS.md), run [the executable example](examples/constructive_data_demo.py), and see [the Python 3.11/3.13 verification](.github/workflows/vli-constructive-data.yml).
+
 ## Malleable computational shape — observer-relative intelligence
 
 A state-space can be vast even when **the distinctions needed by a particular observer are few**. The connectome investigations in [In-Formation-Space](https://github.com/Kier73/In-Formation-Space/tree/main/experiments/real_connectome_ground) and the predictive-quotient, structured-operator and sparse-neural foundations in [Virtual-Layer-Dynamics](https://github.com/Kier73/Virtual-Layer-Dynamics) suggest a path beyond conventional fixed network architecture: **let the intention qualify which state distinctions to preserve, then navigate the smallest Ground that actually supports the requested observation**.
