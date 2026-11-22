@@ -39,7 +39,7 @@ The strongest frontier is not simply performing fewer of the same operators. It 
 
 The observer-host provides the capacity to interpret the Virtual Layer. The architectural goal is to make this capacity general and lightweight, instead of requiring a particular model processor, accelerator or conventional inference stack. Count actual computational work in experiments; **do not assume existing hardware or neural execution patterns are the final form of computation**.
 
-## Parallel revolutionary research frontiers
+## Parallel research frontiers
 
 These efforts begin **now**, in parallel with faithful pretrained-model integration. Neither numerical parity nor acquisition of a complete checkpoint is a prerequisite for pursuing them.
 
