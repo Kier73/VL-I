@@ -131,8 +131,8 @@ def verify_authenticated_refinement_record(
                     ground.content_digest, public.projection_digest,
                     target.projection_digest, context,
                     (
-                        FiniteState.create("zero", 0, 0, {feature: 0}),
-                        FiniteState.create("one", 0, 1, {feature: 1}),
+                        FiniteState.create("0", 0, 0, {feature: 0}),
+                        FiniteState.create("1", 0, 1, {feature: 1}),
                     ),
                 )
                 capabilities = (MeasurementCapability(
