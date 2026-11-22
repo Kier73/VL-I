@@ -1,10 +1,68 @@
 # PFI-001 — The problem forms its own interpreter
 
-**Status:** executable integration experiment, 21–22 November 2026. Source-bounded mathematical semantics. No demonstrated universal self-forming general intelligence, neural execution, or computation in passive wires.
+## Current implementation at a glance
+
+**Source-grounded contract.** `vli.problem_formed_interpreter.construct(source)` accepts an exact, declared binary-affine `SymbolicSource`. It uses Navigable-Compute's NCR-006 quotient to derive native register bits, an XOR/FLIP circuit for each transition and a circuit for the observer projection. `verify_interpreter` symbolically re-evaluates the generated gates and compares their affine rows/bias against the mathematical quotient. `realize` executes a cost-chosen path and compares the result with independently verified NCR navigation; `certify_succession` identifies which changes of observation retain sufficient old state.
+
+### Formal invariants and operational placement
+
+For source transitions \(T_a(x)=A_ax\oplus b_a\) on \(\mathbb F_2^n\) and requested linear observer \(O(x)=Hx\), define
+
+\[
+W_F=\operatorname{span}_{\mathbb F_2}\{hA_w\mid h\in\operatorname{rows}(H),w\in A^*\}.
+\]
+
+The constructed quotient basis \(B\) has \(r=\dim W_F\) rows; native state \(z=Bx\). Every generated transition and observer gate network implements
+
+\[
+BA_a=M_aB,\quad c_a=Bb_a,\quad H=DB,
+\qquad z'=M_az\oplus c_a,\quad O(x)=Dz.
+\]
+
+**Operational order:** validate and construct NCR quotient → synthesize `xor` / `flip` topological circuits → verify each gate's symbolic affine expression → choose direct gate execution or composed-law navigation using the cost heuristic → independently verify NCR result → decode observer → bind source/interpreter/result digests in the receipt. E-CPU DAG integration is separate: `create_ecpu_dag` creates `ground → navigate → observe`, and `run_one_ecpu_frontier` commits one ready step per call.
+
+### Current syntax
+
+```python
+from navigable_compute.symbolic_quotient import AffineMap, SymbolicSource
+from vli.problem_formed_interpreter import construct, verify_interpreter, realize
+
+# Four-bit exact source; action 0 toggles bit 0; observer reads bit 0.
+identity_rows = tuple(1 << i for i in range(4))
+source = SymbolicSource(
+    4, (AffineMap(identity_rows, 1),), (1,), "declared-demo"
+)
+quotient, bundle = construct(source)
+assert verify_interpreter(source, quotient, bundle)
+receipt = realize(source, quotient, bundle, 0, (0,), 5)
+assert int(receipt["observed_decimal"]) == 1
+```
+
+The source is declared mathematical input; no external source discovery is involved in this call. The runnable cross-repository test fixture is [`tests/test_problem_formed_interpreter.py`](../tests/test_problem_formed_interpreter.py); it imports the actual NCR and E-CPU modules.
+
+### Intention succession: exact information requirement
+
+For old/new intentions under the **same source transition-law epoch**, write \(z_o=B_ox\) and \(z_n=B_nx\). The implementation attempts to express every row of \(B_n\) in the row span of \(B_o\):
+
+\[
+\exists L\quad B_n=LB_o
+\quad\Longleftrightarrow\quad
+\operatorname{rowspan}(B_n)\subseteq\operatorname{rowspan}(B_o).
+\]
+
+When this holds, `certify_succession` derives \(z_n=Lz_o\) without a source-state anchor. Otherwise, it requires an explicitly declared \(x\) satisfying \(B_ox=z_o\) and computes \(z_n=B_nx\), recording `declared-source-anchor-required`. `verify_succession` independently regenerates the exact certificate, including both interpreter identities. This is the **affine linear-algebra counterpart** of E-CPU INTENT-001's finite partition-refinement criterion.
+
+**Evidence anchors:** `test_intention_refinement_changes_processor_dimension_and_epoch`, `test_intention_coarsening_derives_map_without_source_anchor`, `test_causal_continuation_after_mathematically_qualified_reformation`, `test_changed_dynamics_refuses_reusing_intention_epoch`, and `test_native_ecpu_dag_checkpoint_and_host_resumption`.
+
+**New construction:** translate an E-CPU finite quotient certificate into a VL-I/NCR affine basis witness when the supplied source has an admitted affine embedding. Test whether the two implementations agree on all future-observation classes and whether a succession witness transfers without retaining the full source state.
+
+**Evidence scope:** current generation and oracle checks are over the stipulated exact binary-affine source law. Three independent local processes exercise E-CPU's native DAG checkpoint continuation; receiver-local execution, physical host authority, and external source attestation are separate integration contracts.
+
+
 
 **Question:** Can an intended observation and a declared causal system generate the shape of their own processor—its state registers, allowed operations, transition circuitry and observer—while preserving continuity and executing through an existing computational host?
 
-This **does not** search for a named programming language and then invoke a solver. Nor does it posit a second universal runtime. It treats the interpreter itself as a constructed Ground, whose machine structure is an output of the problem.
+It treats the interpreter itself as a constructed Ground, whose machine structure is an output of the problem.
 
 ## 1. Connection to the actual repositories
 
