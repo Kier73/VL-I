@@ -134,6 +134,12 @@ The optimal complete basis takes both cheaper rows, total **14 declared quanta**
 
 The [integration suite](../tests/test_routed_authenticated_refinement.py) also checks swapped TLS clients, mismatched pinned certificate DNS, stale inventory/leases, receiver-policy revocation, wrong dispatch oracle, disagreeing peer observations, durable replay on identical challenge, and altered/rehashed dispatch/IOS/VGI certificates. It reuses the real IOS-003 peer fixture built for TDL-005, not synthetic `ObserverReceipt` objects.
 
+## Observed verification
+
+**2026-11-22:** [GitHub Actions run 45072964545](https://github.com/Kier73/VL-I/actions/runs/45072964545) passed all four Linux/Windows × Python 3.11/3.13 jobs at implementation head `aa1bb321cb9245034ad03cf05c85d908c59a9c98`. Each job passed **10 TDL-006 live routed-peer binding tests**, **9 TDL-005 native IOS-003 TLS/VGI quorum regressions**, and **7 TDL-004 E-CPU receiver-owned route regressions**: **26 passing tests/job, 104 executions**. The first exploratory run exposed one fixture arithmetic mistake, corrected before this passing run: two selected source rows cost `(3+4)+(3+4)=14` rather than 28. Subsequent repository changes only update documentation and indices.
+
+The test results confirm same-peer route/TLS endpoint binding in the local controlled setup, wrong-peer/DNS refusal, lease and policy changes, a lower-cost information basis, VGI quorum conflict refusal, receiver-oracle rejection, digest tampering refusal, and durable IOS-003 retry on a reused challenge. They do not demonstrate independent remote organizations or the physical network route taken by TLS bytes.
+
 ## Questions exposed by joining the protocols
 
 1. **Transport-route equivalence:** the current theorem binds endpoints but not the physical path of packets. Build an instrumentation adapter that maps actual IOS-003 transport/channel IDs and bytes to a receiver-observed E-CPU route, then verify path constraints on wire evidence.
