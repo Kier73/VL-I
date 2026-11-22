@@ -9,7 +9,7 @@ from navigable_compute.symbolic_quotient import AffineMap, SymbolicSource
 from vli.problem_formed_interpreter import construct, _hash
 from vli.cost_aware_refinement import ObservationOffer
 from vli.fabric_refinement import (
-    INPUT, OUTPUT, offer_operation,
+    INPUT, OUTPUT, offer_operation, offer_output_kind,
     plan_fabric_refinement, execute_fabric_refinement,
 )
 from vli.fabric_refinement_verify import verify_fabric_refinement
@@ -59,20 +59,20 @@ def runtime(source_state=0b0111, *, broken_handler=None, deny=(), expiry=4):
 
     channels = (
         edge("to-left", "start", "cheap-left", INPUT),
-        edge("left-back", "cheap-left", "collector", OUTPUT),
+        edge("left-back", "cheap-left", "collector", offer_output_kind("cheap-left")),
         edge("to-relay", "start", "relay", INPUT),
         edge("relay-right", "relay", "cheap-right", INPUT),
-        edge("right-back", "cheap-right", "collector", OUTPUT),
+        edge("right-back", "cheap-right", "collector", offer_output_kind("cheap-right")),
         edge("to-direct", "start", "direct", INPUT),
-        edge("direct-back", "direct", "collector", OUTPUT),
+        edge("direct-back", "direct", "collector", offer_output_kind("direct")),
     )
     inventory = SubstrateObservation((
         res("start"),
         res("collector"),
         res("relay"),
-        res("direct", OperationOffer(offer_operation("direct"), INPUT, OUTPUT, 10)),
-        res("cheap-left", OperationOffer(offer_operation("cheap-left"), INPUT, OUTPUT, 1)),
-        res("cheap-right", OperationOffer(offer_operation("cheap-right"), INPUT, OUTPUT, 1),
+        res("direct", OperationOffer(offer_operation("direct"), INPUT, offer_output_kind("direct"), 10)),
+        res("cheap-left", OperationOffer(offer_operation("cheap-left"), INPUT, offer_output_kind("cheap-left"), 1)),
+        res("cheap-right", OperationOffer(offer_operation("cheap-right"), INPUT, offer_output_kind("cheap-right"), 1),
             expires=expiry),
     ), channels)
 
