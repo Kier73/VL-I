@@ -52,6 +52,14 @@ For old/new intentions under the **same source transition-law epoch**, write \(z
 
 When this holds, `certify_succession` derives \(z_n=Lz_o\) without a source-state anchor. Otherwise, it requires an explicitly declared \(x\) satisfying \(B_ox=z_o\) and computes \(z_n=B_nx\), recording `declared-source-anchor-required`. `verify_succession` independently regenerates the exact certificate, including both interpreter identities. This is the **affine linear-algebra counterpart** of E-CPU INTENT-001's finite partition-refinement criterion.
 
+### TDL-002: minimal refinement witness (implemented)
+
+The [separate minimal-witness module](MINIMAL_REFINEMENT_TDL002.md) now computes the rank deficiency
+\(d=\operatorname{rank}([B_{old};B_{new}])-\operatorname{rank}(B_{old})\).
+It selects exactly \(d\) additional source-space covectors, derives \(B_{new}=L[B_{old};C]\), and reconstructs the new coordinate from \((z_{old},Cx)\). The independent verifier rederives the rank and exact row identities; it checks receipt bytes and coordinate transformation separately from the caller's measurement authority.
+
+The original full-source-anchor `certify_succession` API remains unchanged. The additional protocol is in `vli.minimal_refinement` and `vli.minimal_refinement_verify`, with a dedicated Linux/Windows workflow and finite E-CPU/NCR commutation test.
+
 **Evidence anchors:** `test_intention_refinement_changes_processor_dimension_and_epoch`, `test_intention_coarsening_derives_map_without_source_anchor`, `test_causal_continuation_after_mathematically_qualified_reformation`, `test_changed_dynamics_refuses_reusing_intention_epoch`, and `test_native_ecpu_dag_checkpoint_and_host_resumption`.
 
 **New construction:** translate an E-CPU finite quotient certificate into a VL-I/NCR affine basis witness when the supplied source has an admitted affine embedding. Test whether the two implementations agree on all future-observation classes and whether a succession witness transfers without retaining the full source state.
