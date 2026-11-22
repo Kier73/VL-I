@@ -14,6 +14,8 @@
 
 **Cost-aware measurement acquisition (TDL-003):** [Exact-cost observation plans and VGI-finalized refinement](docs/COST_AWARE_REFINEMENT_TDL003.md) select an information-sufficient set of offered source-row measurements with minimum declared cost. VGI's existing source/quorum policy and explicit evidence finalization gate state migration; the protocol independently checks every source-row map and accepted measurement receipt.
 
+**Observer-host route formation (TDL-004):** [E-CPU receiver-admitted measurement paths](docs/FABRIC_REFINEMENT_TDL004.md) translate missing observer information into observation-specific output types, lease/policy-qualified E-CPU paths, executed typed receipts, and VGI-finalized processor reconstruction. The route audit includes every currently eligible offered operation and distinguishes declared path quanta from locally measured wall-time and byte counts.
+
 ## The endeavor
 
 A Virtual Layer observes bytes, constructs an interpretation of their variables and transformations, and expresses them as a **Virtual Ground**: a versioned, testable description of possible states, transitions, observations, and intentions.
