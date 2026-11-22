@@ -232,6 +232,55 @@ class Time010Tests(unittest.TestCase):
                              capture_output=True,text=True,check=True)
         self.assertEqual(json.loads(child.stdout),published)
 
+    def test_hard_crash_after_native_majority_commit_recovers_staged_result(self):
+        vals=sequence([1,2,3],[1,0,1],14)
+        snap,space,contract=self.prepare(vals,label="commit-cut")
+        root=self.root/"commit-cut-native-quorum"
+        params={
+            "root":str(root),"snapshot":snap,"space":space,
+            "source_contract":contract,
+            "expected_space_digest":space["intention_space_digest"],
+            "intended_time":"12/1","job":"kill-after-majority"}
+        owner=FencedNativeRationalProcessor(**params)
+        ticket=owner.claim(peer="member-a",host="commit-worker")
+        claim_id=ticket.claim.claim_id
+        with self.assertRaises(ValueError):
+            owner.verify_published(claim_id)
+        params["claim_id"]=claim_id
+        path=self.root/"commit-cut-args.json"
+        path.write_text(json.dumps(params),encoding="utf-8")
+        worker=(
+            "import json,os,sys\n"
+            "from vli.native_rational_processor import FencedNativeRationalProcessor,SCHEMA\n"
+            "from vli.ground import _digest\n"
+            "from vli.problem_formed_claims import _atomic_json\n"
+            "a=json.load(open(sys.argv[1],encoding='utf-8'))\n"
+            "claim=a.pop('claim_id')\n"
+            "p=FencedNativeRationalProcessor(**a)\n"
+            "candidate=p.calculate(claim,peer='member-a',host='commit-worker')\n"
+            "token=p.store.get(claim)\n"
+            "p._validate(candidate,token)\n"
+            "_atomic_json(p.root/'accepted-native-result.json',candidate)\n"
+            "p.store.complete(claim,expected_epoch=candidate['assignment_epoch'],"
+            " **p._actor(candidate['peer'],candidate['host']),"
+            " result_digest=_digest(SCHEMA+'.value',"
+            " {'rational':candidate['result_exact_rational']}),"
+            " child_receipt_digest=candidate['candidate_digest'])\n"
+            "os._exit(73)\n"
+        )
+        process=subprocess.run([sys.executable,"-c",worker,str(path)],
+                               capture_output=True,text=True)
+        self.assertEqual(process.returncode,73,msg=process.stderr)
+        restored=FencedNativeRationalProcessor(
+            root,snap,space,source_contract=contract,
+            expected_space_digest=space["intention_space_digest"],
+            intended_time="12/1",job="kill-after-majority")
+        publication=restored.verify_published(claim_id)
+        self.assertEqual(publication["result_exact_rational"],f"{vals[12]}/1")
+        self.assertTrue(publication["fenced_pure_result_published"])
+        with self.assertRaises(ValueError):
+            restored.calculate(claim_id,peer="member-a",host="commit-worker")
+
     def test_reopened_processor_refuses_different_source_law_identity(self):
         vals=sequence([1,2,3],[1,0,1],14)
         snap,space,contract=self.prepare(vals,label="revision-a")
