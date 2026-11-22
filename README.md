@@ -2,7 +2,7 @@
 
 **The description of a model is a computational resource. VL-I seeks to operate that description directly—until a Virtual Layer can converse, reason, generate, and act through a Model Ground without needing to run a conventional language-model engine.**
 
-**Status: active revolutionary research.** The overarching description-native intelligence goal is a development aim, not a claim of already-demonstrated general language-model behavior. Initial source-fidelity and exact-observation components are implemented.
+**Status: active research.** The overarching description-native intelligence goal is a development aim, not a claim of already-demonstrated general language-model behavior. Initial source-fidelity and exact-observation components are implemented.
 
 **Verified pretrained baseline (QUALIFIED-009).** VL-I has source-admitted the full original Qwen3.8-27B 64-layer operator topology, executed the first **eight complete pretrained layers** on a real paragraph token, and independently reproduced the original layer-7 result with a separate **PyTorch F64 mathematical oracle** (5,120 output coordinates, maximum absolute error **1.78 × 10⁻¹⁵**). The first seven trained intermediate layers were recomputed and their exact output digests checked before the independent reference. This is a **single causal token**, not yet BF16 full-runtime equivalence, multi-position original attention, next-token logits, or generative language. See [source-directed eight-layer execution](docs/QUALIFIED_ARCHITECTURE_DIRECTED_DECODER.md) and [independent PyTorch trained-layer experiment](docs/QUALIFIED_INDEPENDENT_PYTORCH_PARITY.md). VL-64's 64 KiB core remains unchanged.
 
