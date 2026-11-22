@@ -225,4 +225,4 @@ class RevisedSatFabric(DirectSatFabric):
                  maximum_free=12,partition_size=8,job="sat-revised"):
         super().__init__(root,source_receipt,intention=intention,
                          maximum_free=maximum_free,partition_size=partition_size,
-                         job=job,runtime_adapter=morphic_runtime(revision=revision))
+                         job=job,runtime_adapter=lambda: morphic_runtime(revision=revision))
