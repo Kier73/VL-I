@@ -134,7 +134,7 @@ This is a **receiver-local observed-and-bound multi-hop graph**. Channel drivers
 
 The VGI policy source is **a single receiver-owned adapter**, not a federation of independently authenticated sensors. This distinction is retained in `result["authority_scope"]` and each SAB report's `physical_independence_attested=False`. The physical-source bit is qualified under the declared receiver oracle and VGI local policy, not an external scientific observation theorem. Likewise, a SHA-256 content digest supplies integrity identity rather than proof of who originated the bytes.
 
-The dedicated CI runs the new seven-case integration suite, TDL-003 seven-case regression suite, and TDL-002 seven-case regression suite on Linux/Windows Python 3.11 and 3.13. Results are tracked in the [workflow](../.github/workflows/tdl004-fabric-refinement.yml).
+**Observed CI verification (2026-11-22):** [GitHub Actions run 45070098905](https://github.com/Kier73/VL-I/actions/runs/45070098905) passed **all four** Linux/Windows × Python 3.11/3.13 jobs against source revision `c03f7487899bb5fc7ccd927bdb6c0ed3fa997e7d`. Every job ran **7 new host/path integration tests**, **7 TDL-003 cost/VGI tests**, and **7 TDL-002 minimal-refinement tests**: 21 tests per platform combination. Subsequent commits on this branch changed documentation only. The [dedicated workflow](../.github/workflows/tdl004-fabric-refinement.yml) pins E-CPU, VGI and Navigable-Compute predecessor revisions.
 
 ## Next discoveries to test
 
