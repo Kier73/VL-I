@@ -107,14 +107,25 @@ class MultiObserverInquiryTests(unittest.TestCase):
         self.assertEqual([c["challenged_holdout_count"]
                           for c in law["channels"]],[2,2])
         self.assertEqual(navigate_shared_law(
-            law,"A",100,allow_projection=True)["value"],"1/1")
+            law,"A",100,allow_projection=True,
+            session=session,**self.external())["value"],"1/1")
         self.assertEqual(navigate_shared_law(
-            law,"B",10,allow_projection=True)["value"],"1024/1")
+            law,"B",10,allow_projection=True,
+            session=session,**self.external())["value"],"1024/1")
         self.assertEqual(sum(Fraction(row["receipt"]["offer"]["cost"])
                              for row in session["accepted"]),3)
         self.assertEqual(len(session["accepted"]),2)
         with self.assertRaises(ValueError):
-            navigate_shared_law(law,"B",10)
+            navigate_shared_law(law,"B",10,
+                session=session,**self.external())
+        counterfeit=deepcopy(law)
+        counterfeit["coefficients"]=["4/1","-2/1"]
+        counterfeit["law_digest"]=_digest(
+            counterfeit["schema"],
+            {k:v for k,v in counterfeit.items() if k!="law_digest"})
+        with self.assertRaises(ValueError):
+            navigate_shared_law(counterfeit,"A",9,
+                session=session,allow_projection=True,**self.external())
 
     def test_independent_rank_auditor_rejects_forged_probe_choice(self):
         session=begin_inquiry(self.descriptors(),order=2)
