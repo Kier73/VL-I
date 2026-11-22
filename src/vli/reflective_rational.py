@@ -307,7 +307,7 @@ def _identity(d):
 
 def compile_intention_program(d,output_index):
     """Construct task processor source from DIMENSION and output intention."""
-    _require(type(d) is int and 1<=d<=3 and
+    _require(type(d) is int and 1<=d<=4 and
              type(output_index) is int and 0<=output_index<d,
              "Unadmitted source-derived matrix task")
     n,A,acc=arg(0),arg(1),arg(2)
@@ -417,7 +417,8 @@ def reflect_intention(space,step,*,expected_value,depth=2):
     continuation machine, not merely compared to the source model checksum.
     """
     _require(type(space) is dict and
-             space.get("schema")=="vl-i.intention-derived-rational-state-space.v1"
+             space.get("schema") in ("vl-i.intention-derived-rational-state-space.v1",
+                    "vl-i.time008.discovered-recurrence-ground.v1")
              and type(step) is int and 0<=step<=1_048_576
              and type(depth) is int and 0<=depth<=2,
              "Unadmitted reflective state-space intention")
