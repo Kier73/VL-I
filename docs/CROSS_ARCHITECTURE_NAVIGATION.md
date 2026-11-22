@@ -33,6 +33,14 @@ The panel agreed with the unmodified models on **110 of 110 decisions**. The fir
 
 ## Reproduction
 
+### A build assistant running through the Virtual Layer
+
+The [readout triage assistant](../examples/readout_triage.py) answers a practical question about this panel: which checkpoint and trial first need inspection? In the river analogy, the banks are the allowed tools and their preconditions. The current context is a vector recording what evidence remains and whether an observation is missing, contradictory, or malformed. Each tool has an explicit weight row. VL-I's exact pairwise navigation selects the highest-scoring available tool, its result changes the context, and the controller chooses again. The six rows encode a hand-specified build procedure. The model checkpoints under review supply the evidence.
+
+Run `python -m examples.readout_triage experiments/architecture_survey/2026-11-22-trained-readouts.json` from the repository root. The tool dispatcher reads the local receipt, checks each recorded candidate sign against the native logit gap, and exits with a nonzero status and a witness on failure. On the published panel it read ten model records, checked 110 trials, and finished. In 110 separate challenges, each changing one trial while leaving its passing summary in place, it identified the exact checkpoint and trial every time. The [regression tests](../tests/test_readout_triage.py) also check all 32 controller contexts and exercise missing evidence, nonfinite gaps, and inconsistent summaries. This measures the reliability of read-only triage over recorded outcomes. Authenticating the receipt and rerunning the checkpoint remain separate operations.
+
+### Running the survey and checkpoint panel
+
 From the VL-I root, run the two commands below. The survey uses the Python standard library. The numerical panel was run with Python 3.13, PyTorch 2.7.0 CPU, Transformers 4.51.3, Hugging Face Hub and Safetensors. Add `--acquire` to the second command to populate the Hub cache from its exact source revisions. The panel otherwise runs offline, with two model workers by default. RWKV uses the public Safetensors conversion revision recorded in the panel.
 
 ~~~sh
