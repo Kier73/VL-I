@@ -119,8 +119,8 @@ def prepare_peer_measurement(
         ground.content_digest, public.projection_digest,
         target.projection_digest, context,
         (
-            FiniteState.create("zero", 0, 0, {feature_id: 0}),
-            FiniteState.create("one", 0, 1, {feature_id: 1}),
+            FiniteState.create("0", 0, 0, {feature_id: 0}),
+            FiniteState.create("1", 0, 1, {feature_id: 1}),
         ),
     )
     capabilities = (MeasurementCapability(
