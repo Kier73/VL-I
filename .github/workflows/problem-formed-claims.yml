@@ -1,0 +1,55 @@
+name: PFI-003 problem-formed claims and quorum rehome
+on:
+  push:
+    paths:
+      - 'src/vli/problem_formed_claims.py'
+      - 'tests/test_problem_formed_claims.py'
+      - 'examples/pfi_fenced_rehome.py'
+      - 'docs/PROBLEM_FORMED_CLAIMS_PFI003.md'
+      - '.github/workflows/problem-formed-claims.yml'
+  pull_request:
+    paths:
+      - 'src/vli/problem_formed_claims.py'
+      - 'tests/test_problem_formed_claims.py'
+      - 'examples/pfi_fenced_rehome.py'
+      - 'docs/PROBLEM_FORMED_CLAIMS_PFI003.md'
+      - '.github/workflows/problem-formed-claims.yml'
+jobs:
+  pfi003:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.11', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: VL-I
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/Navigable-Compute
+          ref: 559a1a813012d13ed37c04e2a117467e34ed3cb1
+          path: Navigable-Compute
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: 9d60818a73db8816d5d4f44047d67af81fb1d796
+          path: E-CPU
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install pinned mathematical and execution substrates
+        run: |
+          python -m pip install -e ./Navigable-Compute
+          python -m pip install -e ./E-CPU
+          python -m pip install -e ./VL-I
+          python -m pip install pytest
+      - name: Test native quorum-fenced processor and cross-process loss
+        run: python -m unittest discover -s VL-I/tests -p test_problem_formed_claims.py -v
+      - name: Test source-to-fabric predecessor
+        run: python -m unittest discover -s VL-I/tests -p test_problem_formed_fabric.py -v
+      - name: Test interpreter formation predecessor
+        run: python -m unittest discover -s VL-I/tests -p test_problem_formed_interpreter.py -v
+      - name: Test unmodified E-CPU claim safety regressions
+        run: python -m pytest -q E-CPU/tests/test_transferable_execution_claims.py
