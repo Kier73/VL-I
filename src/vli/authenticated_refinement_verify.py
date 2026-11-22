@@ -197,7 +197,8 @@ def verify_authenticated_refinement_record(
                     or item.protocol_id != "refinement.ios003.bit/1"
                     or item.transport_id != "ios003-receiver-live-tls"
                     or item.source_model_fingerprint != expected[key]["model_digest"]
-                    or item.correlation_id != expected[key]["ios_request_digest"]):
+                    or item.correlation_id is not None
+                    or item.frame_id != expected[key]["ios_request_digest"]):
                 return False
             claim = next(e for e in native
                          if e["offer_id"] == item.action and e["peer_id"] == item.source)
