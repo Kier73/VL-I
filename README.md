@@ -22,6 +22,8 @@
 
 ## The endeavor
 
+The [cross-architecture navigation experiment](docs/CROSS_ARCHITECTURE_NAVIGATION.md) surveys published model families and tests a common trained-weight decision across language, vision, multimodal and recurrent checkpoints.
+
 For a mathematical definition of what a glance must reveal, and an experiment that pulls a trained token preference back through a decoder layer, see [What a glance must preserve](docs/WHAT_A_GLANCE_MUST_PRESERVE.md).
 
 A Virtual Layer observes bytes, constructs an interpretation of their variables and transformations, and expresses them as a **Virtual Ground**: a versioned, testable description of possible states, transitions, observations, and intentions.

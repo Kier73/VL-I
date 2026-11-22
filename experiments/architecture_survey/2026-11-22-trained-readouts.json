@@ -1,0 +1,842 @@
+[
+  {
+    "model": "bert-base-uncased",
+    "revision": "86b5e0934494bd15c9632b12f734a8a67f723594",
+    "reference_class": "BertForMaskedLM",
+    "mode": "masked",
+    "config.json_sha256": "7160e1553ad2ca51d8c1cb066be533db31826e12d173824c1bb0cb1a4f187d20",
+    "model.safetensors_sha256": "68d45e234eb4a928074dfd868cead0219ab85354cc53d20e772753c6bb9169d3",
+    "status": "agreed",
+    "pair": [
+      42,
+      75
+    ],
+    "width_including_bias": 769,
+    "trials": [
+      {
+        "sign": 1,
+        "native_gap": 0.012637615203857422,
+        "terms": 710,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.052900075912475586,
+        "terms": 677,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.07014966011047363,
+        "terms": 675,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.09302330017089844,
+        "terms": 654,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.14510536193847656,
+        "terms": 631,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.13202142715454102,
+        "terms": 641,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 0.0280914306640625,
+        "terms": 695,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.030059337615966797,
+        "terms": 705,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.028723478317260742,
+        "terms": 708,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.09661579132080078,
+        "terms": 659,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.15158653259277344,
+        "terms": 635,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.08515429496765137,
+        "terms": 666,
+        "matches": true
+      }
+    ],
+    "torch_version": "2.7.0+cpu",
+    "transformers_version": "4.51.3"
+  },
+  {
+    "model": "facebook/opt-125m",
+    "revision": "1f9886ce095904096e22b0f4d9e7ba932fa7df2a",
+    "reference_class": "OPTForCausalLM",
+    "mode": "causal",
+    "config.json_sha256": "54162c9cd0377110df1859dfabebb106fc0988c8aadb88207ce1ee0d34985df6",
+    "model.safetensors_sha256": "c66f66605cf89d037cee3f285025f1548ab33cdcf3645dd38355cc1b8bd5d958",
+    "status": "agreed",
+    "pair": [
+      42,
+      75
+    ],
+    "width_including_bias": 769,
+    "trials": [
+      {
+        "sign": 1,
+        "native_gap": 3.822246789932251,
+        "terms": 465,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.04889965057373047,
+        "terms": 740,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 1.9148755073547363,
+        "terms": 610,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.5923218727111816,
+        "terms": 677,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -4.1686320304870605,
+        "terms": 521,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 4.817658185958862,
+        "terms": 502,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -1.0907995700836182,
+        "terms": 590,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -2.284142315387726,
+        "terms": 589,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -1.5449907779693604,
+        "terms": 626,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 4.683027625083923,
+        "terms": 503,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.6186163425445557,
+        "terms": 677,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 3.287031412124634,
+        "terms": 522,
+        "matches": true
+      }
+    ],
+    "torch_version": "2.7.0+cpu",
+    "transformers_version": "4.51.3"
+  },
+  {
+    "model": "google/vit-base-patch16-224",
+    "revision": "3f49326eb077187dfe1c2a2bb15fbd74e6ab91e3",
+    "reference_class": "ViTForImageClassification",
+    "mode": "vision",
+    "config.json_sha256": "abdf73cc4ce79495a83f32a8c9265daa7a1363f5a3efa4704c88a6e7f45ad19d",
+    "model.safetensors_sha256": "1cea07110a4a47edc51420b2dda6f3b8b58e7256e8f44b4ea6aa9696162ccb5d",
+    "status": "agreed",
+    "pair": [
+      0,
+      1
+    ],
+    "width_including_bias": 769,
+    "trials": [
+      {
+        "sign": 1,
+        "native_gap": 1.652453064918518,
+        "terms": 491,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 0.38858067244291306,
+        "terms": 628,
+        "matches": true
+      }
+    ],
+    "torch_version": "2.7.0+cpu",
+    "transformers_version": "4.51.3"
+  },
+  {
+    "model": "gpt2",
+    "revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+    "reference_class": "GPT2LMHeadModel",
+    "mode": "causal",
+    "config.json_sha256": "0daed7749b4f02b8f76240d5444551d7b08712dab4d0adb8239c56ba823bb7b4",
+    "model.safetensors_sha256": "248dfc3911869ec493c76e65bf2fcf7f615828b0254c12b473182f0f81d3a707",
+    "status": "agreed",
+    "pair": [
+      42,
+      75
+    ],
+    "width_including_bias": 769,
+    "trials": [
+      {
+        "sign": 1,
+        "native_gap": 0.8120765686035156,
+        "terms": 753,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 5.2758026123046875,
+        "terms": 742,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -1.197601318359375,
+        "terms": 758,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.03692626953125,
+        "terms": 767,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -2.7510833740234375,
+        "terms": 750,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -3.15771484375,
+        "terms": 750,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 0.18006515502929688,
+        "terms": 764,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -2.5402069091796875,
+        "terms": 751,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -1.8628921508789062,
+        "terms": 754,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -2.3110885620117188,
+        "terms": 752,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.07927703857421875,
+        "terms": 766,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -1.1783218383789062,
+        "terms": 759,
+        "matches": true
+      }
+    ],
+    "torch_version": "2.7.0+cpu",
+    "transformers_version": "4.51.3"
+  },
+  {
+    "model": "HuggingFaceTB/SmolLM-135M",
+    "revision": "1d461723eec654e65efdc40cf49301c89c0c92f4",
+    "reference_class": "LlamaForCausalLM",
+    "mode": "causal",
+    "config.json_sha256": "a1fe6f43e20f7a6c6dbc6380222af9526b5cef262446391a281c038249e3e3b7",
+    "model.safetensors_sha256": "c7a387d6fe81ca6dd304aeb809bda3932ff1bbef3ca41c9484502f2f448dc093",
+    "status": "agreed",
+    "pair": [
+      42,
+      75
+    ],
+    "width_including_bias": 577,
+    "trials": [
+      {
+        "sign": 1,
+        "native_gap": 1.2966797351837158,
+        "terms": 516,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.1839895248413086,
+        "terms": 549,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 0.7577118873596191,
+        "terms": 532,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.4776163101196289,
+        "terms": 549,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.5609660148620605,
+        "terms": 549,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.9375343322753906,
+        "terms": 546,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 1.861398696899414,
+        "terms": 517,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 2.427424371242523,
+        "terms": 510,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 0.5017614364624023,
+        "terms": 545,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 1.0403432846069336,
+        "terms": 531,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -1.0330829620361328,
+        "terms": 540,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.3757758140563965,
+        "terms": 549,
+        "matches": true
+      }
+    ],
+    "torch_version": "2.7.0+cpu",
+    "transformers_version": "4.51.3"
+  },
+  {
+    "model": "Qwen/Qwen3-0.6B",
+    "revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+    "reference_class": "Qwen3ForCausalLM",
+    "mode": "causal",
+    "config.json_sha256": "660db3b73d788119c04535e48cf9be5f55bc3100841a718637ae695b442f27dd",
+    "model.safetensors_sha256": "f47f71177f32bcd101b7573ec9171e6a57f4f4d31148d38e382306f42996874b",
+    "status": "agreed",
+    "pair": [
+      42,
+      75
+    ],
+    "width_including_bias": 1025,
+    "trials": [
+      {
+        "sign": 1,
+        "native_gap": 2.641636848449707,
+        "terms": 871,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 13.687412738800049,
+        "terms": 703,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -2.3576745986938477,
+        "terms": 856,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 0.5493392944335938,
+        "terms": 950,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 1.0550907254219055,
+        "terms": 928,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -1.8013839721679688,
+        "terms": 881,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 2.7319552898406982,
+        "terms": 838,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 0.38236117362976074,
+        "terms": 959,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 0.9479584693908691,
+        "terms": 927,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -1.1382102966308594,
+        "terms": 907,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 4.705230236053467,
+        "terms": 829,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -2.894835948944092,
+        "terms": 837,
+        "matches": true
+      }
+    ],
+    "torch_version": "2.7.0+cpu",
+    "transformers_version": "4.51.3"
+  },
+  {
+    "model": "HuggingFaceTB/SmolVLM-256M-Instruct",
+    "revision": "7e3e67edbbed1bf9888184d9df282b700a323964",
+    "reference_class": "Idefics3ForConditionalGeneration",
+    "mode": "text-only",
+    "config.json_sha256": "b70fb4bfde88df9eeebc9d8ff523733b8bf70d6c9b06c610325960e06ae9db52",
+    "model.safetensors_sha256": "74dea5904032e5ae99a2e0eef5179e6ac0f1dedc3ab0c7c2a5d4d387c843203e",
+    "status": "agreed",
+    "pair": [
+      42,
+      75
+    ],
+    "width_including_bias": 577,
+    "trials": [
+      {
+        "sign": 1,
+        "native_gap": 1.4266750812530518,
+        "terms": 485,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -1.9189453125,
+        "terms": 518,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.049442291259765625,
+        "terms": 556,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.32596778869628906,
+        "terms": 530,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.6035463809967041,
+        "terms": 518,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 0.8173513412475586,
+        "terms": 518,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 2.809898853302002,
+        "terms": 388,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 3.301998496055603,
+        "terms": 465,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 0.38126659393310547,
+        "terms": 531,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 0.5847301483154297,
+        "terms": 518,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 0.9201068878173828,
+        "terms": 518,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.7287940979003906,
+        "terms": 518,
+        "matches": true
+      }
+    ],
+    "torch_version": "2.7.0+cpu",
+    "transformers_version": "4.51.3"
+  },
+  {
+    "model": "state-spaces/mamba-130m-hf",
+    "revision": "1e76775f628fbf1350fbe4dbb3d971ba64af25a1",
+    "reference_class": "MambaForCausalLM",
+    "mode": "causal",
+    "config.json_sha256": "784825b6b6cdde47a1602278db0e66d6764169af4a8e662404701bc636a2686a",
+    "model.safetensors_sha256": "1a5ed29c492ef4d485df3b7c2c8109771696589855b2162ad1ba618b6067cbea",
+    "status": "agreed",
+    "pair": [
+      42,
+      75
+    ],
+    "width_including_bias": 769,
+    "trials": [
+      {
+        "sign": -1,
+        "native_gap": -1.2501411437988281,
+        "terms": 731,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 3.1454696655273438,
+        "terms": 706,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.02463531494140625,
+        "terms": 765,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 0.5999679565429688,
+        "terms": 744,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 0.03790283203125,
+        "terms": 759,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.21723175048828125,
+        "terms": 746,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 4.43511962890625,
+        "terms": 703,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -1.6254844665527344,
+        "terms": 724,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -2.1694488525390625,
+        "terms": 724,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.34450531005859375,
+        "terms": 742,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -1.0737724304199219,
+        "terms": 728,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -4.527011871337891,
+        "terms": 703,
+        "matches": true
+      }
+    ],
+    "torch_version": "2.7.0+cpu",
+    "transformers_version": "4.51.3"
+  },
+  {
+    "model": "google/flan-t5-small",
+    "revision": "0fc9ddf78a1e988dac52e2dac162b0ede4fd74ab",
+    "reference_class": "T5ForConditionalGeneration",
+    "mode": "encoder-decoder",
+    "config.json_sha256": "439aa0fecf5a5546a1def68b1fc45e538e2c94528ce805378daf091e2bf6e4de",
+    "model.safetensors_sha256": "495fa51e204676f1a857a9fc13c4c89f3f5ba9f480b898cebca02add25e6d749",
+    "status": "agreed",
+    "pair": [
+      42,
+      75
+    ],
+    "width_including_bias": 513,
+    "trials": [
+      {
+        "sign": 1,
+        "native_gap": 4.617136478424072,
+        "terms": 480,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 3.548776149749756,
+        "terms": 482,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 2.7519969940185547,
+        "terms": 484,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 2.0726306438446045,
+        "terms": 489,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 0.6820759773254395,
+        "terms": 500,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -1.1032195091247559,
+        "terms": 496,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 6.393503189086914,
+        "terms": 471,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 5.302894115447998,
+        "terms": 474,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 3.74075984954834,
+        "terms": 479,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 6.42448091506958,
+        "terms": 469,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 3.499577522277832,
+        "terms": 482,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 3.5143160820007324,
+        "terms": 483,
+        "matches": true
+      }
+    ],
+    "torch_version": "2.7.0+cpu",
+    "transformers_version": "4.51.3"
+  },
+  {
+    "model": "RWKV/rwkv-4-169m-pile",
+    "revision": "54646c56ad6b5d4283918ef47561e01b777f7575",
+    "reference_class": "RwkvForCausalLM",
+    "mode": "causal",
+    "config.json_sha256": "2bc1d10594c235cf3e6553a48d9d25a1ee2dfa8b21c8dc860a3eabf4cd9d40ff",
+    "model.safetensors_sha256": "73ff888a36ef9a950099b1516c96a971ff33316afc561c97b9ae6925e956a561",
+    "status": "agreed",
+    "pair": [
+      42,
+      75
+    ],
+    "width_including_bias": 769,
+    "trials": [
+      {
+        "sign": -1,
+        "native_gap": -2.0116639137268066,
+        "terms": 629,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 2.4619808197021484,
+        "terms": 616,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.35752809047698975,
+        "terms": 687,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.0969691276550293,
+        "terms": 723,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -1.4050731658935547,
+        "terms": 638,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.25316596031188965,
+        "terms": 698,
+        "matches": true
+      },
+      {
+        "sign": 1,
+        "native_gap": 2.3189501762390137,
+        "terms": 616,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.379016637802124,
+        "terms": 694,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.4295930862426758,
+        "terms": 690,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -1.2153401374816895,
+        "terms": 646,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -0.4972958564758301,
+        "terms": 687,
+        "matches": true
+      },
+      {
+        "sign": -1,
+        "native_gap": -4.029767751693726,
+        "terms": 616,
+        "matches": true
+      }
+    ],
+    "torch_version": "2.7.0+cpu",
+    "transformers_version": "4.51.3"
+  }
+]
