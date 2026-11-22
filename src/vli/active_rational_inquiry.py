@@ -399,8 +399,11 @@ def verify_shared_law(session, law, *, journal_paths, final_source_pins):
     return True
 
 
-def navigate_shared_law(law, channel_id, step, *, allow_projection=False):
-    """Reuses TIME-007's bounded exact operator, never invents source samples."""
+def navigate_shared_law(law, channel_id, step, *, session, journal_paths,
+                        final_source_pins, allow_projection=False):
+    """Reuses TIME-007 after independent external source qualification."""
+    verify_shared_law(session, law, journal_paths=journal_paths,
+                      final_source_pins=final_source_pins)
     _require(type(law) is dict and law.get("schema") == LAW and
              law.get("law_digest") == _digest(
                  LAW, {k:v for k,v in law.items() if k != "law_digest"}) and
