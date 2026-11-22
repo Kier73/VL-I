@@ -94,7 +94,7 @@ def verify_fabric_refinement(
                 intention_id="observe-" + offered.offer_id,
                 ground_digest=expected_epoch,
                 source=acquisition.ingress, input_kind="refinement.request.v1",
-                target=acquisition.collector, output_kind="refinement.observation.v1",
+                target=acquisition.collector, output_kind="refinement.observation.v1." + offered.offer_id,
                 value={
                     "epoch_digest": expected_epoch,
                     "offer_id": offered.offer_id,
