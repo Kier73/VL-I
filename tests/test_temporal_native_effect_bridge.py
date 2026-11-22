@@ -106,7 +106,7 @@ class TemporalNativeEffectTests(unittest.TestCase):
         from test_effect_receiver_service import _published_first, RESOURCE
         from mailcpu.fenced_effect_receiver import FencedGroundEffectReceiver
 
-        first12 = list(range(14, 26))
+        first12 = list(range(10, 22))
         snap, space, contract = self.source_ground(first12)
         self.assertEqual(space["dimension"],2)
         lineage, first, _ = _published_first(self.ecpu)
@@ -116,8 +116,8 @@ class TemporalNativeEffectTests(unittest.TestCase):
         receiver.install(lineage, first)
         first_result = self.bind(
             snap, space, contract, lineage, first, receiver, time="2/1")
-        self.assertEqual(first_result["source_ground_observed_rational"],"16/1")
-        self.assertEqual(first_result["native_effect_receipt"]["value"],16)
+        self.assertEqual(first_result["source_ground_observed_rational"],"12/1")
+        self.assertEqual(first_result["native_effect_receipt"]["value"],12)
         self.assertTrue(first_result["native_receiver_is_only_effect_authority"])
         self.assertFalse(first_result["mathematical_law_native_execution_established"])
 
@@ -137,8 +137,8 @@ class TemporalNativeEffectTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.bind(snap,space,contract,lineage,first,receiver,
                       time="20/1")
-        # Exact authentic signed observation 17 is not equal to original
-        # E-CPU stage 16. The native stage must not be misdescribed as
+        # Exact authentic signed observation 13 is not equal to original
+        # E-CPU stage 12. The native stage must not be misdescribed as
         # having computed an arbitrary source law.
         with self.assertRaises(ValueError):
             self.bind(snap,space,contract,lineage,first,receiver,time="3/1")
@@ -162,7 +162,7 @@ class TemporalNativeEffectTests(unittest.TestCase):
         from mailcpu.fenced_effect_receiver import EffectFencingRefused
 
         old_snapshot, old, old_contract = self.source_ground(
-            list(range(14,26)))
+            list(range(10,22)))
         self.assertEqual(old["dimension"],2)
         # Preserve the immutable source prefix independently of the live
         # append-only publisher journal which will later grow.
@@ -179,7 +179,7 @@ class TemporalNativeEffectTests(unittest.TestCase):
             client.activate(first.manifest.digest)
             initial = self.bind(old_snapshot,old,old_contract,
                                 lineage,first,client,time="2/1")
-            self.assertEqual(initial["native_effect_receipt"]["value"],16)
+            self.assertEqual(initial["native_effect_receipt"]["value"],12)
             replacement = _host(self.ecpu,"time009-replacement")
             barrier = client.prepare(first.manifest.digest,replacement.locus)
             self.assertEqual(barrier["source_root"],first.manifest.digest)
