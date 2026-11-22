@@ -18,6 +18,8 @@
 
 **Live authenticated observer evidence (TDL-005):** [IOS-003 mutual-TLS measurement and VGI strict quorum](docs/AUTHENTICATED_REFINEMENT_TDL005.md) bind mathematical source-row requests to distinct pinned live peer sessions, durable E-CPU native receipts and VGI finalizations before reconstructing the next processor state. Exported hashes remain record identities, not portable proof of an earlier TLS session.
 
+**Routed authenticated observer binding (TDL-006):** [Exact E-CPU receiver-approved endpoint = live IOS-003 TLS peer](docs/ROUTED_AUTHENTICATED_REFINEMENT_TDL006.md) composes an independently audited full peer/row route catalogue, quorum-qualified route cost selection and source-observer equations with pinned TLS identity and VGI finalization. It binds the admitted endpoint while distinguishing the receiver-local dispatch graph from the physical TLS network path.
+
 ## The endeavor
 
 A Virtual Layer observes bytes, constructs an interpretation of their variables and transformations, and expresses them as a **Virtual Ground**: a versioned, testable description of possible states, transitions, observations, and intentions.

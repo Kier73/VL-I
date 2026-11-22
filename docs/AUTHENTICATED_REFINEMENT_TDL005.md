@@ -130,6 +130,10 @@ python -m unittest discover -s tests -p 'test_fabric_refinement.py' -v
 python -m unittest discover -s tests -p 'test_cost_aware_refinement.py' -v
 ```
 
+## Implemented next round: TDL-006 endpoint identity binding
+
+[TDL-006](ROUTED_AUTHENTICATED_REFINEMENT_TDL006.md) joins this document's live IOS-003 peer authentication with TDL-004's exact receiver-owned E-CPU SAB-001 route admission. A source-row feature is available only when every required peer's exact typed route is admitted; the resulting cost and Ground are checked independently. The live IOS-003 client's CA-verified peer certificate DNS and provider identity must match the SAB realizer locus.
+
 ## Translation discoveries and next construction
 
 The observation question is now independently bound to **source-law identity**, **receiver intent**, **live transport peer identity**, **temporal challenge**, and **policy-qualified admission**. These are different representational coordinates; losing one is not equivalent to losing another.
