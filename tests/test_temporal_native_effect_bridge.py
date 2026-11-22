@@ -160,6 +160,7 @@ class TemporalNativeEffectTests(unittest.TestCase):
         )
         from test_fenced_generated_ground import _host, _lineage, _restart
         from mailcpu.fenced_effect_receiver import EffectFencingRefused
+        from mailcpu.effect_receiver_service import EffectReceiverServiceError
 
         old_snapshot, old, old_contract = self.source_ground(
             list(range(10,22)))
@@ -243,7 +244,8 @@ class TemporalNativeEffectTests(unittest.TestCase):
             # Wrong live TLS owner identity must fail, despite a genuine
             # mathematical Ground and correct native observation.
             wrong = _client(info2,certs,certificate="C")
-            with self.assertRaises(Exception):
+            with self.assertRaises((EffectReceiverServiceError,
+                                    EffectFencingRefused)):
                 self.bind(new_snapshot,revised,new_contract,
                           continued,latest,wrong,time="14/1",
                           previous_space=old)
