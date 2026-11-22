@@ -5,6 +5,9 @@ PFI-004/ E-CPU claim store, Hypervisor, FIFO, DAG and recovery lineage.
 """
 import copy
 import json
+import os
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -162,6 +165,57 @@ class RevisionContinuity(unittest.TestCase):
             runtime[0](self.source,maximum_free=3,partition_size=2)
         with self.assertRaises(ValueError):
             create_revision_source([(1,2),(1,-2)],2)
+
+    def test_run_specific_timings_do_not_change_semantic_processor_identity(self):
+        alternate=copy.deepcopy(self.source)
+        alternate["meta_report"]["elapsed_ms"]+=123.125
+        alternate["meta_report"]["digest"]=digest({k:v for k,v in alternate["meta_report"].items()
+                                                   if k!="digest"})
+        alternate["digest"]=digest({k:v for k,v in alternate.items() if k!="digest"})
+        self.assertNotEqual(alternate["digest"],self.source["digest"])
+        self.assertTrue(verify_revision_source(alternate)["source_equivalence_verified"])
+        runtime=morphic_runtime(revision="refined")
+        first,_=runtime[0](self.source,maximum_free=6,partition_size=8)
+        second,_=runtime[0](alternate,maximum_free=6,partition_size=8)
+        self.assertEqual(first,second)
+
+    def test_hard_exited_revised_worker_and_fresh_source_reconstruction(self):
+        with tempfile.TemporaryDirectory() as root:
+            obj=RevisedSatFabric(root,self.source,maximum_free=6,partition_size=8)
+            obj.dispatch()
+            token=obj.claim(0,peer="peer-a",host="host-a")
+            claim=token.claim.claim_id
+            # A second process *rebuilds* the proof and exact semantic program.
+            # It calculates but hard exits without publishing. The original
+            # process has no access to that worker's in-memory state.
+            script=r"""
+import os,sys
+from pathlib import Path
+from test_recursive_sat_compiler import REPAIRABLE
+from vli.problem_formed_revision import create_revision_source,RevisedSatFabric
+from vli.problem_formed_claims import _atomic_json
+root=Path(sys.argv[1]);claim=sys.argv[2]
+source=create_revision_source(REPAIRABLE,6)
+run=RevisedSatFabric(root,source,maximum_free=6,partition_size=8)
+candidate=run.calculate(0,claim,peer="peer-a",host="host-a")
+_atomic_json(root/'suspended.json',candidate)
+os._exit(0)
+"""
+            completed=subprocess.run([sys.executable,"-c",script,str(root),claim],
+                                     capture_output=True,text=True,timeout=90,
+                                     env=os.environ.copy())
+            self.assertEqual(completed.returncode,0,completed.stderr)
+            old=json.loads((Path(root)/"suspended.json").read_text())
+            reconstructed=create_revision_source(REPAIRABLE,6)
+            restarted=RevisedSatFabric(root,reconstructed,maximum_free=6,partition_size=8)
+            self.assertEqual(restarted.identity,obj.identity)
+            restarted.reassign(0,claim,peer="peer-b",host="host-b",
+                               failure_evidence_digest=digest({"hard_exit":True}))
+            with self.assertRaises(ValueError):
+                restarted.publish(old)
+            current=restarted.calculate(0,claim,peer="peer-b",host="host-b")
+            restarted.publish(current)
+            self.assertEqual(restarted.receipts["0"]["host"],"host-b")
 
     def test_baseline_pfi004_adapter_default_unmodified(self):
         from algebraic_ground import encode_xor
