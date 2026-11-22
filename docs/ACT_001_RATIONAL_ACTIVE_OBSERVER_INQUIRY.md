@@ -59,6 +59,12 @@ The two signed observations provide independent rows
 => [a b] = [3 -2]
 ```
 
+Every navigational query takes the externally pinned final source heads and the
+inquiry transcript, and **rechecks the complete law** before computing the
+requested model coordinate. A modified law with a recomputed digest cannot
+authorize a response without the genuine signed observations. This repeat
+audit is deliberately not counted as zero-cost computation.
+
 The exact source-checked law is separately challenged by two *additional,
 previously unobserved* signed values from **each** channel. The producer
 uses exact Gaussian elimination; the checker uses Cramer's rule and
