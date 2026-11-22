@@ -1,0 +1,52 @@
+name: TIME-010 signed rational Ground executed by native E-CPU Virtual Layer
+
+on:
+  push:
+    paths:
+      - 'src/vli/native_rational_processor.py'
+      - 'tests/test_native_rational_processor.py'
+      - 'docs/TIME_010_NATIVE_RATIONAL_EXECUTION.md'
+      - '.github/workflows/vli-time010-native-rational.yml'
+  pull_request:
+    paths:
+      - 'src/vli/native_rational_processor.py'
+      - 'tests/test_native_rational_processor.py'
+      - 'docs/TIME_010_NATIVE_RATIONAL_EXECUTION.md'
+      - '.github/workflows/vli-time010-native-rational.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-rational:
+    name: Native exact semantic execution + source quorum / ${{ matrix.os }} / ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.11','3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout original E-CPU native Virtual Layer, Hypervisor and claim store
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: 25047fee033b84c6cb80bbcda862741d9792bcf2
+          path: upstream/e-cpu
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install both original packages with signed source verification
+        run: |
+          python -m pip install -e .
+          python -m pip install -e upstream/e-cpu
+          python -m pip install "cryptography>=46,<47" "pytest>=8"
+      - name: Execute genuine E-CPU Hypervisor source-derived processor and fenced recovery
+        run: python -m unittest discover -s tests -p test_native_rational_processor.py -v
+      - name: Guard independent TIME-008 source and Cramer validation
+        run: python -m unittest discover -s tests -p test_discovered_state_space.py -v
+      - name: Guard native E-CPU transferable claims and Hypervisor
+        run: python -m pytest -q upstream/e-cpu/tests/test_transferable_execution_claim.py upstream/e-cpu/tests/test_virtual_layer.py
