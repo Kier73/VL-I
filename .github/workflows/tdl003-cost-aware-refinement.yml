@@ -40,6 +40,9 @@ jobs:
           repository: Kier73/Virtual-Ground-Interpreter
           ref: ae3f949b7d0b2aaa42236bc7cc37e9857384b174
           path: VGI
+          sparse-checkout: |
+            virtual_ground_interpreter
+          sparse-checkout-cone-mode: true
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
