@@ -253,7 +253,9 @@ class AuthenticatedRefinementTests(unittest.TestCase):
     def test_two_real_mtls_peer_identities_form_strict_vgi_quorum(self):
         for state in (0, 5, 7):
             with self.peers(state=state) as group:
-                result = self.acquire(group.clients, state=state)
+                result = self.acquire(
+                    group.clients, state=state, nonce=f"{state+1:064x}"
+                )
                 self.assertTrue(verify_authenticated_refinement_record(
                     *self.args, self.plan, result,
                 ))
