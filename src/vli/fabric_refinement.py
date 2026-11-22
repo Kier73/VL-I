@@ -65,6 +65,9 @@ class FabricRefinement:
     epoch_digest: str
     old_native_state: int
     coordinate: int
+    ingress: str
+    collector: str
+    declared_offers: tuple[ObservationOffer, ...]
     routes: tuple[AdmittedRoute, ...]
 
     @property
@@ -73,6 +76,8 @@ class FabricRefinement:
             "schema": "vl-i.fabric-refinement-plan.v1",
             "math": self.mathematical_plan["digest"], "epoch": self.epoch_digest,
             "state": str(self.old_native_state), "coordinate": self.coordinate,
+            "ingress": self.ingress, "collector": self.collector,
+            "declared_offers": [o.encode() for o in self.declared_offers],
             "routes": [{
                 "offer_id": route.offer.offer_id,
                 "task_digest": route.task.fingerprint,
@@ -151,7 +156,8 @@ def plan_fabric_refinement(
     by_id = {r.offer.offer_id: r for r in available}
     selected = tuple(by_id[i] for i in mathematical_plan["selected_offer_ids"])
     return FabricRefinement(
-        mathematical_plan, epoch, old_native_state, coordinate, selected
+        mathematical_plan, epoch, old_native_state, coordinate,
+        ingress, collector, offers, selected
     )
 
 
@@ -167,7 +173,7 @@ def execute_fabric_refinement(
     """
     from mailcpu.substrate_bootstrap import (
         AdaptiveBootstrap, BootstrapRefused, verify_bootstrap_report,
-        canonical,
+        canonical, digest,
     )
     from vgi.channels import ChannelContract, ChannelExchangeLedger, ChannelMessage
     from vgi.encounters import EncounterProvenance
@@ -197,9 +203,7 @@ def execute_fabric_refinement(
         value = report["output"]
         if (type(value) is not dict or set(value) != {
                 "request_digest", "offer_id", "row_decimal", "bit"
-            } or value["request_digest"] != __import__(
-                "mailcpu.substrate_bootstrap", fromlist=["digest"]
-            ).digest(route.task.value)
+            } or value["request_digest"] != digest(route.task.value)
             or value["offer_id"] != route.offer.offer_id
             or value["row_decimal"] != str(route.offer.row)
             or type(value["bit"]) is not int or value["bit"] not in (0, 1)):
