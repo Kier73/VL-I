@@ -167,8 +167,8 @@ def _offer(session, rank_fn):
     before = rank_fn(rows, width)
     _require(before == session["rank"],
              "Selected inquiry rank changed without an authenticated event")
-    _require(before < width,
-             "Shared recurrence already identifiable; acquire heldouts separately")
+    _require(before < width and len(session["accepted"]) < 2*width+4,
+             "Shared recurrence identified or bounded probe budget exhausted")
     offers = []
     for channel in session["channels"]:
         values = [_fraction(x) for x in channel["values"]]
@@ -361,6 +361,11 @@ def qualify_shared_law(session, *, journal_paths, final_source_pins):
                   packets[:channel["source_count"]]] ==
                  channel["packet_digests"],
                  "Original inquiry source evidence changed")
+        origin, delta = (_fraction(channel["time_origin"]),
+                         _fraction(channel["time_step"]))
+        _require(all(_fraction(packet["time"]) == origin + i*delta
+                     for i, packet in enumerate(packets)),
+                 "Source heldout sampling grid changed after inquiry")
         values = tuple(_fraction(p["values"][0]) for p in packets)
         _predict(values, order, coefficients, channel["source_count"],
                  pin["count"]-channel["source_count"])
