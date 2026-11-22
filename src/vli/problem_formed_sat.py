@@ -46,7 +46,7 @@ def _hash(obj):
 def _stage_spec():
     O=_native()['OperatorSpec']
     return O('pfi.sat_source_segment',1,
-             'Execute exact source CNF predicate over a constructed affine coordinate partition',
+             'Execute exact source CNF predicate over a source-verified formed coordinate partition',
              'object','object',('cpu',),required_rights=frozenset({'compute'}),
              base_energy=1,energy_per_byte=1,max_input_bytes=8192,
              max_output_bytes=8192,deterministic=True,effect_mode='pure')
