@@ -116,6 +116,32 @@ class FormedInterpreterTests(unittest.TestCase):
         self.assertTrue(verify_succession(source2,q2,b2,self.source,self.quotient,
                                          self.bundle,migration))
 
+    def test_causal_continuation_after_mathematically_qualified_reformation(self):
+        # Reach a genuine source state before changing the observer, then
+        # continue the same generator law under the freshly constructed CPU.
+        source_state = 0b10101101
+        for _ in range(27):
+            for action in (0, 1):
+                source_state = self.source.generators[action].apply(source_state)
+        old_native = self.quotient.project(source_state)
+        changed = problem(outputs=(1, 4))
+        new_q, new_cpu = construct(changed)
+        certificate = certify_succession(
+            self.source, self.quotient, self.bundle,
+            changed, new_q, new_cpu,
+            old_native_state=old_native, source_anchor=source_state)
+        self.assertTrue(verify_succession(
+            self.source,self.quotient,self.bundle,changed,new_q,new_cpu,certificate))
+        resumed_source = source_state
+        for _ in range(45):
+            for action in (1, 0):
+                resumed_source = changed.generators[action].apply(resumed_source)
+        continuation = realize(changed,new_q,new_cpu,source_state,(1, 0),45)
+        self.assertEqual(int(continuation['observed_decimal']),
+                         changed.observe(resumed_source))
+        self.assertEqual(int(certificate['new_native_decimal']),
+                         new_q.project(source_state))
+
     def test_changed_dynamics_refuses_reusing_intention_epoch(self):
         source2 = problem(outputs=(1,), change_law=True)
         q2,b2 = construct(source2)
