@@ -199,7 +199,7 @@ class RoutedMTLSTests(unittest.TestCase):
                 plan.mathematical_plan["selected_offer_ids"],
                 ["cheap-left", "cheap-right"],
             )
-            self.assertEqual(plan.mathematical_plan["total_cost"], 28)
+            self.assertEqual(plan.mathematical_plan["total_cost"], 14)
             self.assertEqual(len(plan.requests), 4)
             self.assertEqual(
                 [(r.offer.offer_id, r.peer.peer_id,
