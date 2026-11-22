@@ -12,6 +12,8 @@
 
 **Verified-by-contract refinement protocol (TDL-002):** [Minimal observer information](docs/MINIMAL_REFINEMENT_TDL002.md) derives the exact auxiliary GF(2) witness needed when a new intention requires distinctions absent from the old processor. It preserves the earlier source-anchor interface, adds independently auditable plan/receipt APIs, and compares finite E-CPU Moore quotients with NCR/VL-I affine coordinates on shared declared sources.
 
+**Cost-aware measurement acquisition (TDL-003):** [Exact-cost observation plans and VGI-finalized refinement](docs/COST_AWARE_REFINEMENT_TDL003.md) select an information-sufficient set of offered source-row measurements with minimum declared cost. VGI's existing source/quorum policy and explicit evidence finalization gate state migration; the protocol independently checks every source-row map and accepted measurement receipt.
+
 ## The endeavor
 
 A Virtual Layer observes bytes, constructs an interpretation of their variables and transformations, and expresses them as a **Virtual Ground**: a versioned, testable description of possible states, transitions, observations, and intentions.
