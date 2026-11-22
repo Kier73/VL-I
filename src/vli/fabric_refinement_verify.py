@@ -27,8 +27,10 @@ def verify_fabric_refinement(
     """Audit native path reports and finalized VGI event result without replay."""
     try:
         from mailcpu.substrate_bootstrap import (
-            AdaptiveBootstrap, canonical, digest, verify_bootstrap_report,
+            AdaptiveBootstrap, BootstrapRefused, BootstrapTask,
+            canonical, digest, verify_bootstrap_report,
         )
+        from .cost_aware_refinement import ObservationOffer
         from vgi.evidence import TransitionEvidenceLedger
         if not isinstance(runtime, AdaptiveBootstrap):
             return False
@@ -72,6 +74,53 @@ def verify_fabric_refinement(
                 or result["measured_elapsed_ns"] < 0
                 or result["measured_application_bytes"] < 0):
             return False
+        # Recompute ALL available candidate routes, not only the selected
+        # ones: omitting a cheaper admissible candidate must fail the audit.
+        candidates = acquisition.declared_offers
+        if (type(candidates) is not tuple or len(candidates) > 12
+                or any(not isinstance(o, ObservationOffer) for o in candidates)
+                or len({o.offer_id for o in candidates}) != len(candidates)):
+            return False
+        effective = []
+        expected_route_by_id = {}
+        for offered in sorted(candidates, key=lambda o:o.offer_id):
+            if offered.row >= 1 << old_source.width:
+                return False
+            operation = "refinement.observe." + offered.offer_id + ".v1"
+            if any(key[1] == operation and key[0] != offered.locus
+                   for key in runtime.realizers):
+                return False
+            expected_task = BootstrapTask(
+                intention_id="observe-" + offered.offer_id,
+                ground_digest=expected_epoch,
+                source=acquisition.ingress, input_kind="refinement.request.v1",
+                target=acquisition.collector, output_kind="refinement.observation.v1",
+                value={
+                    "epoch_digest": expected_epoch,
+                    "offer_id": offered.offer_id,
+                    "row_decimal": str(offered.row),
+                    "old_native_decimal": str(acquisition.old_native_state),
+                },
+                max_quanta=100_000, max_steps=16, max_bytes=8192,
+                require_oracle=True,
+            )
+            try:
+                route = runtime.plan(expected_task, coordinate=acquisition.coordinate)
+            except BootstrapRefused:
+                continue
+            realizers = [step for step in route.steps if step.kind == "realize"]
+            if (len(realizers) != 1 or realizers[0].locus != offered.locus
+                    or realizers[0].operation != operation
+                    or realizers[0].quanta != offered.cost):
+                continue
+            effective.append({
+                "offer_id": offered.offer_id, "row_decimal": str(offered.row),
+                "cost": route.estimated_quanta, "locus": offered.locus,
+            })
+            expected_route_by_id[offered.offer_id] = (expected_task, route)
+        if plan["offers"] != effective:
+            return False
+
         routes = acquisition.routes
         reports = result["path_reports"]
         if (type(reports) is not list or len(reports) != len(routes)
@@ -84,6 +133,12 @@ def verify_fabric_refinement(
         for route, record in zip(routes, reports):
             offered = route.offer
             task = route.task
+            if offered.offer_id not in expected_route_by_id:
+                return False
+            expected_task, expected_route = expected_route_by_id[offered.offer_id]
+            if (task.fingerprint != expected_task.fingerprint
+                    or route.plan.fingerprint != expected_route.fingerprint):
+                return False
             current_plan = runtime.plan(task, coordinate=acquisition.coordinate)
             if (current_plan.fingerprint != route.plan.fingerprint
                     or task.ground_digest != expected_epoch
