@@ -105,6 +105,12 @@ The receiver then translates the native IOS-003 admitted readings into VGI's exi
 
 Two agreeing authenticated transport endpoints also do not prove that their underlying physical measurements are independent or true: a trusted CA, admitted host software, policies and source-law grounding are still part of the receiver's assumptions.
 
+## Observed CI verification
+
+**2026-11-22:** [GitHub Actions run 45071510754](https://github.com/Kier73/VL-I/actions/runs/45071510754) completed successfully in all four combinations of Linux/Windows and Python 3.11/3.13. Each job passed **9** live IOS-003 TLS/quorum/recovery integration tests, **7** TDL-004 E-CPU route regressions and **7** TDL-003 VGI/cost regressions (**23 tests/job, 92 executions**). The tested source head was `c7242e5372fe660dd1edb90ef474b32e2800b2c6`; subsequent changes were documentation/index changes.
+
+The earlier exploratory runs established two concrete implementation requirements: (1) IOS finite `FiniteGround` state rows must use canonical sorted IDs; (2) VGI's observation messages cannot use its reply-only `correlation_id` field. The IOS request identity is now retained as the receiver adapter's `TransportFrameReceipt.frame_id`, with independent ledger-record verification. These corrections are included in the passing source revision.
+
 ## Current verification cases
 
 - Two distinct live peer TLS identities, all selected measurements, VGI strict two-source quorum and exactly reconstructed new native state.
