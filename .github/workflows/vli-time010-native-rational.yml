@@ -49,4 +49,4 @@ jobs:
       - name: Guard independent TIME-008 source and Cramer validation
         run: python -m unittest discover -s tests -p test_discovered_state_space.py -v
       - name: Guard native E-CPU transferable claims and Hypervisor
-        run: python -m pytest -q upstream/e-cpu/tests/test_transferable_execution_claim.py upstream/e-cpu/tests/test_virtual_layer.py
+        run: python -m pytest -q upstream/e-cpu/tests/test_transferable_execution_claims.py upstream/e-cpu/tests/test_virtual_layer.py
