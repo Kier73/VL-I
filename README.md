@@ -22,6 +22,8 @@
 
 ## The endeavor
 
+[Turning externally hosted files into an addressable model](docs/ADDRESSABLE_HOSTED_MODELS.md) follows a real trained embedding from page to bytes and proposes tests for navigating Qwen memory and DeepSeek expert selection.
+
 The [cross-architecture navigation experiment](docs/CROSS_ARCHITECTURE_NAVIGATION.md) surveys published model families and tests a common trained-weight decision across language, vision, multimodal and recurrent checkpoints.
 
 For a mathematical definition of what a glance must reveal, and an experiment that pulls a trained token preference back through a decoder layer, see [What a glance must preserve](docs/WHAT_A_GLANCE_MUST_PRESERVE.md).
