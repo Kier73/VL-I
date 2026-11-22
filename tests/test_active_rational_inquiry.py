@@ -42,14 +42,15 @@ class MultiObserverInquiryTests(unittest.TestCase):
             }
             self.append(ident, 2)
 
-    def append(self, channel, count, *, replace=None):
+    def append(self, channel, count, *, replace=None, time_override=None):
         c=self.spec[channel]
         for _ in range(count):
             idx=c["count"]
             value = self.seq[channel][idx] if replace is None else replace
+            time=Fraction(idx) if time_override is None else Fraction(time_override)
             packet=sign_source_observation(
                 c["key"],source=c["source"],sequence=idx,
-                time=f"{idx}/1",value=f"{value}/1")
+                time=f"{time.numerator}/{time.denominator}",value=f"{value}/1")
             head,n=append_signed_observation(
                 c["journal_path"],packet,
                 expected_head=c["head"],expected_count=idx,
@@ -151,6 +152,15 @@ class MultiObserverInquiryTests(unittest.TestCase):
         self.append("B",1)
         self.assertTrue(audit_inquiry(session,**self.external()))
         with self.assertRaises(ValueError):
+            qualify_shared_law(session,**self.external())
+
+    def test_signed_but_time_misaligned_heldout_is_not_a_law_witness(self):
+        session=self.identify()
+        self.append("A",2)
+        self.append("B",1,time_override=Fraction(7,2))
+        self.append("B",1)
+        self.assertTrue(audit_inquiry(session,**self.external()))
+        with self.assertRaisesRegex(ValueError, "sampling grid"):
             qualify_shared_law(session,**self.external())
 
     def test_stale_publisher_head_and_source_alignment_refuse(self):
