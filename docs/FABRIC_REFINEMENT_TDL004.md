@@ -138,7 +138,7 @@ The dedicated CI runs the new seven-case integration suite, TDL-003 seven-case r
 
 ## Next discoveries to test
 
-1. **Authentication as typed evidence:** use E-CPU's mutual-TLS transit fabric and independent host identity to produce the observation frame consumed by the receiver adapter; bind VGI's source membership to authenticated endpoint identity instead of adapter attribution.
+1. **Authentication as typed evidence:** adapt E-CPU's *existing* [IOS-003 mTLS measurement service](https://github.com/Kier73/E-CPU/blob/main/mailcpu/intention_measurement_fabric.py) (`MeasurementPeerClient.resolve`, `MeasurementPeerServer`, `MeasurementReceiptLedger`) and its native `ObserverReceipt`/CA-verified DNS peer binding. Translate each authenticated source-bound measurement into the same observation-specific output kind, with receiver-known authority, then bind VGI's source membership to the authenticated peer rather than the single adapter. Preserve the existing durability, refusal and source-law checks instead of implementing parallel transport authority.
 2. **Quorum and path costs jointly:** plan at least two independent authenticated observer-hosts for each source row under strict VGI quorum, measure duplicated requests, and account for source correlation/authority.
 3. **Moving intention epochs:** allow context-safe renegotiation of the chosen row basis after one host fails between planning and execution; preserve unfinished VGI events as pending rather than turning absence into a bit value.
 4. **Information cost versus execution cost:** measure end-to-end elapsed time, payload bytes, authorization overhead and physical energy across repeated runs; determine when a higher number of cheaper observations is actually faster.
