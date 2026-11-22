@@ -51,7 +51,7 @@ jobs:
           python -m pip install -e ./VL-I
       - name: Check cost-aware observations and VGI finalized evidence
         run: python -m unittest discover -s VL-I/tests -p test_cost_aware_refinement.py -v
-      - name: Regression: minimal affine source and cross-representation quotient
+      - name: 'Regression: minimal affine source and cross-representation quotient'
         run: python -m unittest discover -s VL-I/tests -p test_minimal_refinement.py -v
-      - name: Regression: PFI-001 and independent translations
+      - name: 'Regression: PFI-001 and independent translations'
         run: python -m unittest discover -s VL-I/tests -p test_translation_commutation.py -v
