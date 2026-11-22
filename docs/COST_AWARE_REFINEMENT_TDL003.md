@@ -1,5 +1,7 @@
 # TDL-003 — Cost-aware observer acquisition and VGI-finalized processor refinement
 
+**Continuation:** [TDL-004](FABRIC_REFINEMENT_TDL004.md) now composes this mathematical selector with receiver-admitted E-CPU host/channel route planning, actual handler/carrier execution and VGI-qualified reports. Observation-specific output kinds preserve the intended mathematical measurement through the typed path.
+
 **Implementation:** [`vli.cost_aware_refinement`](../src/vli/cost_aware_refinement.py), [independent verifier](../src/vli/cost_aware_refinement_verify.py), [adversarial integration tests](../tests/test_cost_aware_refinement.py).
 
 TDL-002 established the smallest additional **number of linear bits** needed when an intention changes. TDL-003 selects **which offered observations to acquire**, minimizing their declared cost and accepting values only from VGI's existing finalized evidence ledger.
