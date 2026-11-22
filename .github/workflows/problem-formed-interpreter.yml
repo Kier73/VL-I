@@ -29,10 +29,12 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: Kier73/Navigable-Compute
+          ref: 559a1a813012d13ed37c04e2a117467e34ed3cb1
           path: Navigable-Compute
       - uses: actions/checkout@v4
         with:
           repository: Kier73/E-CPU
+          ref: 9d60818a73db8816d5d4f44047d67af81fb1d796
           path: E-CPU
       - uses: actions/setup-python@v5
         with:
