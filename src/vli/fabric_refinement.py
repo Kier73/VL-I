@@ -30,6 +30,15 @@ def offer_operation(offer_id: str) -> str:
     """Typed operation requested only at a receiver-admitted observation locus."""
     return "refinement.observe." + offer_id + ".v1"
 
+def offer_output_kind(offer_id: str) -> str:
+    """Qualify the output type by mathematical observation identity.
+
+    A generic scalar-bit tag lets a cheapest-route planner choose an entirely
+    different measurement operator. The intended covector requires its own
+    typed output, not only a correctly shaped scalar value.
+    """
+    return OUTPUT + "." + offer_id
+
 
 def _epoch(args, runtime, old_native_state: int, coordinate: int) -> str:
     old_source, old_q, old_bundle, new_source, new_q, new_bundle = args
@@ -125,7 +134,7 @@ def plan_fabric_refinement(
             intention_id="observe-" + offer.offer_id,
             ground_digest=epoch,
             source=ingress, input_kind=INPUT,
-            target=collector, output_kind=OUTPUT,
+            target=collector, output_kind=offer_output_kind(offer.offer_id),
             value={
                 "epoch_digest": epoch,
                 "offer_id": offer.offer_id,
