@@ -208,8 +208,12 @@ class TemporalNativeEffectTests(unittest.TestCase):
                              old["intention_space_digest"])
             self.assertNotEqual(revised["intention_space_digest"],
                                 old["intention_space_digest"])
-            # Even the new, correct value 16 cannot reach the frozen old root.
-            with self.assertRaises(EffectFencingRefused):
+            # The revised signed law outputs 16, but the old published
+            # native stage really outputs 12. The adapter rejects source/
+            # stage disagreement *before* it even consults the receiver.
+            # The preceding old-law tests separately prove the barrier
+            # itself blocks a matching, otherwise legitimate stage.
+            with self.assertRaisesRegex(ValueError, "stage observation"):
                 self.bind(new_snapshot,revised,new_contract,
                           lineage,first,client2,time="14/1",previous_space=old)
 
