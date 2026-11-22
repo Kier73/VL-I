@@ -76,6 +76,16 @@ a source-hashed but fabricated event. The original native claim store
 then completes the current result. Reopening the owner reads the
 original live majority and independently reconstructs the candidate.
 
+The independently checked candidate is durably staged **before**
+the native E-CPU majority commits. This makes the originally discovered
+source law and exact native work recoverable if the coordinator is
+hard-killed at the particularly dangerous crash boundary *after* native
+quorum completion but *before* returning its result. A dedicated subprocess
+test uses an immediate `os._exit(73)` after the native majority commit;
+the parent reopens independent quorum journals and reconstructs the
+accepted source-qualified result. This is a tested pure-result recovery cut,
+not an atomic remote actuator transaction.
+
 The proof survives a fresh Python process reading the same immutable
 source inputs and durable quorum journals. This is evidence of
 **preserved mathematical identity and accepted pure results across
