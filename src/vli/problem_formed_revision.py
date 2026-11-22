@@ -84,6 +84,21 @@ def verify_revision_source(receipt):
     return proof
 
 
+def semantic_revision_identity(receipt):
+    """Stable mathematical identity, independent of producer time and logs.
+
+    The report remains separately source-bound and independently replayed
+    before acceptance. Only exact source and resulting interpreter semantics
+    determine the reusable Ground identity.
+    """
+    M=_imports()
+    source=M["digest"]({"n":receipt["n"],"clauses":receipt["source_clauses"]})
+    return M["digest"]({"schema":"vli.pfi005.semantic-revision.v1",
+                        "source_sha256":source,
+                        "baseline_ground_sha256":receipt["baseline"]["digest"],
+                        "refined_ground_sha256":receipt["refined"]["digest"]})
+
+
 def _form(receipt,*,intention="#SAT",maximum_free=12,partition_size=8,revision="refined"):
     M=_imports()
     verify_revision_source(receipt)
@@ -103,7 +118,7 @@ def _form(receipt,*,intention="#SAT",maximum_free=12,partition_size=8,revision="
              "source_sha256":source_sha,"source_variables":receipt["n"],
              "source_clauses":receipt["source_clauses"],
              "intention":intention,"free_dimension":d,
-             "ground":ground,"revision_source_sha256":receipt["digest"],
+             "ground":ground,"revision_source_sha256":semantic_revision_identity(receipt),
              "baseline_ground_sha256":receipt["baseline"]["digest"],
              "partition_size":partition_size,
              "budgets":{"maximum_free":maximum_free,"partition_size":partition_size},
@@ -199,7 +214,7 @@ def translate_source_witness(receipt,bits):
         coordinates[revision]=str(z)
     body={"schema":WITNESS_SCHEMA,
           "source_sha256":M["digest"]({"n":n,"clauses":receipt["source_clauses"]}),
-          "revision_source_sha256":receipt["digest"],
+          "revision_source_sha256":semantic_revision_identity(receipt),
           "source_assignment_decimal":str(bits),
           "baseline_ground_sha256":receipt["baseline"]["digest"],
           "refined_ground_sha256":receipt["refined"]["digest"],
