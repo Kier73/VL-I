@@ -1,0 +1,54 @@
+name: TIME-009 signed rational Ground and native E-CPU mTLS effect authority
+
+on:
+  push:
+    paths:
+      - 'src/vli/temporal_native_effect_bridge.py'
+      - 'tests/test_temporal_native_effect_bridge.py'
+      - 'docs/TIME_009_NATIVE_AUTHORITY_BRIDGE.md'
+      - '.github/workflows/vli-time009-native-authority.yml'
+  pull_request:
+    paths:
+      - 'src/vli/temporal_native_effect_bridge.py'
+      - 'tests/test_temporal_native_effect_bridge.py'
+      - 'docs/TIME_009_NATIVE_AUTHORITY_BRIDGE.md'
+      - '.github/workflows/vli-time009-native-authority.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-and-authority:
+    name: signed source + E-CPU receiver / ${{ matrix.os }} / ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.11', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout original E-CPU IPS-008 authority implementation
+        uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: 8749e692d1be241d1b34ab191e2846f8d6924ff7
+          path: upstream/e-cpu
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install original repositories and signed-source dependencies
+        run: |
+          python -m pip install -e .
+          python -m pip install -e upstream/e-cpu
+          python -m pip install "cryptography>=46,<47" "pytest>=8"
+      - name: Verify actual signed rational Ground and native E-CPU mTLS receiver
+        env:
+          VLI_ECPU_TEST_ROOT: ${{ github.workspace }}/upstream/e-cpu/tests
+        run: python -m unittest discover -s tests -p test_temporal_native_effect_bridge.py -v
+      - name: Preserve independent TIME-008 discovery guarantees
+        run: python -m unittest discover -s tests -p test_discovered_state_space.py -v
+      - name: Preserve IPS-008 native receiver and handoff semantics
+        run: python -m pytest -q upstream/e-cpu/tests/test_effect_receiver_service.py
