@@ -1,0 +1,44 @@
+name: TIME-008 source-derived processor dimensions and independent verifier
+
+on:
+  push:
+    paths:
+      - 'src/vli/discovered_state_space.py'
+      - 'src/vli/intention_state_space.py'
+      - 'src/vli/reflective_rational.py'
+      - 'tests/test_discovered_state_space.py'
+      - 'docs/TIME_008_DISCOVERED_RATIONAL_PROCESSOR.md'
+      - '.github/workflows/vli-discovered-state-space.yml'
+  pull_request:
+    paths:
+      - 'src/vli/discovered_state_space.py'
+      - 'src/vli/intention_state_space.py'
+      - 'src/vli/reflective_rational.py'
+      - 'tests/test_discovered_state_space.py'
+      - '.github/workflows/vli-discovered-state-space.yml'
+  workflow_dispatch:
+
+jobs:
+  inferred-processor:
+    name: exact rational discovery / ${{ matrix.os }} / ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.11', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install bounded interpreter and source authentication
+        run: |
+          python -m pip install -e .
+          python -m pip install "cryptography>=46,<47"
+      - name: Test unknown order, source refusal, independent replay, hard lineage revision
+        run: python -m unittest discover -s tests -p test_discovered_state_space.py -v
+      - name: Guard TIME-007 exact generated program and metainterpreter
+        run: python -m unittest discover -s tests -p test_intention_state_space.py -v
+      - name: Guard signed-source chronology and causal recovery
+        run: python -m unittest discover -s tests -p test_authenticated_temporal_source.py -v
