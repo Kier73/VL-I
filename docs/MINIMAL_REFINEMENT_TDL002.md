@@ -111,6 +111,10 @@ python -m unittest discover -s tests -p 'test_translation_commutation.py' -v
 python -m unittest discover -s tests -p 'test_problem_formed_interpreter.py' -v
 ```
 
+## Implemented next step: TDL-003 cost and evidence qualification
+
+[TDL-003](COST_AWARE_REFINEMENT_TDL003.md) now implements a bounded exact-cost selector over receiver-declared observer offers, derives an exact row decoder, and uses VGI's actual finalized transition-evidence ledger to accept the selected scalar observation values. The minimal-bit protocol below remains a separate mathematical baseline.
+
 ## Discovery for the next round
 
 For nonlinear NCR-007 feature coordinates \(q(x)\), the number of additional distinctions in an old observer fiber is
