@@ -10,6 +10,8 @@
 
 **Implementation-first reference (PFI-001).** The [problem-formed interpreter](docs/PROBLEM_FORMED_INTERPRETER_PFI001.md) now links its exact future-observation equations to the implemented XOR/FLIP circuit constructor, independent symbolic verifier, E-CPU DAG execution and intention-succession certificate. For a declared binary-affine source, it constructs a quotient coordinate `z = Bx`; its new-state map exists exactly when the new basis rows lie in the old basis span. The related [translation discovery log](https://github.com/Kier73/In-Formation-Space/blob/main/reports/TRANSLATION_DISCOVERY_LOG.md) derives the additional information required when that span test fails.
 
+**Verified-by-contract refinement protocol (TDL-002):** [Minimal observer information](docs/MINIMAL_REFINEMENT_TDL002.md) derives the exact auxiliary GF(2) witness needed when a new intention requires distinctions absent from the old processor. It preserves the earlier source-anchor interface, adds independently auditable plan/receipt APIs, and compares finite E-CPU Moore quotients with NCR/VL-I affine coordinates on shared declared sources.
+
 ## The endeavor
 
 A Virtual Layer observes bytes, constructs an interpretation of their variables and transformations, and expresses them as a **Virtual Ground**: a versioned, testable description of possible states, transitions, observations, and intentions.
