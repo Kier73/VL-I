@@ -38,6 +38,16 @@ F(x) iff (decoded_gate_relations_r(x) AND residual_r(x))
 The original CNF source digest is constant. The Ground/interpreter digests,
 register counts, partition topology and native claim identities differ.
 
+**Semantic identity is independent of producer telemetry.** The SFI-003 meta-proof
+report contains timing measurements and a digest of the exact run. A fresh
+process may reproduce the same mathematical Ground but observe different
+elapsed times. PFI-005 therefore retains the full report as **proof evidence**
+while computing its stable revision identity from the canonical source CNF and
+the source-verified baseline/refined Ground digests. Before admitting the
+interpreter the independent checker still replays the report's meta-proofs.
+Changed run timings cannot silently change a computational identity, and a
+changed mathematical Ground cannot keep the old identity.
+
 `create_revision_source` uses the already-existing SFI-003 meta-SAT
 constructor and its independent auditor; it **refuses** sources that do not
 support an actual verified architectural improvement. This is finite
