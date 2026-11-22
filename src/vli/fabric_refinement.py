@@ -112,6 +112,7 @@ def plan_fabric_refinement(
             new_source, new_quotient, new_bundle)
     epoch = _epoch(args, runtime, old_native_state, coordinate)
     available = []
+    refused = []
     for offer in sorted(offers, key=lambda item: item.offer_id):
         if offer.row >= 1 << old_source.width:
             raise ValueError("Offered observation row outside declared source")
@@ -136,7 +137,8 @@ def plan_fabric_refinement(
         )
         try:
             route = runtime.plan(task, coordinate=coordinate)
-        except BootstrapRefused:
+        except BootstrapRefused as exc:
+            refused.append((offer.offer_id, str(exc)))
             continue
         realizations = [step for step in route.steps if step.kind == "realize"]
         if (len(realizations) != 1
@@ -145,12 +147,16 @@ def plan_fabric_refinement(
                 or realizations[0].quanta != offer.cost):
             # Resource claims must agree with receiver-admitted operation and
             # its declared cost. A route to another handler is not equivalent.
+            refused.append((offer.offer_id, "selected path does not match offered locus, operation or cost"))
             continue
         available.append(AdmittedRoute(offer, task, route))
     effective = tuple(ObservationOffer(
         r.offer.offer_id, r.offer.row, r.plan.estimated_quanta, r.offer.locus
     ) for r in available)
-    mathematical_plan = plan_cost_aware_observations(*args, effective)
+    try:
+        mathematical_plan = plan_cost_aware_observations(*args, effective)
+    except ValueError as exc:
+        raise ValueError(f"Admitted offer set cannot span intention; available={[(x.offer_id, x.cost) for x in effective]}; refused={refused}") from exc
     if not verify_cost_plan(*args, mathematical_plan):
         raise ValueError("Chosen route-cost plan failed independent mathematical audit")
     by_id = {r.offer.offer_id: r for r in available}
