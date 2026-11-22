@@ -21,7 +21,7 @@ qualified computational histories are required before a real native effect.
 3. **No replacement Hypervisor, consensus, authority or transport.** The
    TIME-009 bridge calls the original native E-CPU public service and
    receiver methods. GitHub CI pins
-   [E-CPU `9064559d`](https://github.com/Kier73/E-CPU/commit/9064559d6e9b621034953b7135fc991a436d7746)
+   [E-CPU `9064559d`](https://github.com/Kier73/E-CPU/commit/8749e692d1be241d1b34ab191e2846f8d6924ff7)
    and runs its unchanged IPS-008 test fixtures and original regression.
 
 The authority condition is a conjunction:
@@ -112,7 +112,7 @@ python -m unittest discover -s tests -p test_discovered_state_space.py -v
 python -m pytest -q <pinned-E-CPU-directory>/tests/test_effect_receiver_service.py
 ```
 
-The E-CPU source checkout is pinned to one immutable commit for repeatability;
+The E-CPU source checkout pins the exact SQLite connection-scope correction introduced in [E-CPU PR #201](https://github.com/Kier73/E-CPU/pull/201), which the Windows cross-repository regression exposed. The native connection lifetime is now closed explicitly without altering original E-CPU receiver authority.\n\nThe E-CPU source checkout is pinned to one immutable commit for repeatability;
 no new service can silently replace native authority.
 
 ## Development still to solve
