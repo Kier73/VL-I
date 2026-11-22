@@ -1,0 +1,62 @@
+name: TDL-005 authenticated mTLS observer quorum
+on:
+  pull_request:
+    paths:
+      - 'src/vli/authenticated_refinement.py'
+      - 'src/vli/authenticated_refinement_verify.py'
+      - 'tests/test_authenticated_refinement.py'
+      - '.github/workflows/tdl005-authenticated-refinement.yml'
+  push:
+    paths:
+      - 'src/vli/authenticated_refinement.py'
+      - 'src/vli/authenticated_refinement_verify.py'
+      - 'tests/test_authenticated_refinement.py'
+      - '.github/workflows/tdl005-authenticated-refinement.yml'
+
+jobs:
+  authenticated-quorum:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.11', '3.13']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: VL-I
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/Navigable-Compute
+          ref: 66e216e53ab606547ba4a5316ed44044e327b67b
+          path: Navigable-Compute
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: 2c925e177734b88d4cf32961b24028dfee771e68
+          path: E-CPU
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/Virtual-Ground-Interpreter
+          ref: ae3f949b7d0b2aaa42236bc7cc37e9857384b174
+          path: VGI
+          sparse-checkout: |
+            virtual_ground_interpreter
+          sparse-checkout-cone-mode: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Ensure live mTLS certificate tool is available
+        run: openssl version
+      - name: Install predecessor Grounds, live transport and VGI packages
+        run: |
+          python -m pip install -e ./Navigable-Compute
+          python -m pip install -e ./E-CPU
+          python -m pip install -e ./VGI/virtual_ground_interpreter
+          python -m pip install -e ./VL-I
+      - name: Verify dual mTLS source quorum and durable recovery
+        run: python -m unittest discover -s VL-I/tests -p test_authenticated_refinement.py -v
+      - name: Regression receiver-admitted E-CPU fabric paths
+        run: python -m unittest discover -s VL-I/tests -p test_fabric_refinement.py -v
+      - name: Regression source-row cost optimization and VGI finalization
+        run: python -m unittest discover -s VL-I/tests -p test_cost_aware_refinement.py -v

@@ -136,6 +136,10 @@ The VGI policy source is **a single receiver-owned adapter**, not a federation o
 
 **Observed CI verification (2026-11-22):** [GitHub Actions run 45070098905](https://github.com/Kier73/VL-I/actions/runs/45070098905) passed **all four** Linux/Windows × Python 3.11/3.13 jobs against source revision `c03f7487899bb5fc7ccd927bdb6c0ed3fa997e7d`. Every job ran **7 new host/path integration tests**, **7 TDL-003 cost/VGI tests**, and **7 TDL-002 minimal-refinement tests**: 21 tests per platform combination. Subsequent commits on this branch changed documentation only. The [dedicated workflow](../.github/workflows/tdl004-fabric-refinement.yml) pins E-CPU, VGI and Navigable-Compute predecessor revisions.
 
+## Implemented continuation: live peer-authenticated readings
+
+[TDL-005](AUTHENTICATED_REFINEMENT_TDL005.md) connects selected source-row observations to E-CPU's existing IOS-003 `MeasurementPeerClient` and `MeasurementPeerServer` on CA-verified mutually authenticated TLS sessions. Each selected bit must receive agreement from at least two pinned peer identities under VGI's existing strict finalization policy. This is a separate live authenticated **measurement route**; binding that selected endpoint back to this document's exact SAB-001 route and making its authorization portable are next research steps.
+
 ## Next discoveries to test
 
 1. **Authentication as typed evidence:** adapt E-CPU's *existing* [IOS-003 mTLS measurement service](https://github.com/Kier73/E-CPU/blob/main/mailcpu/intention_measurement_fabric.py) (`MeasurementPeerClient.resolve`, `MeasurementPeerServer`, `MeasurementReceiptLedger`) and its native `ObserverReceipt`/CA-verified DNS peer binding. Translate each authenticated source-bound measurement into the same observation-specific output kind, with receiver-known authority, then bind VGI's source membership to the authenticated peer rather than the single adapter. Preserve the existing durability, refusal and source-law checks instead of implementing parallel transport authority.

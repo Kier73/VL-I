@@ -16,6 +16,8 @@
 
 **Observer-host route formation (TDL-004):** [E-CPU receiver-admitted measurement paths](docs/FABRIC_REFINEMENT_TDL004.md) translate missing observer information into observation-specific output types, lease/policy-qualified E-CPU paths, executed typed receipts, and VGI-finalized processor reconstruction. The route audit includes every currently eligible offered operation and distinguishes declared path quanta from locally measured wall-time and byte counts.
 
+**Live authenticated observer evidence (TDL-005):** [IOS-003 mutual-TLS measurement and VGI strict quorum](docs/AUTHENTICATED_REFINEMENT_TDL005.md) bind mathematical source-row requests to distinct pinned live peer sessions, durable E-CPU native receipts and VGI finalizations before reconstructing the next processor state. Exported hashes remain record identities, not portable proof of an earlier TLS session.
+
 ## The endeavor
 
 A Virtual Layer observes bytes, constructs an interpretation of their variables and transformations, and expresses them as a **Virtual Ground**: a versioned, testable description of possible states, transitions, observations, and intentions.
