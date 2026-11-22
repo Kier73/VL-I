@@ -1,0 +1,39 @@
+name: ACT-001 authenticated rational active rank inquiry
+
+on:
+  push:
+    paths:
+      - 'src/vli/active_rational_inquiry.py'
+      - 'src/vli/discovered_state_space.py'
+      - 'tests/test_active_rational_inquiry.py'
+      - 'docs/ACT_001_RATIONAL_ACTIVE_OBSERVER_INQUIRY.md'
+      - '.github/workflows/vli-active-rational-inquiry.yml'
+  pull_request:
+    paths:
+      - 'src/vli/active_rational_inquiry.py'
+      - 'src/vli/discovered_state_space.py'
+      - 'tests/test_active_rational_inquiry.py'
+      - '.github/workflows/vli-active-rational-inquiry.yml'
+  workflow_dispatch:
+
+jobs:
+  active-rational:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.11', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install source-verifiable VL-I
+        run: |
+          python -m pip install -e .
+          python -m pip install "cryptography>=46,<47"
+      - name: Independent rank-audited signed active inquiry
+        run: python -m unittest discover -s tests -p test_active_rational_inquiry.py -v
+      - name: Regression on discovered unknown-order state-space
+        run: python -m unittest discover -s tests -p test_discovered_state_space.py -v
