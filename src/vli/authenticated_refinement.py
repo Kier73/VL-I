@@ -245,7 +245,6 @@ def acquire_authenticated_refinement(
                 f"ios003-live://{item['observer_receipt_digest']}",
                 collector="receiver-verified-tls-session",
             ),
-            correlation_id=item["ios_request_digest"],
         ))
     exchange = ChannelExchangeLedger()
     for message in messages:
@@ -254,6 +253,7 @@ def acquire_authenticated_refinement(
     for index, message in enumerate(messages, 1):
         frame = TransportFrameReceipt.capture(
             message, transport_id="ios003-receiver-live-tls", sequence=index,
+            frame_id=native[index - 1]["ios_request_digest"],
         )
         ledger = ledger.ingest_channel_message(
             exchange, message.message_id, frame, encounters,
