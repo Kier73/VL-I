@@ -129,7 +129,7 @@ def navigate_relation(A,V,step,output_index):
     _require(type(step) is int and 0<=step<=MAX_TARGET,
              "Unadmitted intention coordinate")
     d=len(V)
-    _require(1<=d<=3 and type(output_index) is int and
+    _require(1<=d<=4 and type(output_index) is int and
              0<=output_index<d and len(A)==d,
              "Invalid constructed state-space dimension")
     metrics={"matrix_products":0,"rational_multiplications":0,
