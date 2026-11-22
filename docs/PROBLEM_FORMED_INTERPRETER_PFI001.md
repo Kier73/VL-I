@@ -1,10 +1,68 @@
 # PFI-001 — The problem forms its own interpreter
 
-**Status:** executable integration experiment, 21–22 November 2026. Source-bounded mathematical semantics. No demonstrated universal self-forming general intelligence, neural execution, or computation in passive wires.
+## Current implementation at a glance
+
+**Source-grounded contract.** `vli.problem_formed_interpreter.construct(source)` accepts an exact, declared binary-affine `SymbolicSource`. It uses Navigable-Compute's NCR-006 quotient to derive native register bits, an XOR/FLIP circuit for each transition and a circuit for the observer projection. `verify_interpreter` symbolically re-evaluates the generated gates and compares their affine rows/bias against the mathematical quotient. `realize` executes a cost-chosen path and compares the result with independently verified NCR navigation; `certify_succession` identifies which changes of observation retain sufficient old state.
+
+### Formal invariants and operational placement
+
+For source transitions \(T_a(x)=A_ax\oplus b_a\) on \(\mathbb F_2^n\) and requested linear observer \(O(x)=Hx\), define
+
+\[
+W_F=\operatorname{span}_{\mathbb F_2}\{hA_w\mid h\in\operatorname{rows}(H),w\in A^*\}.
+\]
+
+The constructed quotient basis \(B\) has \(r=\dim W_F\) rows; native state \(z=Bx\). Every generated transition and observer gate network implements
+
+\[
+BA_a=M_aB,\quad c_a=Bb_a,\quad H=DB,
+\qquad z'=M_az\oplus c_a,\quad O(x)=Dz.
+\]
+
+**Operational order:** validate and construct NCR quotient → synthesize `xor` / `flip` topological circuits → verify each gate's symbolic affine expression → choose direct gate execution or composed-law navigation using the cost heuristic → independently verify NCR result → decode observer → bind source/interpreter/result digests in the receipt. E-CPU DAG integration is separate: `create_ecpu_dag` creates `ground → navigate → observe`, and `run_one_ecpu_frontier` commits one ready step per call.
+
+### Current syntax
+
+```python
+from navigable_compute.symbolic_quotient import AffineMap, SymbolicSource
+from vli.problem_formed_interpreter import construct, verify_interpreter, realize
+
+# Four-bit exact source; action 0 toggles bit 0; observer reads bit 0.
+identity_rows = tuple(1 << i for i in range(4))
+source = SymbolicSource(
+    4, (AffineMap(identity_rows, 1),), (1,), "declared-demo"
+)
+quotient, bundle = construct(source)
+assert verify_interpreter(source, quotient, bundle)
+receipt = realize(source, quotient, bundle, 0, (0,), 5)
+assert int(receipt["observed_decimal"]) == 1
+```
+
+The source is declared mathematical input; no external source discovery is involved in this call. The runnable cross-repository test fixture is [`tests/test_problem_formed_interpreter.py`](../tests/test_problem_formed_interpreter.py); it imports the actual NCR and E-CPU modules.
+
+### Intention succession: exact information requirement
+
+For old/new intentions under the **same source transition-law epoch**, write \(z_o=B_ox\) and \(z_n=B_nx\). The implementation attempts to express every row of \(B_n\) in the row span of \(B_o\):
+
+\[
+\exists L\quad B_n=LB_o
+\quad\Longleftrightarrow\quad
+\operatorname{rowspan}(B_n)\subseteq\operatorname{rowspan}(B_o).
+\]
+
+When this holds, `certify_succession` derives \(z_n=Lz_o\) without a source-state anchor. Otherwise, it requires an explicitly declared \(x\) satisfying \(B_ox=z_o\) and computes \(z_n=B_nx\), recording `declared-source-anchor-required`. `verify_succession` independently regenerates the exact certificate, including both interpreter identities. This is the **affine linear-algebra counterpart** of E-CPU INTENT-001's finite partition-refinement criterion.
+
+**Evidence anchors:** `test_intention_refinement_changes_processor_dimension_and_epoch`, `test_intention_coarsening_derives_map_without_source_anchor`, `test_causal_continuation_after_mathematically_qualified_reformation`, `test_changed_dynamics_refuses_reusing_intention_epoch`, and `test_native_ecpu_dag_checkpoint_and_host_resumption`.
+
+**New construction:** translate an E-CPU finite quotient certificate into a VL-I/NCR affine basis witness when the supplied source has an admitted affine embedding. Test whether the two implementations agree on all future-observation classes and whether a succession witness transfers without retaining the full source state.
+
+**Evidence scope:** current generation and oracle checks are over the stipulated exact binary-affine source law. Three independent local processes exercise E-CPU's native DAG checkpoint continuation; receiver-local execution, physical host authority, and external source attestation are separate integration contracts.
+
+
 
 **Question:** Can an intended observation and a declared causal system generate the shape of their own processor—its state registers, allowed operations, transition circuitry and observer—while preserving continuity and executing through an existing computational host?
 
-This **does not** search for a named programming language and then invoke a solver. Nor does it posit a second universal runtime. It treats the interpreter itself as a constructed Ground, whose machine structure is an output of the problem.
+It treats the interpreter itself as a constructed Ground, whose machine structure is an output of the problem.
 
 ## 1. Connection to the actual repositories
 
@@ -16,23 +74,9 @@ The following was inspected, not copied or replaced:
 - [E-CPU GGE-001](https://github.com/Kier73/E-CPU/blob/main/docs/GENERAL_GROUND_EXECUTION_GGE001.md) cautions against creating parallel authority layers. This prototype has **no** Hypervisor capability grant, route qualification, actual TCP/mTLS traffic, shared host authority or physical link execution. Those remain separate E-CPU admission steps.
 - [In-Formation-Space PNG-001/002/003](https://github.com/Kier73/In-Formation-Space/tree/main/experiments/pnp-ground-navigation) motivate the distinction between the cost of describing a result, deriving a representation, and actually realizing it. PFI-001 focuses on the interpreter's form rather than SAT-specific representation selection.
 
-## 2. What is supplied, and what is generated
+## 2. Mathematical input and generated microarchitecture
 
-The supplied problem is an exact mathematical description
-
-\[
-D=(X=\mathbb F_2^n,\{T_a(x)=A_ax\oplus b_a\}_{a\in A},\;O(x)=Hx,\;\text{intention}).
-\]
-
-There is **no supplied processor register layout or instruction-set implementation**. The observer intention names a particular output view and, at execution, an initial state and action-word/time coordinate.
-
-The NCR-006 constructor derives the least future-stable dual observer space
-
-\[
-W=\mathrm{span}\{hA_w\mid h\in\mathrm{rows}(H),\;w\in A^*\}
-\]
-
-with canonical basis rows `B`. The native state `z=Bx` has `r=dim W` bits; the source can have `2^n` states while the native interpreter only needs `2^r` distinguishable states for all requested future observations. For every generator, it constructs native operations `M_a,c_a` with `BA_a=M_aB`, `c_a=Bb_a`, and readout `H=DB`. NCR's verifier independently checks that **every** possible finite future observer output is preserved under the stipulated source law.
+The source supplies the transition matrices, biases and requested observer rows, while NCR-006 supplies the independently verified future-observer basis. The processor register count, gate networks, observer decoder and interpreter identity are generated, as formalized in the current implementation contract above.
 
 PFI-001 then **constructs actual gate-network microarchitectures** from the derived mathematics. Every transition and the observer readout gets its own acyclic network of primitive `xor` and `flip` nodes and source-derived output connections. The processor's *number of registers*, *number and wiring of gates*, *effective primitive set*, *operator network*, *observer decoder*, and *digest identity* are outputs of construction. For a degenerate projection, zero gates may be required. Its execution uses these generated networks; for long logical-time intentions it instead uses NCR's independently checked compressed operator-composition semantics.
 
@@ -55,19 +99,11 @@ PFI-001 also constructs a **three-node native E-CPU DAG**:
 
 The receiver commits one node each time it is invoked, validating all predecessors and the full interpreter epoch digest before advancing. E-CPU's own `snapshot` and `from_snapshot` serialize and restore the exact committed frontier. A three-subprocess demonstration uses genuinely different local Python processes to perform the successive native DAG transitions, reconstructing the original mathematical source/quotient and interpreter identity on each process. Those are host-local execution steps; no passive link, network, Hypervisor or multi-party authority is claimed.
 
-## 4. An evolving problem forces the processor to re-form
+## 4. Intention succession and information preservation
 
-If the observer changes from `O_old` to `O_new` while the causal law remains fixed, the resulting new `W_new` can have a different rank, hence a different processor.
+`certify_succession` applies the row-span criterion in the implementation contract above. A smaller observer quotient can be reconstructed directly from a more informative native coordinate. A finer intention requires additional source information consistent with the old native coordinate; the current API accepts a full declared source-state anchor. Both interpreter digests and the exact transformation kind are recorded and checked by `verify_succession`. When transition generators or source-law origin differ, the old succession epoch is refused.
 
-Let the old native state be `z_old=B_old x` and the new one be `z_new=B_new x`:
-
-- If every new basis row lies in the span of the **old** basis, a source-state-independent quotient map `z_old -> z_new` exists. PFI-001 derives this mapping exactly. The original state can be migrated without reobtaining the full source.
-- If `W_new` contains previously invisible distinctions, **there is generally no function** of the old coordinate alone that can produce the new one. PFI-001 explicitly refuses that transition until a *declared source-state anchor* consistent with the old native coordinate is supplied. It uses that anchor to instantiate the new coordinate. This is not authenticated sensing, but it prevents a false mathematical inference from an impoverished old representation.
-- If the original source *transition laws* have changed, the succession contract is refused. A changed law requires a new Ground epoch and a separate continuity obligation; it is not silently accepted as a different name for the old processor.
-
-The checkable succession certificate binds both digests, old and new coordinates, transformation kind, and optional source anchor. An adversarially rehashed but incorrect successor coordinate fails independent regeneration.
-
-This makes the compiler's self-change a **semantic** phenomenon: the machine can be reconstituted with more or fewer registers because the intended distinctions changed, but it cannot fabricate lost observations.
+The [Translation Discovery Log (TDL-001)](https://github.com/Kier73/In-Formation-Space/blob/main/reports/TRANSLATION_DISCOVERY_LOG.md) derives the minimum conditional rank witness that could replace the larger source anchor in a future implementation.
 
 ## 5. Falsifiers and cost accounting
 
@@ -98,10 +134,10 @@ The dedicated GitHub Actions workflow uses Linux and Windows with Python 3.11 an
 
 The scaffold is deliberately not a self-aware agent, a general compiler for arbitrary bytes, a live environmental solver, physical fabric execution, authenticated host migration or unrestricted behavioral equivalence. An independent external sensor may require stronger evidence and authority than this mathematical source contract supplies. A future version should bind the same verified microarchitecture to E-CPU's `VirtualLayerRuntime` with actual receiver-local operator admission and a typed E-CPU host catalogue/route, **without replacing** the existing Hypervisor, classifier or durable channel.
 
-## 7. Why this is not merely choosing a language
+## 7. The language is constructed from the problem
 
-A static interpreter has an instruction vocabulary and registers that exist *before* the input. A PFI-001 instance receives a problem whose transition law and observer are known, discovers the smallest exact future-relevant coordinate subspace for that problem, **forms** its registers and executable transformation graph, and realizes that problem through the resulting constructed machine. When the intended observation changes, its exact mathematical state-space, circuit and identity can change.
+A static interpreter supplies its instruction vocabulary and registers in advance. PFI-001 derives register count, XOR/FLIP operation graphs, observer readout and exact interpreter digest from the declared source law and intention; the generated machinery changes when the observer's required distinctions change.
 
-That is substantially stronger than selecting a preexisting SAT solver or programming language. It is still a restricted but verifiable example of an adaptable interpreter, not a claimed general path around the P versus NP question: a general source law might have no compact future-observer quotient, and discovering the appropriate Ground could itself cost exponentially more than operating it.
+**Next construction:** extend exact formation beyond binary-affine source laws using NCR-007 invariant-derived nonlinear families, then bind produced circuits through E-CPU's existing receiver-owned admission coordinator. Demonstrate source-backed numerical equivalence, independent host authority and recovery identity under explicit tests.
 
-**Next constructive direction:** generate and admit non-affine finite Boolean processor architectures from NCR-007's invariant-derived nonlinear laws, and connect E-CPU `ComputationalExecutionAdmissionCoordinator` to execute the generated circuits under explicit rights, real host identities and typed recovery epochs. An intention should be able to request a different computational structure *and* a qualified host to realize that structure, not assume the path itself performs arbitrary arithmetic.
+The quantitative refinement-witness problem and cross-representation verification procedure are tracked in [TDL-001](https://github.com/Kier73/In-Formation-Space/blob/main/reports/TRANSLATION_DISCOVERY_LOG.md).
