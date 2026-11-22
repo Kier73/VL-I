@@ -122,7 +122,7 @@ class DirectSatFabric:
         return data
 
     def _wire(self,i):
-        _,_,_,_,_,_,canon=_sat()
+        _,_,_,_,_,_,canon=self._sat_runtime()
         return canon(self._packet(i))
 
     def _save(self):
