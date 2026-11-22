@@ -58,8 +58,10 @@ class DirectSatFabric:
     CANDIDATE='vli.sat-stage-candidate.v1'
 
     def __init__(self,root,source_receipt, *,intention='#SAT',
-                 maximum_free=12,partition_size=8,job='sat-formed'):
-        form,verify_program,*_= _sat()
+                 maximum_free=12,partition_size=8,job='sat-formed',runtime_adapter=None):
+        self._sat_runtime = _sat if runtime_adapter is None else runtime_adapter
+        _need(callable(self._sat_runtime), 'SAT runtime adapter is not callable')
+        form,verify_program,*_= self._sat_runtime()
         self.root=Path(root)
         self.root.mkdir(parents=True,exist_ok=True)
         self.receipt=source_receipt
@@ -148,7 +150,7 @@ class DirectSatFabric:
             if node in d.committed_nodes:
                 _need(str(i) in s['receipts'],'Committed stage has no receipt')
                 result=s['receipts'][str(i)]['result']
-                _sat()[3](self.program,result)
+                self._sat_runtime()[3](self.program,result)
                 stage_receipt=s['receipts'][str(i)]
                 committed=d.result(node)
                 _need(committed.get('result_sha256')==_hash(result) and
@@ -232,7 +234,7 @@ class DirectSatFabric:
             _need(value=={'program':program['digest'],'part':i},
                   'Receiver-bound workload changed')
             call.append(i)
-            return _sat()[2](program,i)
+            return self._sat_runtime()[2](program,i)
         registry=M['OperatorRegistry']();registry.register(spec,run)
         runtime=M['VirtualLayerRuntime'](registry,host,frozenset({'cpu'}))
         cap=M['Capability']('/virtual-layer/operators',frozenset({'compute'})) if grant_compute else M['Capability']('/safe',frozenset({'read'}))
@@ -250,7 +252,7 @@ class DirectSatFabric:
         _need(event.action is M['HypervisorAction'].ALLOW and event.executed and
               len(call)==1 and event.effect is not None,
               'SAT receiver Hypervisor refused execution')
-        result=dict(event.effect['result']);_sat()[3](program,result)
+        result=dict(event.effect['result']);self._sat_runtime()[3](program,result)
         return result,{'host':host,'part':i,'event_fingerprint':event.fingerprint,
                        'result_sha256':_hash(result),'hypervisor_action':'ALLOW',
                        'local_kernel_journal_verified':os.environment.kernel.journal.verify()}
@@ -282,7 +284,7 @@ class DirectSatFabric:
               and all(c[k]==v for k,v in expected.items()) and
               c['sha256']==_hash({k:v for k,v in c.items() if k!='sha256'}),
               'SAT candidate identity, host or epoch altered')
-        _sat()[3](self.program,c['result'])
+        self._sat_runtime()[3](self.program,c['result'])
         r=c['receiver']
         _need(type(r) is dict and r.get('host')==actor.owner_host_id and
               r.get('part')==i and r.get('hypervisor_action')=='ALLOW' and
@@ -335,7 +337,7 @@ class DirectSatFabric:
     def finish(self):
         _need({n.node_id for n in self.dag.ready_nodes()}=={'finish'},
               'All SAT partitions must be published before final reduction')
-        summary=_sat()[4](self.program,[self.receipts[str(i)]['result']
+        summary=self._sat_runtime()[4](self.program,[self.receipts[str(i)]['result']
                             for i in range(len(self.program['partitions']))],
                             source_receipt=self.receipt)
         self.dag.commit('finish',summary)
