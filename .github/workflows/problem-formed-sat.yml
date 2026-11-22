@@ -1,10 +1,13 @@
-name: PFI-004 direct SAT on formed E-CPU fabric
+name: PFI-004/005 SAT Ground execution and interpreter revision
 on:
   push:
     paths:
       - 'src/vli/problem_formed_sat.py'
+      - 'src/vli/problem_formed_revision.py'
       - 'tests/test_problem_formed_sat.py'
+      - 'tests/test_problem_formed_revision.py'
       - 'docs/PROBLEM_FORMED_SAT_PFI004.md'
+      - 'docs/PROBLEM_FORMED_REVISION_PFI005.md'
       - '.github/workflows/problem-formed-sat.yml'
   pull_request:
     paths:
@@ -37,7 +40,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: Kier73/In-Formation-Space
-          ref: 276e669b4aa1bbd251dd5bb9e76f33bad65e692b
+          ref: d2022bf811dc89a9ae69a266148847bd443fa256
           path: In-Formation-Space
       - uses: actions/setup-python@v5
         with:
@@ -52,8 +55,12 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}/In-Formation-Space/experiments/pnp-ground-navigation
         run: python -m unittest discover -s VL-I/tests -p test_problem_formed_sat.py -v
+      - name: Formed Boolean architecture revision on native fenced SAT fabric
+        env:
+          PYTHONPATH: ${{ github.workspace }}/In-Formation-Space/experiments/pnp-ground-navigation
+        run: python -m unittest discover -s VL-I/tests -p test_problem_formed_revision.py -v
       - name: SFI direct SAT source-ground checks
         working-directory: In-Formation-Space/experiments/pnp-ground-navigation
-        run: python -m unittest -q test_self_forming_sat.py
+        run: python -m unittest -q test_self_forming_sat.py test_recursive_sat_compiler.py test_morphic_sat.py
       - name: Native PFI predecessor safety tests
         run: python -m unittest discover -s VL-I/tests -p test_problem_formed_claims.py -q
