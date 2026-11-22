@@ -1,0 +1,48 @@
+name: PFI-001 problem-formed interpreter
+on:
+  push:
+    paths:
+      - 'src/vli/problem_formed_interpreter.py'
+      - 'tests/test_problem_formed_interpreter.py'
+      - 'examples/problem_formed_interpreter_demo.py'
+      - 'examples/pfi_host_rehome.py'
+      - '.github/workflows/problem-formed-interpreter.yml'
+  pull_request:
+    paths:
+      - 'src/vli/problem_formed_interpreter.py'
+      - 'tests/test_problem_formed_interpreter.py'
+      - 'examples/problem_formed_interpreter_demo.py'
+      - 'examples/pfi_host_rehome.py'
+      - '.github/workflows/problem-formed-interpreter.yml'
+jobs:
+  proof-and-host:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.11','3.13']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: VL-I
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/Navigable-Compute
+          path: Navigable-Compute
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          path: E-CPU
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install real predecessor mathematics and native E-CPU
+        run: |
+          python -m pip install -e ./Navigable-Compute
+          python -m pip install -e ./E-CPU
+          python -m pip install -e ./VL-I
+      - name: Verify problem-formed interpreter and E-CPU checkpoints
+        run: python -m unittest discover -s VL-I/tests -p test_problem_formed_interpreter.py -v
+      - name: Source-derived 128-bit processor demo
+        run: python VL-I/examples/problem_formed_interpreter_demo.py
