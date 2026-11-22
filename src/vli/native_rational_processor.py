@@ -442,6 +442,10 @@ class FencedNativeRationalProcessor:
         token=self.store.get(candidate["claim_id"])
         self._fresh(candidate["claim_id"],candidate["peer"],candidate["host"])
         self._validate(candidate,token)
+        # Persist the exact independently reproduced pure candidate BEFORE
+        # quorum completion. If the process dies immediately after the native
+        # majority commits, a replacement can still replay this evidence.
+        _atomic_json(self.root/"accepted-native-result.json",candidate)
         # The publisher verifies current quorum owner again before commit.
         finished=self.store.complete(
             candidate["claim_id"],
@@ -452,7 +456,6 @@ class FencedNativeRationalProcessor:
             child_receipt_digest=candidate["candidate_digest"])
         _require(finished.claim.status.value=="completed",
                  "E-CPU refused native rational result publication")
-        _atomic_json(self.root/"accepted-native-result.json",candidate)
         return self.verify_published(candidate["claim_id"])
 
     def verify_published(self,claim_id):
