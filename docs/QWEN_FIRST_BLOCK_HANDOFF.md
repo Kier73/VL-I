@@ -21,6 +21,8 @@ The grouped feed-forward step took 47.30 and 45.02 seconds. Single-threaded PyTo
 
 ## Reproduction
 
+The [E-CPU classifier translation](CLASSIFIED_QWEN_HANDOFF.md) follows up on grouping costs with a resident coefficient program, a request dispatcher, and a native dense comparator.
+
 Use the sibling VL-64 checkout at `fbc8094` and the head archives from the [formation experiment](COMPOSED_ATTENTION_ROW.md). In the commands below, `artifacts/row.json` is the manifest generated with those archives. Set `PYTHONPATH=src` from the VL-I checkout. The staged operand directory must be new. The candidate commands use the standard library. The last command requires PyTorch and network access for the reference attention operands.
 
 ```sh

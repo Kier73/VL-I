@@ -1,0 +1,94 @@
+{
+  "hidden": 5120,
+  "intermediate": 17408,
+  "epsilon": 1e-06,
+  "operands": {
+    "post_attention_layernorm": {
+      "shape": [
+        5120
+      ],
+      "sha256": "a085df7f80dc3c9524ba6f96d18f09f11a7443048fd50704ee1b334c794b8143",
+      "shard": "model-00001-of-00018.safetensors",
+      "start": 766581528,
+      "bytes": 10240
+    },
+    "mlp.gate_proj": {
+      "shape": [
+        17408,
+        5120
+      ],
+      "sha256": "33f8e7677f361290d5f6a415c00cb56149a8fdbea20122bc13f0e1004b469565",
+      "shard": "model-00001-of-00018.safetensors",
+      "start": 410065688,
+      "bytes": 178257920
+    },
+    "mlp.up_proj": {
+      "shape": [
+        17408,
+        5120
+      ],
+      "sha256": "4f923e4b0b2d8b428c156f758dd67e94ee4bb0fbde8e823ac2c4d168753ec5f5",
+      "shard": "model-00001-of-00018.safetensors",
+      "start": 588323608,
+      "bytes": 178257920
+    },
+    "mlp.down_proj": {
+      "shape": [
+        5120,
+        17408
+      ],
+      "sha256": "dec9dc95995a34a6478bfcb8e080059bf311dcde959030eb8a55fa77603e4783",
+      "shard": "model-00001-of-00018.safetensors",
+      "start": 231807768,
+      "bytes": 178257920
+    }
+  },
+  "page": "https://huggingface.co/Qwen/Qwen3.8-27B/tree/37561816e66b5b9153b1b64c10968c18c1e6f4a0",
+  "attention_reference_bytes": 231803328,
+  "cases": [
+    {
+      "tokens": [
+        1761,
+        628,
+        33303
+      ],
+      "dense_mlp_and_io_seconds": 1.395498800004134,
+      "input_max_abs_error": 5.3290705182007514e-14,
+      "input_sha256": "60b8f6191ab1b067e5f4b5c1b72f3085fa55134585032f7d0eda062fb142cc73",
+      "output_max_abs_error": 4.618527782440651e-14,
+      "output_sha256": "82dd02a82c7e5610c0b2fc17d0471fc2ced61dd1673818b0b6e662b25a221b73"
+    },
+    {
+      "tokens": [
+        628,
+        1761,
+        628,
+        63204,
+        33303
+      ],
+      "dense_mlp_and_io_seconds": 1.3259429000027012,
+      "input_max_abs_error": 1.4210854715202004e-14,
+      "input_sha256": "14c444ccde7752b1afaf93d4e4950bab546734de411a13bec7b65e212e710192",
+      "output_max_abs_error": 1.0658141036401503e-14,
+      "output_sha256": "21fc75d7f8b5dc6d2665facd0862b35b9a994f1b3940128f392cf98a70feed2c"
+    },
+    {
+      "tokens": [
+        33303,
+        63204,
+        628,
+        1761,
+        63204,
+        33303,
+        628
+      ],
+      "dense_mlp_and_io_seconds": 1.3382706999836955,
+      "input_max_abs_error": 1.007194327939942e-12,
+      "input_sha256": "e4d90fdd69823c4134085b2825363bdb7079d7897b9e10793b3abae95463801b",
+      "output_max_abs_error": 1.120881165661558e-12,
+      "output_sha256": "d25c1bf4612433c6d5e041d0807e35b63de2f0253e235d977b8a486de6c03ac8"
+    }
+  ],
+  "tolerance": 1e-10,
+  "passed": true
+}

@@ -40,7 +40,7 @@ def silu(x):
     return x * exp_x / (1 + exp_x)
 
 
-def advance(directory, manifest, state):
+def advance(directory, manifest, state, projection=project):
     """r' = r + D[SiLU(Gn) ⊙ Un], n = (1+w) ⊙ r / sqrt(mean(r²)+ε)."""
     ops = manifest["operands"]
     hidden = manifest["hidden"]
@@ -52,10 +52,10 @@ def advance(directory, manifest, state):
     gain = (struct.unpack("<f", bytes(2)+word)[0] for word, in struct.iter_unpack("2s", norm))
     normalized = [x*scale*(1+w) for x, w in zip(state, gain, strict=True)]
     zeros = [0.] * intermediate
-    gate, ng = project(directory, "mlp.gate_proj", ops["mlp.gate_proj"], normalized, zeros)
-    up, nu = project(directory, "mlp.up_proj", ops["mlp.up_proj"], normalized, zeros)
+    gate, ng = projection(directory, "mlp.gate_proj", ops["mlp.gate_proj"], normalized, zeros)
+    up, nu = projection(directory, "mlp.up_proj", ops["mlp.up_proj"], normalized, zeros)
     mixed = [silu(g)*u for g, u in zip(gate, up, strict=True)]
-    output, nd = project(directory, "mlp.down_proj", ops["mlp.down_proj"], mixed, state)
+    output, nd = projection(directory, "mlp.down_proj", ops["mlp.down_proj"], mixed, state)
     return output, ng+nu+nd
 
 

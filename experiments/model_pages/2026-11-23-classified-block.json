@@ -1,0 +1,73 @@
+{
+  "page": "https://huggingface.co/Qwen/Qwen3.8-27B/tree/37561816e66b5b9153b1b64c10968c18c1e6f4a0",
+  "formation_seconds": 4.331360963000009,
+  "manifest_sha256": "564e770e29c49be5e8e78e57aa7c64d7c715ca05b01cee459b4bb43b4054cafb",
+  "native_library_bytes": 16272,
+  "native_library_sha256": "9f2c9233188a8215f4f2d03b7b9483f3b97a4a213ff396c29ce0e1327ea382e0",
+  "logical_plan_bytes": 657092110,
+  "cases": [
+    {
+      "route": "interpret",
+      "seconds": 0.2424814150000003,
+      "products": 60999419,
+      "input_sha256": "60b8f6191ab1b067e5f4b5c1b72f3085fa55134585032f7d0eda062fb142cc73",
+      "output_sha256": "82dd02a82c7e5610c0b2fc17d0471fc2ced61dd1673818b0b6e662b25a221b73",
+      "native_dense_seconds": 0.219382607,
+      "native_dense_max_error": 3.552713678800501e-15
+    },
+    {
+      "route": "replay",
+      "seconds": 8.652999994751553e-06,
+      "products": 0,
+      "input_sha256": "60b8f6191ab1b067e5f4b5c1b72f3085fa55134585032f7d0eda062fb142cc73",
+      "output_sha256": "82dd02a82c7e5610c0b2fc17d0471fc2ced61dd1673818b0b6e662b25a221b73",
+      "native_dense_seconds": 0.21472180600000002,
+      "native_dense_max_error": 3.552713678800501e-15
+    },
+    {
+      "route": "interpret",
+      "seconds": 0.24152334000000053,
+      "products": 60999419,
+      "input_sha256": "14c444ccde7752b1afaf93d4e4950bab546734de411a13bec7b65e212e710192",
+      "output_sha256": "21fc75d7f8b5dc6d2665facd0862b35b9a994f1b3940128f392cf98a70feed2c",
+      "native_dense_seconds": 0.23214510300000768,
+      "native_dense_max_error": 1.7763568394002505e-15
+    },
+    {
+      "route": "interpret",
+      "seconds": 0.2067217430000028,
+      "products": 60999419,
+      "input_sha256": "e4d90fdd69823c4134085b2825363bdb7079d7897b9e10793b3abae95463801b",
+      "output_sha256": "d25c1bf4612433c6d5e041d0807e35b63de2f0253e235d977b8a486de6c03ac8",
+      "native_dense_seconds": 0.20197810500000912,
+      "native_dense_max_error": 6.938893903907228e-16
+    },
+    {
+      "route": "interpret",
+      "seconds": 0.20979191599998614,
+      "products": 60999419,
+      "input_sha256": "60b8f6191ab1b067e5f4b5c1b72f3085fa55134585032f7d0eda062fb142cc73",
+      "output_sha256": "82dd02a82c7e5610c0b2fc17d0471fc2ced61dd1673818b0b6e662b25a221b73",
+      "native_dense_seconds": 0.23101921900000377,
+      "native_dense_max_error": 3.552713678800501e-15
+    },
+    {
+      "route": "interpret",
+      "seconds": 0.2338441859999989,
+      "products": 60999419,
+      "input_sha256": "14c444ccde7752b1afaf93d4e4950bab546734de411a13bec7b65e212e710192",
+      "output_sha256": "21fc75d7f8b5dc6d2665facd0862b35b9a994f1b3940128f392cf98a70feed2c",
+      "native_dense_seconds": 0.28971476700000665,
+      "native_dense_max_error": 1.7763568394002505e-15
+    },
+    {
+      "route": "replay",
+      "seconds": 5.657600000574803e-05,
+      "products": 0,
+      "input_sha256": "14c444ccde7752b1afaf93d4e4950bab546734de411a13bec7b65e212e710192",
+      "output_sha256": "21fc75d7f8b5dc6d2665facd0862b35b9a994f1b3940128f392cf98a70feed2c",
+      "native_dense_seconds": 0.3388571959999922,
+      "native_dense_max_error": 1.7763568394002505e-15
+    }
+  ]
+}
