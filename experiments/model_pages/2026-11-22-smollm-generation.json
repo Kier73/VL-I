@@ -1,0 +1,89 @@
+{
+  "model": "HuggingFaceTB/SmolLM-135M",
+  "source_revision": "1d461723eec654e65efdc40cf49301c89c0c92f4",
+  "model_type": "llama",
+  "structure_digest": "68eb45765313e2f78b0d26d89d8865d1754bb8c07ba9de89dd938d5489123e33",
+  "shard_header_sha256": {
+    "model.safetensors": "ac18e7a185182fd342c9d761e553aee3c1fe317974130d90a0a2719eecb0f93f"
+  },
+  "tensor_count": 272,
+  "declared_payload_bytes": 538060032,
+  "metadata_bytes_observed": 31100,
+  "weight_bytes_at_inspection": 0,
+  "dag_digest": "65b8e342135f2a23cfa4bc800de33f42bae95eca9c442176401f0e50cce4d74b",
+  "input_ids": [
+    504,
+    3575,
+    282,
+    4649,
+    314
+  ],
+  "generated_ids": [
+    7042
+  ],
+  "steps": [
+    {
+      "schema": "vl64.weight-backed-token-dag-receipt.v1",
+      "status": "WEIGHT_BACKED_DECODER_FORWARD_EXECUTED",
+      "model": "HuggingFaceTB/SmolLM-135M",
+      "revision": "1d461723eec654e65efdc40cf49301c89c0c92f4",
+      "dag_digest": "65b8e342135f2a23cfa4bc800de33f42bae95eca9c442176401f0e50cce4d74b",
+      "tensor_ground_digest": "b095be011dcde24bcad5ce56c9ad3206640fc823cbae000c6b3a5840a59a2edd",
+      "tokens": [
+        504,
+        3575,
+        282,
+        4649,
+        314
+      ],
+      "selected_next_token": 7042,
+      "weight_bytes_acquired": 2237317632,
+      "exact_range_count": 35662,
+      "range_witness_chain_digest": "b794799aefa448e74a79d8f6c02c2619a318baeb8aa0bf0d3545c1daf53da5bd",
+      "claims": "provided_token_ids_forward_only_no_tokenizer_or_full_artifact_digest_proof",
+      "receipt_digest": "4a68cddc346508abd27e817916417c9c36fc5bed602d0eb9865a45d32d9dde71"
+    }
+  ],
+  "prefix_policy": "recompute supplied and generated prefix for each step",
+  "numeric_contract": "VL-64 binary64 arithmetic",
+  "pages": [
+    {
+      "url": "https://huggingface.co/models?search=HuggingFaceTB%2FSmolLM-135M",
+      "bytes": 287783,
+      "sha256": "cdbec60bfeff85059ec3012ec13187ba1c828108c994a9df080edc09edf1244c"
+    },
+    {
+      "url": "https://huggingface.co/HuggingFaceTB/SmolLM-135M",
+      "bytes": 241162,
+      "sha256": "12c26b537547b45177a4efc0f0e299b1030f06df4816292cf933a626ac438910"
+    },
+    {
+      "url": "https://huggingface.co/HuggingFaceTB/SmolLM-135M/tree/main",
+      "bytes": 198642,
+      "sha256": "beb9d9b98d1567047d8ce5a8f455d59bc9b0df9e9da7bb0fcb0167b0a00b499d"
+    },
+    {
+      "url": "https://huggingface.co/HuggingFaceTB/SmolLM-135M/tree/1d461723eec654e65efdc40cf49301c89c0c92f4",
+      "bytes": 199695,
+      "sha256": "3caf166434233e191ce8e0bac245771a02b33f823c0658921688da68e5afa567"
+    }
+  ],
+  "shard_http_bytes": 538120784,
+  "staged_sha256": {
+    "model.safetensors": "c7a387d6fe81ca6dd304aeb809bda3932ff1bbef3ca41c9484502f2f448dc093"
+  },
+  "prompt": "The capital of France is",
+  "tokenizer_sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+  "tokenizer_scope": "external tokenizer for shared reference and seed input IDs",
+  "seed_sha256": "8552b2a66ea728928c5afbdf66aebd0d39a204166cb928cdea241a9610e75515",
+  "seed_bytes": 26723,
+  "continuation": " Paris",
+  "reference_id": 7042,
+  "torch": "2.7.0+cpu",
+  "transformers": "4.51.3",
+  "vocabulary": 49152,
+  "max_abs_logit_error": 2.7652522816001834e-05,
+  "tolerance": 0.0002,
+  "agrees": true,
+  "logits_f64le_sha256": "4f8cd3df5eb65d68ddb96141dff2de5dda1479fc77e486eabb9f89c1f0aaa260"
+}

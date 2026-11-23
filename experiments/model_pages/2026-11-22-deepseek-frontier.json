@@ -1,0 +1,13 @@
+{
+  "page": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017/tree/08c8657f02291e11b6f6b63e0e16014f8e748518",
+  "shard": "model-00003-of-00048.safetensors",
+  "header_sha256": "ff66dd94d7eb6ef5cc1457b2ac13b422c14e9891914c786af995edaa4f10a614",
+  "header_bytes": 258144,
+  "unsupported_dtype_counts": {
+    "F8_E8M0": 1160
+  },
+  "example_tensors": {
+    "F8_E8M0": "layers.0.attn.wkv.scale"
+  },
+  "observed_error": "Malformed typed tensor definition"
+}

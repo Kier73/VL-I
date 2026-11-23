@@ -1,0 +1,173 @@
+{
+  "query": "SmolLM-135M",
+  "search_page": {
+    "url": "https://huggingface.co/models?search=SmolLM-135M",
+    "bytes": 360622,
+    "sha256": "64acc7413de65d9407550d7b1fb84b4222e37cd6a5e814f10a12b56bcb34a293"
+  },
+  "displayed": 30,
+  "observations": [
+    {
+      "model": "HuggingFaceTB/SmolLM2-135M",
+      "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+      "model_type": "llama",
+      "architectures": [
+        "LlamaForCausalLM"
+      ],
+      "pages": [
+        {
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M",
+          "bytes": 254878,
+          "sha256": "ab02018d598912a542fcd1cf8af6580c5339d677758bc1987bc1b4264b5f8934"
+        },
+        {
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M/tree/main",
+          "bytes": 193656,
+          "sha256": "5c6783f40691b678df0df9c412617c525aa7622af0d12aae3e2e37a8de00ee29"
+        },
+        {
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M/tree/93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+          "bytes": 194673,
+          "sha256": "b41f8c4550d481ebc98f9f69d314f21fc1dc897f7603a95864c6f28dc24ad12f"
+        }
+      ],
+      "status": "observed_config",
+      "trained_bytes": 0
+    },
+    {
+      "model": "HuggingFaceTB/SmolLM-135M",
+      "revision": "1d461723eec654e65efdc40cf49301c89c0c92f4",
+      "model_type": "llama",
+      "architectures": [
+        "LlamaForCausalLM"
+      ],
+      "pages": [
+        {
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM-135M",
+          "bytes": 241162,
+          "sha256": "a81f315982549ca5b59ad0574ca19253789e78b9fc68571c075fee92cbd955fd"
+        },
+        {
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM-135M/tree/main",
+          "bytes": 198642,
+          "sha256": "1422d6cf4a57cc700ec8ba5d5f7fbf21afe29efc2c14079910b4f2bee96a845d"
+        },
+        {
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM-135M/tree/1d461723eec654e65efdc40cf49301c89c0c92f4",
+          "bytes": 199695,
+          "sha256": "4dfe78c5f6eee943ca4f96d95358031de6193719236dca6de1edd22a2a2eb1aa"
+        }
+      ],
+      "status": "observed_config",
+      "trained_bytes": 0
+    },
+    {
+      "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+      "revision": "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+      "model_type": "llama",
+      "architectures": [
+        "LlamaForCausalLM"
+      ],
+      "pages": [
+        {
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct",
+          "bytes": 250958,
+          "sha256": "8739a5e867e3ef3ee94b415a582998dc2f04b4bbc8b84e5aaff85740011e238a"
+        },
+        {
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/tree/main",
+          "bytes": 249319,
+          "sha256": "b496cb43492d67c23fdf41661632d4f232863545d262d5fed0722dbbd5093f83"
+        },
+        {
+          "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct/tree/12fd25f77366fa6b3b4b768ec3050bf629380bac",
+          "bytes": 250768,
+          "sha256": "49e381442330da65c5c6909650a206e7792c76bf349d1373a5f131eb3cf51206"
+        }
+      ],
+      "status": "observed_config",
+      "trained_bytes": 0
+    },
+    {
+      "model": "niishantth/SmolLM2_135M_reverse_engineered",
+      "revision": "0f1c30dde9bd77b433b11499aee09d97832010a6",
+      "model_type": "llama",
+      "architectures": [
+        "LlamaForCausalLM"
+      ],
+      "pages": [
+        {
+          "url": "https://huggingface.co/niishantth/SmolLM2_135M_reverse_engineered",
+          "bytes": 114923,
+          "sha256": "60c983e225b36424c3fba52d4de9c4f0986e73ab65ec1c9570a44b2ca7cb4822"
+        },
+        {
+          "url": "https://huggingface.co/niishantth/SmolLM2_135M_reverse_engineered/tree/main",
+          "bytes": 127396,
+          "sha256": "5346f90c0b4a91ef9c1d631ec36c0d1f1b913e8538eac3058fca04d9772a2e8c"
+        },
+        {
+          "url": "https://huggingface.co/niishantth/SmolLM2_135M_reverse_engineered/tree/0f1c30dde9bd77b433b11499aee09d97832010a6",
+          "bytes": 128419,
+          "sha256": "47613467238d36a47da0169e0a161aec7ce2f97811fcb5ddcddc8ce023c9004c"
+        }
+      ],
+      "status": "observed_config",
+      "trained_bytes": 0
+    },
+    {
+      "model": "Saran0003/SmolLM2-135M-SFT",
+      "revision": "9ecb2c580ac44089e9b57598aadfd7e32fed797e",
+      "model_type": "llama",
+      "architectures": [
+        "LlamaForCausalLM"
+      ],
+      "pages": [
+        {
+          "url": "https://huggingface.co/Saran0003/SmolLM2-135M-SFT",
+          "bytes": 168107,
+          "sha256": "3573597f7a53fab6b95afed35a8b7c818a06a076258e13c0ffb0b2aab011bf08"
+        },
+        {
+          "url": "https://huggingface.co/Saran0003/SmolLM2-135M-SFT/tree/main",
+          "bytes": 187776,
+          "sha256": "02e0635834f55404e3e605a0c782556e17ccbfba49e8cbfc49b31054e57d51ea"
+        },
+        {
+          "url": "https://huggingface.co/Saran0003/SmolLM2-135M-SFT/tree/9ecb2c580ac44089e9b57598aadfd7e32fed797e",
+          "bytes": 188972,
+          "sha256": "bdf51a42a8977d6188fb426b2837efb62f586133635e84dbf29fae6cb76c781f"
+        }
+      ],
+      "status": "observed_config",
+      "trained_bytes": 0
+    },
+    {
+      "model": "bayazidhs04/bangla-smollm-135m-cupcake",
+      "revision": "4aee2d0567028271cd6c5865587d82cb30f28e94",
+      "model_type": "llama",
+      "architectures": [
+        "LlamaForCausalLM"
+      ],
+      "pages": [
+        {
+          "url": "https://huggingface.co/bayazidhs04/bangla-smollm-135m-cupcake",
+          "bytes": 257560,
+          "sha256": "6c3a87f2408e7b33da4b2b04530857a556151f18f8d79447ba28da46ce9a8ebb"
+        },
+        {
+          "url": "https://huggingface.co/bayazidhs04/bangla-smollm-135m-cupcake/tree/main",
+          "bytes": 241432,
+          "sha256": "e4e26b263be3ef94f98ae4a5c789e9b6ca4ac09df77534a3097c69a9251bae9b"
+        },
+        {
+          "url": "https://huggingface.co/bayazidhs04/bangla-smollm-135m-cupcake/tree/4aee2d0567028271cd6c5865587d82cb30f28e94",
+          "bytes": 242449,
+          "sha256": "b269a4bdf916854cf9c3acb9587ab0e09e97bcf398e90bbcc67059b0314944b8"
+        }
+      ],
+      "status": "observed_config",
+      "trained_bytes": 0
+    }
+  ]
+}
