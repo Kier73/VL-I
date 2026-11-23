@@ -26,6 +26,8 @@ Several VL-64 workers could maintain bounds for disjoint expert rows. A coordina
 
 ## A benchmark that could change the execution path
 
+The [first router-bound experiment](DEEPSEEK_ROUTER_BOUNDS.md) exercised this stopping rule on the pinned gate with three supplied embedding probes. It records both agreement and the cost of late elimination.
+
 Pin one DeepSeek revision, one routed layer, the numerical convention, and a held-out set of genuine incoming text states. Give the workers the tensor map and identify every summary they obtained in advance. Have them commit the six IDs before a separate implementation reveals the route. Record disagreements, ties, fallbacks, bytes read, arithmetic, communication, latency, and cold construction costs. Compare against the checkpoint’s ordinary sparse router on the same states. The repository’s earlier DeepSeek evidence belongs to revision 1bae0e1; a benchmark on revision 08c8657 needs its own source and numerical checks. [Earlier evidence and scope](LARGE_MODEL_PARITY_FRONTIER.md)
 
 Once a route can be determined economically from a supplied state, move the experiment one dependency upstream and include the cost of producing that state. For generation, repeat the test after feeding the selected token back into the model. The stronger achievement is a Ground that preserves both the present answer and enough state to answer the next question.
