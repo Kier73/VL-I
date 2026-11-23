@@ -11,7 +11,7 @@ certify an unmodeled candidate law, or make an actuator crash-atomic.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, InitVar
 from fractions import Fraction as Q
 from functools import lru_cache
 import re
@@ -43,6 +43,7 @@ class QualifiedLaw:
     ground: IntentionGround
     prior: Q
     goal_digest: str
+    qualification_source: InitVar[ControlledSource | None] = None
 
     @classmethod
     def from_source(cls, name, source, prior):
@@ -51,9 +52,13 @@ class QualifiedLaw:
         ground = compile_intention_ground(source)
         if not verify_intention_ground(source, ground):
             raise ValueError("Candidate does not commute with its source law")
-        return cls(name, ground, _r(prior), _hash([_q(g) for g in source.goal]))
+        return cls(name, ground, _r(prior), _hash([_q(g) for g in source.goal]), source)
 
-    def __post_init__(self):
+    def __post_init__(self, qualification_source):
+        if (not isinstance(qualification_source, ControlledSource) or
+                not verify_intention_ground(qualification_source, self.ground) or
+                self.goal_digest != _hash([_q(g) for g in qualification_source.goal])):
+            raise ValueError("Hypothesis requires independently verified source and goal")
         if (type(self.name) is not str or NAME.fullmatch(self.name) is None or
                 not isinstance(self.ground,IntentionGround) or
                 type(self.goal_digest) is not str or
