@@ -221,3 +221,6 @@ def test_nonnegative_source_rejects_bad_probabilistic_hypotheses():
         source_with_accuracy(Q(5,4))
     with pytest.raises(ValueError,match='prior'):
         QualifiedLaw.from_source('negative',source,Q(-1))
+    verified=QualifiedLaw.from_source('verified',source,Q(1))
+    with pytest.raises(ValueError,match='independently verified'):
+        QualifiedLaw('unverified-direct',verified.ground,Q(1),verified.goal_digest)
