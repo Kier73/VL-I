@@ -13,6 +13,7 @@
 | [PBG-003](OBSERVED_INTENTION_PBG003.md) | Native receiver-owned E-CPU SAB-001 execution, strict two-source VGI finalization, exact source/epoch-specific records |
 | [TDL-005](AUTHENTICATED_REFINEMENT_TDL005.md) and [TDL-006](ROUTED_AUTHENTICATED_REFINEMENT_TDL006.md) | Prior mTLS and pinned-peer mechanisms for a future authenticated, remote-source version; **not** newly implemented here |
 | [VGI evidence and reconstruction](https://github.com/Kier73/Virtual-Ground-Interpreter/blob/main/virtual_ground_interpreter/docs/EVIDENCE_AND_RECONSTRUCTION.md) | Explicit authorized versus pending/conflicting evidence, with source identity and reconstruction |
+| [SHAPE-010 neural causal basis expansion](SHAPE_010_CAUSAL_BASIS_EXPANSION.md) | Already extends a source-witnessed Qwen normalization Ground by an independently observed rank-expanding causal vector, retaining its immutable parent and evidence lineage. This is a source-qualified **basis construction** rather than PBG-004 posterior selection. |
 | [IFS response equivalence](https://github.com/Kier73/In-Formation-Space/tree/main/experiments/response-equivalence) and [observation-equivalence bridge](https://github.com/Kier73/In-Formation-Space/tree/main/bridges/observation-equivalence) | Observer-relative predictive algebra and future distinctions |
 
 The code does **not** introduce a second transport, reimplement the evidence ledger, execute a trained neural model, or require source-state matrices during online planning.
@@ -77,7 +78,7 @@ A new revision has a digest over its contract Ground, candidate/source identitie
 
 When all candidates give probability zero to independently admitted `y`, **the Ground is not silently coerced to admit `y`**. PBG-004 retains the actual PBG-003 receipt as `EXPANSION_REQUIRED` and refuses further planning.
 
-A receiver can then supply a new `ControlledSource`, which is compiled and independently verified with the existing PBG-002 machinery. The new candidate must preserve the same goal and exact names/outcome labels/costs of admitted operations. Its reduced state is reconstructed by replaying **only the already accepted source-independent operation and outcome descriptions through the new reduced Ground**:
+A receiver can then supply a new `ControlledSource`, which is compiled and independently verified with the existing PBG-002 machinery. A `QualifiedLaw` cannot be directly constructed from a Ground digest alone: its constructor demands the exact source law and independently rechecks source/goal commutation without retaining the source matrices after admission. The new candidate must preserve the same goal and exact names/outcome labels/costs of admitted operations. Its reduced state is reconstructed by replaying **only the already accepted source-independent operation and outcome descriptions through the new reduced Ground**:
 
 \[
  z_{\mathrm{new},0} \xrightarrow{\text{retained observations/actions}}
@@ -123,6 +124,6 @@ python -m pytest -q tests/test_goal_evidence_fabric.py tests/test_intention_pred
 ## Next construction
 
 1. Make source-host actuation **durably idempotent and epoch fenced**, reusing E-CPU's recovery/fencing patterns; reconcile uncertain effects from a separate post-intervention observer before retrying. A persisted `MeasurementReceiptLedger` supports read-only measurements and is not sufficient by itself for irreversible actuators.
-2. Define a finite structural hypothesis grammar and source-qualified active probes that can **generate** a new candidate Ground from observed counterexamples, instead of requiring caller-provided candidate laws.
+2. Combine this controller with SHAPE-010's **source-witnessed native causal basis expansion**, qualifying each newly observed coordinate against the current immutable parent and its independent oracle before proposing a derived law. Define a finite structural hypothesis grammar and active probes that can **generate** a new candidate Ground from observations, instead of requiring caller-provided candidate laws.
 3. Connect the PBG-004 revision controller to TDL-006's actual pinned live mTLS observer route, and preserve VGI policy/peer identities across host failover.
 4. Measure whether observation-conditioned structural revision reduces original pretrained-model inference or tool-action work. Distinguish extra source inspections/compilation, persistent Ground cost, Bayesian planner cost and eliminated original execution.
