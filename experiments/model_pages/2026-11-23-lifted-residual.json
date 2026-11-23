@@ -1,0 +1,39 @@
+{
+  "page": "https://huggingface.co/Qwen/Qwen3.8-27B/tree/37561816e66b5b9153b1b64c10968c18c1e6f4a0",
+  "head_manifest_sha256": "0ce1a67ad7b7c4e34a92f01a5b885200b33188836e1cc88733541c66c0b6555f",
+  "matrix_bytes": 62914560,
+  "matrix_sha256": "87b442961543b1d794219563100c9728529f75bc513f01cbbbaeab6ca89b33fe",
+  "joint_validation_trained_bytes": 231803328,
+  "joint_validation_requests": 66,
+  "tolerance": 1e-10,
+  "observations": [
+    {
+      "tokens": [
+        1761,
+        628,
+        33303
+      ],
+      "coordinates": 5120,
+      "grouped_products": 8041091,
+      "dense_products": 31457280,
+      "projection_seconds": 5.422500800021226,
+      "max_abs_error": 5.3290705182007514e-14,
+      "residual_f64le_sha256": "60b8f6191ab1b067e5f4b5c1b72f3085fa55134585032f7d0eda062fb142cc73"
+    },
+    {
+      "tokens": [
+        63204,
+        33303,
+        1761,
+        628
+      ],
+      "coordinates": 5120,
+      "grouped_products": 8041091,
+      "dense_products": 31457280,
+      "projection_seconds": 5.4608409000211395,
+      "max_abs_error": 7.65609797781508e-13,
+      "residual_f64le_sha256": "e939cd37425e0d2d30197ba54b367c411d374af213dbbcdbe83b234e539e4196"
+    }
+  ],
+  "passed": true
+}

@@ -1,5 +1,7 @@
 # Turning externally hosted files into an addressable model
 
+The [model lift contract](MODEL_LIFT_CONTRACT.md) develops this address scheme into a process for compiling and qualifying a virtual transition.
+
 A model page can be the starting point for a calculation. A worker that follows the page to an immutable checkpoint can locate one learned quantity, read its bytes, and interpret them under the model’s equations. VL-I asks a further question: **for the behavior we want to reproduce, which quantities must the worker actually observe and which calculations can it omit?**
 
 ## From a page to one learned value

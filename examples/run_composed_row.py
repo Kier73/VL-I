@@ -8,13 +8,12 @@ from pathlib import Path
 import sys
 
 
-def observe(manifest, directory, tokens):
-    """W[row,:]·concat(y_h) = Σ_h W[row,h]·y_h with each compiled h consumed exactly once."""
+def head_outputs(manifest, directory, tokens):
+    """Yield z_h and W[row,h]·z_h once per pinned head, in concatenation order."""
     from experiments.model_fabric.addressed_delta import read_ground,evaluate
     hashes=manifest["archive_sha256"]
     if len(hashes)!=manifest["heads"] or not hashes:
         raise ValueError("Incomplete head inventory")
-    contributions=[]
     for head,expected in enumerate(hashes):
         blob=(directory/f"head-{head:02}.pyz").read_bytes()
         if hashlib.sha256(blob).hexdigest()!=expected:
@@ -25,8 +24,12 @@ def observe(manifest, directory, tokens):
                 g["alphabet"]!=sorted(manifest["alphabet"]) or g["layer"]!=0 or
                 manifest["page"]!=f"https://huggingface.co/{g['model']}/tree/{g['revision']}"):
             raise ValueError("Inconsistent compiled coordinate")
-        contributions.append(evaluate(program,tokens)["row_contribution"])
-    return math.fsum(contributions)
+        yield evaluate(program,tokens)
+
+
+def observe(manifest, directory, tokens):
+    """W[row,:]·concat(y_h) = Σ_h W[row,h]·y_h."""
+    return math.fsum(o["row_contribution"] for o in head_outputs(manifest,directory,tokens))
 
 
 if __name__=="__main__":

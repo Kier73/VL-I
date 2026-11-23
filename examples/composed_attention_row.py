@@ -26,7 +26,7 @@ def acquire(snapshot, row):
     for key, name in (("qkv","in_proj_qkv.weight"),("z","in_proj_z.weight"),("a","in_proj_a.weight"),
                       ("b","in_proj_b.weight"),("conv","conv1d.weight"),("alog","A_log"),
                       ("dt","dt_bias"),("gain","norm.weight"),("out","out_proj.weight")):
-        start,count = (row*output_width,output_width) if key=="out" else (0,None)
+        start,count = (row*output_width,output_width) if key=="out" and row is not None else (0,None)
         specs.append((key,prefix+"linear_attn."+name,start,count))
     dtype = {t["name"]: t["dtype"] for t in snapshot.ground["tensors"]["tensors"]}
     with ThreadPoolExecutor(max_workers=4) as pool:
