@@ -126,6 +126,49 @@ class SourceFabricTests(unittest.TestCase):
                                    nonce_factory=lambda:'4'*64)
         with self.assertRaises(BootstrapRefused):reader(((),))
 
+    def test_pbg004_pending_qualified_counterexample_admits_new_source_derived_law(self):
+        """Full PBG-004 material event -> source query -> newly admitted law."""
+        from test_evidence_adaptive_fabric import (
+            setup_case,perform,SENSORS as WORLD_SENSORS,ACT as WORLD_ACT,
+        )
+        from test_evidence_adaptive_ground import source_with_accuracy
+        from vli.evidence_adaptive_ground import GroundExpansionRequired
+        council,world,physical=setup_case(two_laws=False)
+        perform(council,physical,'sense','read-type',WORLD_SENSORS,'a'*64)
+        perform(council,physical,'act','apply-1',WORLD_ACT,'b'*64)
+        before_action_revision=world['revision']
+        _,outcome=perform(council,physical,'sense','read-goal',WORLD_SENSORS,'c'*64)
+        self.assertEqual(outcome['status'],'EXPANSION_REQUIRED')
+        with self.assertRaises(GroundExpansionRequired):council.plan(1)
+        source=source_with_accuracy(Q(0))
+        symbol_alphabet=tuple('act:'+name for name,_,_ in source.actions)+tuple(
+            'sense:'+name+':'+label for name,outs,_ in source.sensors for label,m in outs)
+        reader=NativeSourceReader(admitted_sources(source),PEERS,source.digest,
+                                  symbol_alphabet,batch_size=128)
+        atlas=QueryAtlas(symbol_alphabet,source.digest,reader,max_queries=3500)
+        learner=HankelLearner(atlas)
+        candidate=learner.build()
+        for _ in range(len(source.initial)):
+            proof=certify_source_equivalence(source,candidate)
+            if proof['status']=='EQUIVALENT_ALL_WORDS':break
+            candidate=learner.counterexample(proof['word'])
+        else:self.fail('The observed law failed exact all-word qualification')
+        self.assertEqual(world['revision'],before_action_revision)
+        admitted=council.admit_source('source-derived-inverted',source,Q(1,5))
+        self.assertEqual(admitted['status'],'GROUNDED_AFTER_EXPANSION')
+        self.assertTrue(admitted['no_external_execution_repeated'])
+        self.assertEqual(world['revision'],before_action_revision)
+        self.assertEqual(council.plan(1).name,'apply-0')
+        # A second, independently source-derived interpreter can reconstruct
+        # council's complete evidence history without rerunning the actuator.
+        replay=HankelObserverSession(candidate,source)
+        replay.replay_events(council.events)
+        self.assertEqual(replay.goal_probability(),council.goal_probability)
+        self.assertEqual(replay.goal_probability(),0)
+        replay.apply('apply-0')
+        self.assertEqual(replay.goal_probability(),1)
+        self.assertEqual(world['revision'],before_action_revision)
+
     def test_prior_history_replays_in_source_derived_ground_without_material_reexecution(self):
         from test_evidence_adaptive_ground import source_with_accuracy
         from vli.intention_predictive_ground import IntentionSession,compile_intention_ground
@@ -134,7 +177,7 @@ class SourceFabricTests(unittest.TestCase):
         symbol_alphabet=tuple('act:'+name for name,_,_ in source.actions)+tuple(
             'sense:'+name+':'+label for name,outs,_ in source.sensors for label,m in outs)
         fab=admitted_sources(source)
-        reader=NativeSourceReader(fab,PEERS,source.digest,symbol_alphabet,batch_size=64)
+        reader=NativeSourceReader(fab,PEERS,source.digest,symbol_alphabet,batch_size=128)
         atlas=QueryAtlas(symbol_alphabet,source.digest,reader,max_queries=3500)
         learner=HankelLearner(atlas)
         candidate=learner.build()
