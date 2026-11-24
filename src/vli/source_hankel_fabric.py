@@ -108,11 +108,10 @@ def read_source_batch(runtime,endpoints,source_digest,alphabet,words,*,nonce,coo
             if not 0<=Q(x)<=1:
                 raise ValueError('Source response violates probability domain')
         reports.append(report)
-    first=reports[0]['output']['values']
-    if any(x['output']['values']!=first for x in reports[1:]):
-        raise ValueError('Receiver source oracles disagree on exact observations')
-    content_hash=digest({'question':question_digest,'values':first})
-    labels=_octal_digest(content_hash)
+    # Each source must contribute its *own* exact-value digest to VGI.
+    # Never pre-normalize divergent readings into the first source's claim.
+    labels_by_source=[_octal_digest(digest({
+        'question':question_digest,'values':r['output']['values']})) for r in reports]
     contract=ChannelContract(CHANNEL,PROTOCOL,
                              observation_schema='vgi.transition-observation/1')
     exchange=ChannelExchangeLedger()
@@ -121,7 +120,7 @@ def read_source_batch(runtime,endpoints,source_digest,alphabet,words,*,nonce,coo
     for i,(report,endpoint) in enumerate(zip(reports,endpoints)):
         message=ChannelMessage('pbg005-'+str(i)+'-'+nonce[:20],CHANNEL,PROTOCOL,
             'observation',{'status':'known','source_state':STATE,
-                           'action':event,'target':STATE,'output':labels,
+                           'action':event,'target':STATE,'output':labels_by_source[i],
                            'ground_fingerprint':report['report_digest']},
             EncounterProvenance(endpoint.source_id,
                                 'ecpu-report://'+report['report_digest'],collector='pbg005'))
@@ -136,11 +135,14 @@ def read_source_batch(runtime,endpoints,source_digest,alphabet,words,*,nonce,coo
     ledger=ledger.finalize(STATE,event)
     ledger=TransitionEvidenceLedger.from_dict(ledger.to_dict())
     decision=ledger.decision(STATE,event)
+    if decision.status!='AUTHORIZED':
+        raise ValueError('VGI strict source quorum refused divergent source observations: '+decision.status)
     observed=ledger.transition_observation(STATE,event)
-    if (decision.status!='AUTHORIZED' or
-        len(observed.outcomes)!=1 or
-        list(observed.outcomes[0].output)!=labels):
-        raise ValueError('VGI strict independent source-label finalization refused')
+    first=reports[0]['output']['values']
+    if (len(observed.outcomes)!=1 or
+        list(observed.outcomes[0].output)!=labels_by_source[0] or
+        any(r['output']['values']!=first for r in reports[1:])):
+        raise ValueError('Qualified source reports disagree on exact trace values')
     # Verify E-CPU report lineage inside VGI evidence; a quorum by itself is
     # not an assertion that the original source is semantically correct.
     records=tuple(x for x in ledger.evidence if x.event==(STATE,event))
@@ -151,7 +153,7 @@ def read_source_batch(runtime,endpoints,source_digest,alphabet,words,*,nonce,coo
         if (e.message_id!=message.message_id or e.source!=endpoint.source_id or
             e.frame_id!=frame.frame_id or e.payload_digest!=frame.payload_digest or
             e.source_model_fingerprint!=report['report_digest'] or
-            e.context_digest!=context or e.outcomes[0].output!=tuple(labels)):
+            e.context_digest!=context or e.outcomes[0].output!=tuple(labels_by_source[i-1])):
             raise ValueError('VGI event cannot be traced to native E-CPU report')
     return tuple(SourceObservation(w,Q(v),source_digest,
         digest({'context':context,'word':w,'value':v,'ecpu':tuple(r['report_digest'] for r in reports),
