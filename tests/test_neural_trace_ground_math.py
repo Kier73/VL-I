@@ -86,3 +86,24 @@ def test_inadmissible_projection_and_hypothesis(monkeypatch):
     exp=fixture(monkeypatch)
     with pytest.raises(ValueError):exp.probability(('act:unknown',))
     with pytest.raises(ValueError):exp.atlas(1).observe_many([(),('act:step',)])
+
+
+def test_twenty_random_bounded_neural_tape_laws_converge_exactly(monkeypatch):
+    """Stress sparse/delayed signal patterns, multiple lengths and rank growth."""
+    import random
+    monkeypatch.setattr(CausalTape,'verify',lambda self: True)
+    observer=NeuralObserver(0)
+    for seed in range(20):
+        rng=random.Random(seed)
+        traces=tuple(tuple(rng.choice(('0','1')) for _ in range(rng.randrange(2,5)))
+                     for _ in range(3))
+        tapes=tuple(CausalTape('fixture','rev','a'*64,'b'*64,observer,
+                 ((1,(.1,)),)*len(word),({'fixture':i},)*len(word),
+                 word,chr(97+i)*64) for i,word in enumerate(traces))
+        exp=WitnessedNeuralTraceEnsemble(tapes)
+        first,learned,atlas,witnesses=close_ground(exp,12000)
+        assert learned.rank>=first
+        assert exp.certify(learned)['status']=='EQUIVALENT_ALL_WORDS'
+        for q in range(5):
+            for word in product(ALPHABET,repeat=q):
+                assert learned.probability(word)==exp.probability(word)
