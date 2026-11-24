@@ -1,0 +1,104 @@
+{
+  "seed_sha256": "bb8797acd75f709c2a7c1ffd2a21630dc2ed4779f33737e52454fe4c05306eb8",
+  "inventory_sha256": "b48f0b2b0840a0427341c9fed1230112e75a769b77a889b1a13d42c55769e30d",
+  "pins": {
+    "transformers": [
+      "huggingface/transformers",
+      "d8f10a82213a3a9db48385aba3a4b57ab535de50"
+    ],
+    "timm": [
+      "huggingface/pytorch-image-models",
+      "b4f423c19f778672f875e0948f296322c775f24b"
+    ],
+    "diffusers": [
+      "huggingface/diffusers",
+      "2e09bbcf1c4930381a3f043e8fe7bb9f8bdafb43"
+    ],
+    "sklearn": [
+      "scikit-learn/scikit-learn",
+      "f159b78dc59f250cdde8fe391a21f0bc871960ad"
+    ]
+  },
+  "live": {
+    "distilbert/distilgpt2": {
+      "page": "https://huggingface.co/distilbert/distilgpt2/tree/2290a62682d06624634c1f46a6ad5be0f47f38aa",
+      "status": "first_weight_requested",
+      "request": [
+        "model.safetensors",
+        198434909,
+        3072
+      ],
+      "header_bytes": 8285
+    },
+    "sentence-transformers/all-MiniLM-L6-v2": {
+      "page": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/tree/1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "status": "first_weight_requested",
+      "request": [
+        "model.safetensors",
+        808088,
+        1536
+      ],
+      "header_bytes": 11416
+    },
+    "microsoft/resnet-18": {
+      "page": "https://huggingface.co/microsoft/resnet-18/tree/65a5785d9156231087c481e0c7dd33a5ff6f7e3e",
+      "status": "first_weight_requested",
+      "request": [
+        "model.safetensors",
+        2105764,
+        256
+      ],
+      "header_bytes": 15716
+    },
+    "microsoft/resnet-50": {
+      "page": "https://huggingface.co/microsoft/resnet-50/tree/34c2154c194f829b11125337b98c8f5f9965ff19",
+      "status": "refused",
+      "exception": "ValueError",
+      "reason": "Unsupported ResNet-18 or RGB preprocessing contract",
+      "header_bytes": 41822
+    },
+    "timm/resnet18.a1_in1k": {
+      "page": "https://huggingface.co/timm/resnet18.a1_in1k/tree/491b427b45c94c7fb0e78b5474cc919aff584bbf",
+      "status": "refused",
+      "exception": "KeyError",
+      "reason": "'model_type'",
+      "header_bytes": 10838
+    },
+    "openai/whisper-tiny": {
+      "page": "https://huggingface.co/openai/whisper-tiny/tree/169d4a4341b33bc18d8881c4b69c2e104e1cc0af",
+      "status": "refused",
+      "exception": "ValueError",
+      "reason": "Unimplemented model or input semantics ('whisper', ('WhisperForConditionalGeneration',))",
+      "header_bytes": 19112
+    },
+    "google/vit-base-patch16-224": {
+      "page": "https://huggingface.co/google/vit-base-patch16-224/tree/3f49326eb077187dfe1c2a2bb15fbd74e6ab91e3",
+      "status": "refused",
+      "exception": "ValueError",
+      "reason": "Unimplemented model or input semantics ('vit', ('ViTForImageClassification',))",
+      "header_bytes": 23228
+    },
+    "stable-diffusion-v1-5/stable-diffusion-v1-5": {
+      "page": "https://huggingface.co/stable-diffusion-v1-5/stable-diffusion-v1-5/tree/451f4fe16113bff5a5d2269ed5ad43b0592e9a14",
+      "status": "refused",
+      "exception": "ValueError",
+      "reason": "Missing directory entry: config.json",
+      "header_bytes": 0
+    },
+    "state-spaces/mamba-130m-hf": {
+      "page": "https://huggingface.co/state-spaces/mamba-130m-hf/tree/1e76775f628fbf1350fbe4dbb3d971ba64af25a1",
+      "status": "refused",
+      "exception": "ValueError",
+      "reason": "Unimplemented model or input semantics ('mamba', ('MambaForCausalLM',))",
+      "header_bytes": 26120
+    }
+  },
+  "counts": {
+    "diffusers/refused": 296,
+    "sklearn/refused": 207,
+    "timm/refused": 1371,
+    "transformers/first_weight_requested": 3,
+    "transformers/refused": 1759
+  },
+  "trained_bytes_read": 0
+}

@@ -1,5 +1,7 @@
 # VL-I — Virtual Layer Intelligence
 
+The [architecture dry run](docs/ARCHITECTURE_DRY_RUN.md) records the first interpreter blocker across four pinned catalogues and the development and validation work needed to progress.
+
 The [external architecture interpreter](docs/EXTERNAL_ARCHITECTURE_INTERPRETER.md) runs trained GPT-2 and BERT text models and a [ResNet-18 image classifier](docs/EXTERNAL_VISION.md) from model pages and filesystems.
 
 **The description of a model is a computational resource. VL-I seeks to operate that description directly—until a Virtual Layer can converse, reason, generate, and act through a Model Ground without needing to run a conventional language-model engine.**

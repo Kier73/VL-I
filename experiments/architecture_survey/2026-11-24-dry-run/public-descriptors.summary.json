@@ -1,0 +1,10 @@
+{
+  "counts": {
+    "refused": 671,
+    "first_weight_requested": 2
+  },
+  "trained_bytes_read": 0,
+  "seed_sha256": "bb8797acd75f709c2a7c1ffd2a21630dc2ed4779f33737e52454fe4c05306eb8",
+  "prior_survey_sha256": "202c75114013f73c118ca429d40914a1f8bef4498d675905f6da6a0f59e3265e",
+  "output_sha256": "95a7e052797684c4532f8e3799dbad2cadcc0e4a754683202389007f101c703e"
+}
