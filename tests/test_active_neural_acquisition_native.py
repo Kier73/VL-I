@@ -137,6 +137,7 @@ class NativeActiveAcquisitionTests(unittest.TestCase):
         self.assertEqual(plan.word,word)
         self.assertEqual(native.lineage,[])
         result=controller.execute(plan)
+        self.assertEqual(result['status'],'QUALIFIED_SOURCE_PROBE')
         self.assertEqual(result['observed'],new.probability(word))
         self.assertEqual(result['matching_forecasts'],('new-neural-traces',))
         self.assertEqual(native.lineage[0]['quorum'],'AUTHORIZED')

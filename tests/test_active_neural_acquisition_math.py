@@ -52,12 +52,12 @@ def test_paired_exact_linear_span_finds_shortest_uncached_distinguishing_questio
     assert plan.word==diff['word']
     assert plan.word not in controller.atlas.cache
     result=controller.execute(plan)
-    assert result['status']=='QUALIFIED_SOURCE_PROBE'
+    assert result['status']=='RECORDED_SOURCE_PROBE'
     assert result['matching_forecasts']==('two-step',)
     assert result['observed']==Q(0)
     assert result['source_receipt_digest']==controller.atlas.receipts[plan.word]
     assert result['native_trained_calls_during_prediction']==0
-    assert result['native_trained_calls_during_source_trace_query']==0
+    assert result['native_trained_calls_during_source_trace_query'] is None
     assert controller.learner.ground.rank==3
     assert certify_source_equivalence(true,controller.learner.ground)['status']=='EQUIVALENT_ALL_WORDS'
     assert len(controller.seen_nonces)==1

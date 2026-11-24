@@ -197,7 +197,14 @@ class ActiveTraceObserver:
             refined=self.learner.build()
         elif observed!=old.probability(proposal.word):
             refined=self.learner.counterexample(proposal.word)
-        return {'schema':SCHEMA,'status':'QUALIFIED_SOURCE_PROBE',
+        # Only the PBG-006 receiver adapter provides the native-host/VGI
+        # qualification contract. Arbitrary injected source callbacks may
+        # be sound mathematical fixtures but have no independent authority.
+        from .neural_trace_ground import ReceiverQualifiedNeuralReader
+        native_qualified=isinstance(self.atlas.reader,ReceiverQualifiedNeuralReader)
+        return {'schema':SCHEMA,
+                'status':('QUALIFIED_SOURCE_PROBE' if native_qualified else
+                          'RECORDED_SOURCE_PROBE'),
                 'source_digest':self.atlas.source_digest,
                 'plan_digest':proposal.plan_digest,
                 'word':proposal.word,'observed':observed,
@@ -206,7 +213,7 @@ class ActiveTraceObserver:
                 'new_ground_digest':None if refined is None else refined.ground_digest,
                 'new_rank':None if refined is None else refined.rank,
                 'native_trained_calls_during_prediction':0,
-                'native_trained_calls_during_source_trace_query':0}
+                'native_trained_calls_during_source_trace_query':(0 if native_qualified else None)}
 
 
 def _f64(values):
