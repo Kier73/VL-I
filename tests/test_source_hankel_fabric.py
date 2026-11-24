@@ -112,7 +112,7 @@ class SourceFabricTests(unittest.TestCase):
         reader=NativeSourceReader(fab,PEERS,source.digest,alphabet(),batch_size=32,
                                    nonce_factory=lambda:'2'*64)
         # Both hosts agree for short words; the fourth action reveals the liar.
-        with self.assertRaisesRegex(ValueError,'disagree|quorum'):
+        with self.assertRaisesRegex(ValueError,'VGI.*CONFLICT'):
             reader((('act:step','act:step','sense:goal:1'),))
 
     def test_revoked_or_expired_source_host_refuses_before_source_measurement(self):
