@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 from .ground import load_json, lift_observation, intention_frontier, verify_frontier
@@ -25,10 +27,18 @@ def _save(path, record):
 
 
 def main(argv=None):
+    """Dispatch the requested observation O=F(source,token IDs) to its interpreter."""
     p = argparse.ArgumentParser(
         prog="vli", description="Lift pinned model observations and realize qualified VL-native outputs"
     )
     sub = p.add_subparsers(dest="operation", required=True)
+    external = sub.add_parser("external", help="Interpret external model weights with a VL-64 seed")
+    external.add_argument("--seed", required=True)
+    source = external.add_mutually_exclusive_group(required=True)
+    for name in ("snapshot", "page", "url"):
+        source.add_argument("--"+name)
+    external.add_argument("--tokens", type=int, nargs="+", required=True)
+    external.add_argument("--out", required=True)
     i = sub.add_parser("inspect", help="Lift typed model and select an intention frontier; no weights")
     i.add_argument("--manifest", required=True)
     i.add_argument("--target", action="append", default=[],
@@ -60,6 +70,10 @@ def main(argv=None):
     nav.add_argument("--out", default="-")
 
     args = p.parse_args(argv)
+    if args.operation == "external":
+        kind = next(k for k in ("snapshot","page","url") if getattr(args,k) is not None)
+        return subprocess.run([sys.executable,"-I","-S",args.seed,"--"+kind,getattr(args,kind),
+                               "--tokens",*map(str,args.tokens),"--out",args.out]).returncode
     observed = load_json(args.manifest)
     if args.operation == "run":
         result = run_pinned_decoder(observed, args.tokens, state_dir=args.state_dir,

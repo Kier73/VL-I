@@ -1,5 +1,7 @@
 # VL-I — Virtual Layer Intelligence
 
+The [external architecture interpreter](docs/EXTERNAL_ARCHITECTURE_INTERPRETER.md) runs trained GPT-2 decoder and BERT encoder observations from model pages and filesystems.
+
 **The description of a model is a computational resource. VL-I seeks to operate that description directly—until a Virtual Layer can converse, reason, generate, and act through a Model Ground without needing to run a conventional language-model engine.**
 
 **Status: active research.** The overarching description-native intelligence goal is a development aim, not a claim of already-demonstrated general language-model behavior. Initial source-fidelity and exact-observation components are implemented.

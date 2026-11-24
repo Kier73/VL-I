@@ -1,0 +1,63 @@
+{
+  "source_page": "https://huggingface.co/distilbert/distilgpt2/tree/2290a62682d06624634c1f46a6ad5be0f47f38aa",
+  "seed_sha256": "3bd48367b04aca31160990a103981656e2319bd4735859323ba85aa7a9df1b1a",
+  "seed": {
+    "expanded_python_bytes": 42771,
+    "ground_digest": "bf4bc79e8f7f848c354ea2889b815305aa183937887e646e52f16004512be4c8",
+    "module_count": 10,
+    "profile": "vl64.standalone-model-readout.v1",
+    "seed_bytes": 20443,
+    "source_bytes": 35398,
+    "status": "VERIFIED_MONOLITHIC_SEED"
+  },
+  "snapshot": {
+    "architecture": "GPT2LMHeadModel",
+    "tokens": [
+      15496,
+      11,
+      995
+    ],
+    "source": "local-snapshot",
+    "revision": null,
+    "config_sha256": "4ec5947c1d59fee6212cdf3b0ec1a53eac02092554c5ff0a733488cbd2c64f3a",
+    "headers": {
+      "model.safetensors": "20ed923e186530aab856708c7e06f600300114271f9c6bfa4b5071cef69dd50a"
+    },
+    "weight_bytes": 324523008,
+    "weight_requests": 147,
+    "max_weight_range": 4193280,
+    "observation_sha256": "25f6419baaf524b1bb45e42ca60101c411603447bf6c1dc7e06ddcd39e391442"
+  },
+  "page": {
+    "architecture": "GPT2LMHeadModel",
+    "tokens": [
+      15496,
+      11,
+      995
+    ],
+    "source": "pinned-huggingface-https-range",
+    "revision": "2290a62682d06624634c1f46a6ad5be0f47f38aa",
+    "config_sha256": "4ec5947c1d59fee6212cdf3b0ec1a53eac02092554c5ff0a733488cbd2c64f3a",
+    "headers": {
+      "model.safetensors": "20ed923e186530aab856708c7e06f600300114271f9c6bfa4b5071cef69dd50a"
+    },
+    "weight_bytes": 324523008,
+    "weight_requests": 147,
+    "max_weight_range": 4193280,
+    "observation_sha256": "25f6419baaf524b1bb45e42ca60101c411603447bf6c1dc7e06ddcd39e391442"
+  },
+  "identical_observations": true,
+  "reference": {
+    "coordinates": 50257,
+    "max_abs_error": {
+      "logits": 7.105427357601002e-14
+    },
+    "tolerance": 1e-08,
+    "passed": true,
+    "reference_next_token": 13,
+    "vl_next_token": 13,
+    "top_two_gap": 0.237609452649437,
+    "observed_reference_gap_lower_bound": 0.2376094526492949
+  },
+  "passed": true
+}
