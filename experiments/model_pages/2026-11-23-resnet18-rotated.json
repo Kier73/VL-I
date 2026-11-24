@@ -1,0 +1,53 @@
+{
+  "page_url": "https://huggingface.co/microsoft/resnet-18/tree/65a5785d9156231087c481e0c7dd33a5ff6f7e3e",
+  "image_sha256": "f3f87bb8ab3c26c7ecfd3ac60421d7f32b0503d1d6c5baf8bac42ed93d86351a",
+  "seed_sha256": "bb8797acd75f709c2a7c1ffd2a21630dc2ed4779f33737e52454fe4c05306eb8",
+  "seed": {
+    "expanded_python_bytes": 46896,
+    "ground_digest": "98e8de7f41856cc6f70dbd85fc8cfe3e70d48e76caabe2953a113dd335191681",
+    "module_count": 10,
+    "profile": "vl64.standalone-model-readout.v1",
+    "seed_bytes": 21926,
+    "source_bytes": 39523,
+    "status": "VERIFIED_MONOLITHIC_SEED"
+  },
+  "crop_rotation_degrees": 180,
+  "snapshot": {
+    "architecture": "ResNetForImageClassification",
+    "rgb224_sha256": "9b3288ab29150d43e8859685fa913e99aba12d5a70e68c3ea512d4b29daf1037",
+    "processor_sha256": "fd575b890da5a949493e1d1e7a70bfcb9e4b99fe444004d2dbfa253add254741",
+    "source": "local-snapshot",
+    "revision": null,
+    "config_sha256": "11a01bcc873444bb433140e5f30f3687356641ed923266d738eef1c3438f6d22",
+    "headers": {
+      "model.safetensors": "297ebe153822988543aec3c2e2220a68833b3cd21759427d4546c2a1202cae54"
+    },
+    "weight_bytes": 46796448,
+    "weight_requests": 109,
+    "max_weight_range": 4193280,
+    "observation_sha256": "8e9396a9d7bac20f8254cca73ff1502216dc65697fcaaf98994e5d1a1ca55dfc"
+  },
+  "page": {
+    "architecture": "ResNetForImageClassification",
+    "rgb224_sha256": "9b3288ab29150d43e8859685fa913e99aba12d5a70e68c3ea512d4b29daf1037",
+    "processor_sha256": "fd575b890da5a949493e1d1e7a70bfcb9e4b99fe444004d2dbfa253add254741",
+    "source": "pinned-huggingface-https-range",
+    "revision": "65a5785d9156231087c481e0c7dd33a5ff6f7e3e",
+    "config_sha256": "11a01bcc873444bb433140e5f30f3687356641ed923266d738eef1c3438f6d22",
+    "headers": {
+      "model.safetensors": "297ebe153822988543aec3c2e2220a68833b3cd21759427d4546c2a1202cae54"
+    },
+    "weight_bytes": 46796448,
+    "weight_requests": 109,
+    "max_weight_range": 4193280,
+    "observation_sha256": "8e9396a9d7bac20f8254cca73ff1502216dc65697fcaaf98994e5d1a1ca55dfc"
+  },
+  "identical_outputs": true,
+  "coordinates": 1000,
+  "max_abs_error": 1.1546319456101628e-14,
+  "tolerance": 1e-08,
+  "vl_top1": 279,
+  "reference_top1": 279,
+  "label": "Arctic fox, white fox, Alopex lagopus",
+  "passed": true
+}

@@ -37,7 +37,9 @@ def main(argv=None):
     source = external.add_mutually_exclusive_group(required=True)
     for name in ("snapshot", "page", "url"):
         source.add_argument("--"+name)
-    external.add_argument("--tokens", type=int, nargs="+", required=True)
+    inputs = external.add_mutually_exclusive_group(required=True)
+    inputs.add_argument("--tokens", type=int, nargs="+")
+    inputs.add_argument("--rgb224", help="224×224 row-major interleaved RGB8 file")
     external.add_argument("--out", required=True)
     i = sub.add_parser("inspect", help="Lift typed model and select an intention frontier; no weights")
     i.add_argument("--manifest", required=True)
@@ -72,8 +74,9 @@ def main(argv=None):
     args = p.parse_args(argv)
     if args.operation == "external":
         kind = next(k for k in ("snapshot","page","url") if getattr(args,k) is not None)
+        observation = ["--rgb224",args.rgb224] if args.rgb224 else ["--tokens",*map(str,args.tokens)]
         return subprocess.run([sys.executable,"-I","-S",args.seed,"--"+kind,getattr(args,kind),
-                               "--tokens",*map(str,args.tokens),"--out",args.out]).returncode
+                               *observation,"--out",args.out]).returncode
     observed = load_json(args.manifest)
     if args.operation == "run":
         result = run_pinned_decoder(observed, args.tokens, state_dir=args.state_dir,

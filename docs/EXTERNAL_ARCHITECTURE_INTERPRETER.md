@@ -1,5 +1,7 @@
 # One interpreter, external model data
 
+The [convolutional vision experiment](EXTERNAL_VISION.md) extends the original text build below to ResNet-18. The expanded interpreter uses the same source interface for all three architectures.
+
 A single 20,443-byte VL-64 executable ran the trained DistilGPT2 decoder and MiniLM BERT encoder. It contains 42,771 bytes of expanded Python and runs with the Python standard library. The model weights stay on a filesystem or at a public host between requests. During execution the VL reads a bounded interval, applies the operator locally and releases that interval. It retains architecture metadata, current activations and temporary arithmetic buffers. Each tensor request is at most 4 MiB. The executable size and the range limit measure different things, and neither bounds total working memory. [Standalone executable](https://github.com/Kier73/VL-64/blob/main/artifacts/VL64-external.pyz)
 
 | Trained checkpoint | Observation | Bytes of weights read per run | Maximum error against Transformers in binary64 |
@@ -13,7 +15,7 @@ For each checkpoint the same archive produced byte-identical output files from a
 
 The model adapter owns the equations, including attention direction, normalization placement, trained bias, matrix orientation and readout. The source adapter owns metadata and the operation `read_range(shard,start,length) → (bytes,file_size)`. A model adapter can run over any provider implementing that contract. The built-in providers cover local Safetensors directories, Hugging Face model pages and versioned HTTP(S) directories with exact ranges and strong shard ETags. A custom provider can call `run(files, ids)` directly. A generic HTTP root should identify one immutable release across all shards. A per-file ETag protects that file across reads.
 
-These two models share dot products and embeddings. GPT-2 uses causal attention, pre-normalization and input-major trained projections. BERT uses bidirectional attention, post-normalization and output-major projections. Architecture support comes from binding the correct equations and validating the requested outputs. The current executable dispatches these two F32 model families and rejects unimplemented configurations. Other VL-64 builds cover different operators. The next test of generality should exercise an operator outside transformer attention, such as spatial convolution in a vision model, while keeping the same source interface.
+These two models share dot products and embeddings. GPT-2 uses causal attention, pre-normalization and input-major trained projections. BERT uses bidirectional attention, post-normalization and output-major projections. ResNet-18 adds spatial convolution, pooling and inference-time batch normalization. Architecture support comes from binding each configuration to the correct equations and validating the requested outputs.
 
 ## Builds in related repositories
 
