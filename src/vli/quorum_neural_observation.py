@@ -298,3 +298,32 @@ class QuorumNeuralObservation:
                 'new_neural_calls_during_restore': 0,
                 'quorum_manifest_digest': ticket.manifest.digest,
                 'portable_claim_ticket_digest': ticket.digest}
+
+
+def admit_authenticated_observer(client, live_coordinator, parent, candidates, plan,
+                                 *, claim_id, owner_host_id, implementation_fingerprint):
+    """E-CPU direct-mTLS receiver admission for a recovered observer job.
+
+    The existing ComputationalFabricPeerClient performs CA/peer-DNS-validated
+    mutual TLS and asks the owner claim-status service whether this exact
+    authenticated receiving peer and logical Host still own `claim_id`.
+    Independently demand current quorum/Merkle proof and entire semantic,
+    address, pure operator, source Ground and implementation match here.
+    The result is an admission ticket, NOT result transport or completion.
+    """
+    from mailcpu.computational_fabric import ComputationalFabricPeerClient
+    from mailcpu.recovery_lineage import RecoveryLineageCoordinator
+    if (not isinstance(client, ComputationalFabricPeerClient) or
+            not isinstance(live_coordinator, RecoveryLineageCoordinator)):
+        raise ObservationRefused('Authenticated E-CPU peer client and live quorum required')
+    ticket = client.get_execution_claim_status(claim_id,
+                                                expected_host_id=owner_host_id)
+    ticket.verify_for_target(
+        live_coordinator,
+        **semantic_identity(parent, candidates, plan),
+        operator_spec=verified_observation_operator(),
+        owner_peer_id=client.local_peer_id,
+        owner_host_id=owner_host_id,
+        implementation_fingerprint=implementation_fingerprint,
+    )
+    return ticket
