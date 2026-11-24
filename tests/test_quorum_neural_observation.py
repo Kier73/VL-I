@@ -258,3 +258,98 @@ class ECPUQuorumNeuralRecovery(unittest.TestCase):
                 if proc.poll() is None:proc.kill();proc.wait(timeout=5)
 
 if __name__=='__main__':unittest.main()
+
+
+def test_original_ecpu_mutual_tls_recovery_client_refreshes_current_neural_claim(tmp_path):
+    """Real E-CPU direct peer-control TLS, fresh Merkle root, and target scoping."""
+    import ssl
+    import threading
+    from mailcpu import (
+        ComputationalFabricAuthority, ComputationalFabricPeerListener,
+        ComputationalFabricPeerClient, ComputationalPeerEndpoint,
+    )
+    from mailcpu.computational_fabric import ComputationalFabricError
+    from mailcpu.socket_transport import SocketTransport
+    from vli.quorum_neural_observation import admit_authenticated_observer
+    from test_computational_fabric import _make_test_certificates
+
+    parent=source()  # synthetic-F32-trained native Qwen-shaped source, not pretrained
+    plan=select_native_run(parent, OPTIONS, nonce='f'*64)
+    store,coordinator=authority(tmp_path)
+    actor=QuorumNeuralObservation(tmp_path/'observation',store,coordinator)
+    initial=actor.issue(parent,OPTIONS,plan,
+                        peer='peer-a',host='logical-host-a',implementation=IMPL_A)
+    moved=actor.reassign(parent,OPTIONS,plan,expected_epoch=1,
+                         peer='peer-b',host='logical-host-b',
+                         implementation=IMPL_B,failure_evidence_digest=FAILURE)
+    # Expire even the moved proof by changing an unrelated claim. The client
+    # must ask the real TLS owner service for a fresh single-claim Merkle path.
+    store.create(parent_request_digest='1'*64,child_request_digest='2'*64,
+                 address_digest='3'*64,operator_spec=verified_observation_operator(),
+                 computational_ground_fingerprint='4'*64,
+                 owner_peer_id='peer-c',owner_host_id='logical-host-c',
+                 implementation_fingerprint='5'*64)
+    with __import__('pytest').raises(TransferableExecutionClaimError):
+        moved.verify_current(coordinator)
+
+    cert=_make_test_certificates(tmp_path)
+    server_context=ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    server_context.minimum_version=ssl.TLSVersion.TLSv1_2
+    server_context.load_cert_chain(str(cert['client_cert']),str(cert['client_key']))
+    server_context.load_verify_locations(cafile=str(cert['ca']))
+    server_context.verify_mode=ssl.CERT_REQUIRED
+    client_context=ssl.create_default_context(ssl.Purpose.SERVER_AUTH,
+                                               cafile=str(cert['ca']))
+    client_context.minimum_version=ssl.TLSVersion.TLSv1_2
+    client_context.load_cert_chain(str(cert['server_cert']),str(cert['server_key']))
+    listener=SocketTransport.open_listener('127.0.0.1',0)
+    endpoint=ComputationalPeerEndpoint('peer-a','peer-a.fabric.test','127.0.0.1',
+                                       listener.getsockname()[1])
+    owner=ComputationalFabricAuthority(endpoint,lease_seconds=30)
+    stop=threading.Event()
+    failures=[]
+    service=ComputationalFabricPeerListener(owner,listener,'peer-b',
+                        expected_client_dns='peer-b.fabric.test',
+                        tls_context=server_context,execution_claim_store=store)
+    def serve():
+        try:service.serve_forever(stop)
+        except Exception as err:failures.append(err)
+    thread=threading.Thread(target=serve,daemon=True)
+    thread.start()
+    client=None
+    try:
+        client=ComputationalFabricPeerClient.connect_mutual_tls(
+                'peer-b',endpoint,client_context,timeout=3.0)
+        ticket=admit_authenticated_observer(
+                client,coordinator,parent,OPTIONS,plan,
+                claim_id=initial.claim.claim_id,owner_host_id='logical-host-b',
+                implementation_fingerprint=IMPL_B)
+        assert ticket.claim.current_assignment.epoch==2
+        assert ticket.claim.claim_id==initial.claim.claim_id
+        assert ticket.manifest.generation==moved.manifest.generation+1
+        with __import__('pytest').raises(ComputationalFabricError):
+            admit_authenticated_observer(
+                client,coordinator,parent,OPTIONS,plan,
+                claim_id=initial.claim.claim_id,owner_host_id='wrong-host',
+                implementation_fingerprint=IMPL_B)
+        with __import__('pytest').raises(TransferableExecutionClaimError):
+            admit_authenticated_observer(
+                client,coordinator,parent,OPTIONS,plan,
+                claim_id=initial.claim.claim_id,owner_host_id='logical-host-b',
+                implementation_fingerprint=IMPL_A)
+        # Quorum reassignment revokes the previous authenticated Host's status.
+        actor.reassign(parent,OPTIONS,plan,expected_epoch=2,
+                       peer='peer-c',host='logical-host-c',
+                       implementation='6'*64,failure_evidence_digest='7'*64)
+        with __import__('pytest').raises(ComputationalFabricError):
+            admit_authenticated_observer(
+                client,coordinator,parent,OPTIONS,plan,
+                claim_id=initial.claim.claim_id,owner_host_id='logical-host-b',
+                implementation_fingerprint=IMPL_B)
+    finally:
+        stop.set()
+        if client is not None:client.close()
+        service.close();listener.close()
+        thread.join(timeout=5)
+    assert not thread.is_alive()
+    assert not failures,repr(failures)
