@@ -1,0 +1,20 @@
+name: Factored observer closure
+on:
+  pull_request:
+    paths:
+      - 'experiments/factored_observer_closure/**'
+      - '.github/workflows/factored-observer-closure.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          node experiments/factored_observer_closure/clt006.js > /tmp/clt006.json
+          diff -u experiments/factored_observer_closure/results.json /tmp/clt006.json
