@@ -1,0 +1,209 @@
+{
+  "time": "1000000000039",
+  "runs": [
+    {
+      "kind": "affine",
+      "n": 20,
+      "budget": 300000,
+      "discoveryWork": 1693,
+      "queries": 21,
+      "checks": 20,
+      "counterexamples": 0,
+      "retained": 20,
+      "adaptive": {
+        "status": "EXACT",
+        "route": "affine-power",
+        "work": 9851,
+        "trace": [],
+        "attempts": [
+          {
+            "route": "affine-power",
+            "status": "EXACT",
+            "work": 9851
+          }
+        ],
+        "sink": 20,
+        "driver": 0
+      },
+      "baseline": {
+        "status": "UNRESOLVED",
+        "route": "direct-cycle",
+        "reason": "shared-work-budget",
+        "work": 297907,
+        "completed": 0,
+        "trace": [],
+        "attempts": [
+          {
+            "route": "direct-cycle",
+            "status": "UNRESOLVED",
+            "work": 297907
+          }
+        ],
+        "sink": 20,
+        "driver": 0
+      },
+      "totalAdaptive": 11944,
+      "totalBaseline": 300000,
+      "verified": 16,
+      "shortChecks": 16
+    },
+    {
+      "kind": "triangular",
+      "n": 20,
+      "budget": 300000,
+      "discoveryWork": 2639,
+      "queries": 211,
+      "checks": 21,
+      "counterexamples": 1,
+      "retained": 20,
+      "adaptive": {
+        "status": "EXACT",
+        "route": "conditional-phase",
+        "work": 4676,
+        "trace": [
+          {
+            "preperiod": 0,
+            "period": 16,
+            "sinkStates": 16
+          }
+        ],
+        "attempts": [
+          {
+            "route": "conditional-phase",
+            "status": "EXACT",
+            "work": 4676
+          }
+        ],
+        "sink": 4,
+        "driver": 16
+      },
+      "baseline": {
+        "status": "EXACT",
+        "route": "direct-cycle",
+        "work": 18816,
+        "trace": [],
+        "attempts": [
+          {
+            "route": "direct-cycle",
+            "status": "EXACT",
+            "work": 18816
+          }
+        ],
+        "sink": 4,
+        "driver": 16
+      },
+      "totalAdaptive": 7651,
+      "totalBaseline": 21791,
+      "verified": 16,
+      "shortChecks": 16
+    },
+    {
+      "kind": "triangular",
+      "n": 24,
+      "budget": 300000,
+      "discoveryWork": 3670,
+      "queries": 301,
+      "checks": 25,
+      "counterexamples": 1,
+      "retained": 24,
+      "adaptive": {
+        "status": "EXACT",
+        "route": "conditional-phase",
+        "work": 7304,
+        "trace": [
+          {
+            "preperiod": 0,
+            "period": 20,
+            "sinkStates": 16
+          }
+        ],
+        "attempts": [
+          {
+            "route": "conditional-phase",
+            "status": "EXACT",
+            "work": 7304
+          }
+        ],
+        "sink": 4,
+        "driver": 20
+      },
+      "baseline": {
+        "status": "EXACT",
+        "route": "direct-cycle",
+        "work": 28000,
+        "trace": [],
+        "attempts": [
+          {
+            "route": "direct-cycle",
+            "status": "EXACT",
+            "work": 28000
+          }
+        ],
+        "sink": 4,
+        "driver": 20
+      },
+      "totalAdaptive": 11470,
+      "totalBaseline": 32166,
+      "verified": 16,
+      "shortChecks": 16
+    },
+    {
+      "kind": "nonlinear",
+      "n": 24,
+      "budget": 300000,
+      "discoveryWork": 3811,
+      "queries": 301,
+      "checks": 25,
+      "counterexamples": 1,
+      "retained": 24,
+      "adaptive": {
+        "status": "UNRESOLVED",
+        "route": "direct-cycle",
+        "reason": "shared-work-budget",
+        "work": 295613,
+        "completed": 8,
+        "trace": [],
+        "attempts": [
+          {
+            "route": "direct-cycle",
+            "status": "UNRESOLVED",
+            "work": 295613
+          }
+        ],
+        "sink": 24,
+        "driver": 0
+      },
+      "baseline": {
+        "status": "UNRESOLVED",
+        "route": "direct-cycle",
+        "reason": "shared-work-budget",
+        "work": 295613,
+        "completed": 8,
+        "trace": [],
+        "attempts": [
+          {
+            "route": "direct-cycle",
+            "status": "UNRESOLVED",
+            "work": 295613
+          }
+        ],
+        "sink": 24,
+        "driver": 0
+      },
+      "totalAdaptive": 300000,
+      "totalBaseline": 300000,
+      "verified": 0,
+      "shortChecks": 16
+    },
+    {
+      "kind": "cubic",
+      "n": 12,
+      "discoveryWork": 488,
+      "status": "UNRESOLVED",
+      "reason": "degree-bound",
+      "queries": 80,
+      "checks": 2,
+      "counterexamples": 2
+    }
+  ]
+}

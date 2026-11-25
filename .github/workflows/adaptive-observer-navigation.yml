@@ -1,0 +1,20 @@
+name: Adaptive observer navigation
+on:
+  pull_request:
+    paths:
+      - 'experiments/adaptive_observer_navigation/**'
+      - '.github/workflows/adaptive-observer-navigation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          node experiments/adaptive_observer_navigation/clt007.js > /tmp/clt007.json
+          diff -u experiments/adaptive_observer_navigation/results.json /tmp/clt007.json
