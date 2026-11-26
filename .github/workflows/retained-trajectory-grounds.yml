@@ -1,0 +1,20 @@
+name: Retained trajectory Grounds
+on:
+  pull_request:
+    paths:
+      - 'experiments/retained_trajectory_grounds/**'
+      - '.github/workflows/retained-trajectory-grounds.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          node experiments/retained_trajectory_grounds/clt008.js > /tmp/clt008.json
+          diff -u experiments/retained_trajectory_grounds/results.json /tmp/clt008.json

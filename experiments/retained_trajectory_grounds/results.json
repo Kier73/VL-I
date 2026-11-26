@@ -1,0 +1,150 @@
+{
+  "time": "1000000000039",
+  "limit": 300000,
+  "cap": 6000,
+  "runs": [
+    {
+      "seed": 39,
+      "discovery": 3811,
+      "sourceQueries": 301,
+      "proofChecks": 25,
+      "sourceCounterexamples": 1,
+      "first": {
+        "atlas": {
+          "rounds": 22,
+          "complete": 14,
+          "unresolved": [
+            7,
+            8
+          ],
+          "work": 299963,
+          "verified": 14,
+          "auditSteps": 2688
+        },
+        "independent": {
+          "rounds": 20,
+          "complete": 14,
+          "unresolved": [
+            7,
+            8
+          ],
+          "work": 299952,
+          "verified": 14,
+          "auditSteps": 2688
+        },
+        "failedPrefixStates": 1632
+      },
+      "followup": {
+        "atlas": {
+          "rounds": 1,
+          "complete": 8,
+          "unresolved": [],
+          "work": 8,
+          "verified": 8,
+          "newEdges": 0
+        },
+        "independent": {
+          "rounds": 1,
+          "complete": 3,
+          "unresolved": [
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "work": 11983,
+          "verified": 3
+        },
+        "horizon": "64"
+      },
+      "retained": {
+        "states": 5587,
+        "segments": 14,
+        "edges": 5585,
+        "auditedEdges": 5585,
+        "jumpCount": 42,
+        "skippedTransitions": "13999999998738"
+      },
+      "changedEpoch": {
+        "signatureChanged": true,
+        "oldAtlasReused": false,
+        "verified": 1
+      }
+    },
+    {
+      "seed": 93,
+      "discovery": 3571,
+      "sourceQueries": 301,
+      "proofChecks": 25,
+      "sourceCounterexamples": 1,
+      "first": {
+        "atlas": {
+          "rounds": 22,
+          "complete": 14,
+          "unresolved": [
+            7,
+            8
+          ],
+          "work": 299988,
+          "verified": 14,
+          "auditSteps": 2688
+        },
+        "independent": {
+          "rounds": 20,
+          "complete": 14,
+          "unresolved": [
+            7,
+            8
+          ],
+          "work": 299977,
+          "verified": 14,
+          "auditSteps": 2688
+        },
+        "failedPrefixStates": 1637
+      },
+      "followup": {
+        "atlas": {
+          "rounds": 1,
+          "complete": 8,
+          "unresolved": [],
+          "work": 8,
+          "verified": 8,
+          "newEdges": 0
+        },
+        "independent": {
+          "rounds": 1,
+          "complete": 3,
+          "unresolved": [
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "work": 11983,
+          "verified": 3
+        },
+        "horizon": "64"
+      },
+      "retained": {
+        "states": 5592,
+        "segments": 14,
+        "edges": 5590,
+        "auditedEdges": 5590,
+        "jumpCount": 42,
+        "skippedTransitions": "13999999998738"
+      },
+      "changedEpoch": {
+        "signatureChanged": true,
+        "oldAtlasReused": false,
+        "verified": 1
+      }
+    }
+  ],
+  "controls": {
+    "crossSegmentCycle": true,
+    "nonInjectiveMerge": true,
+    "memoryRefusal": true
+  }
+}
