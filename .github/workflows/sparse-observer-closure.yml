@@ -1,0 +1,20 @@
+name: Sparse observer closure
+on:
+  pull_request:
+    paths:
+      - 'experiments/sparse_observer_closure/**'
+      - '.github/workflows/sparse-observer-closure.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  reproduce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          node experiments/sparse_observer_closure/clt005.js > /tmp/clt005.json
+          diff -u experiments/sparse_observer_closure/results.json /tmp/clt005.json

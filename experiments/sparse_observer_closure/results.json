@@ -1,0 +1,82 @@
+{
+  "width": 10,
+  "rotation": {
+    "status": "CLOSED",
+    "rank": 4,
+    "classes": 16,
+    "counters": {
+      "queries": 11,
+      "challengeQueries": 0,
+      "cacheHits": 33,
+      "products": 4,
+      "verificationChecks": 4,
+      "failedDegreeAttempts": 0,
+      "interpolationEvaluations": 44,
+      "eliminationXors": 1
+    },
+    "evidenceCount": 4,
+    "fullTableQueries": 1024,
+    "checked": 1024,
+    "longChecks": 1024,
+    "maxTerms": 1,
+    "maxDegree": 1
+  },
+  "shear": {
+    "status": "CLOSED",
+    "rank": 12,
+    "classes": 16,
+    "counters": {
+      "queries": 352,
+      "challengeQueries": 4,
+      "cacheHits": 2240,
+      "products": 167,
+      "verificationChecks": 48,
+      "failedDegreeAttempts": 24,
+      "interpolationEvaluations": 2568,
+      "eliminationXors": 25
+    },
+    "evidenceCount": 24,
+    "fullTableQueries": 2048,
+    "checked": 2048,
+    "longChecks": 1024,
+    "maxTerms": 2,
+    "maxDegree": 3
+  },
+  "coupled": {
+    "status": "UNRESOLVED",
+    "rank": 77,
+    "counters": {
+      "queries": 1159,
+      "challengeQueries": 10,
+      "cacheHits": 32898,
+      "products": 3042,
+      "verificationChecks": 394,
+      "failedDegreeAttempts": 248,
+      "interpolationEvaluations": 33809,
+      "eliminationXors": 209
+    },
+    "evidenceCount": 146,
+    "fullTableQueries": 3072
+  },
+  "budget": {
+    "status": "UNRESOLVED",
+    "rank": 2,
+    "counters": {
+      "queries": 23,
+      "challengeQueries": 1,
+      "cacheHits": 0,
+      "products": 3,
+      "verificationChecks": 2,
+      "failedDegreeAttempts": 1,
+      "interpolationEvaluations": 22,
+      "eliminationXors": 0
+    },
+    "evidenceCount": 1,
+    "fullTableQueries": 3072
+  },
+  "hidden": {
+    "samples": 386,
+    "witness": 1023,
+    "zeroPredictionRejected": true
+  }
+}
