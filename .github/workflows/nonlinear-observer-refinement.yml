@@ -1,0 +1,26 @@
+name: Nonlinear observer refinement
+on:
+  pull_request:
+    paths:
+      - 'experiments/nonlinear_observer_refinement/**'
+      - 'docs/CLT004_NONLINEAR_OBSERVER_REFINEMENT.md'
+      - '.github/workflows/nonlinear-observer-refinement.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: e4459e05e1676468edd202630b890365480979ef
+          path: upstream-vl64
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s experiments/nonlinear_observer_refinement -v
+        env:
+          PYTHONPATH: src:upstream-vl64/src:upstream-vl64/experiments/observer_closure
