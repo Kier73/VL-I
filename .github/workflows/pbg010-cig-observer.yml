@@ -1,0 +1,62 @@
+name: PBG-010 CIG-qualified neural observer sufficiency
+
+on:
+  pull_request:
+    paths:
+      - 'src/vli/observer_sufficiency.py'
+      - 'tests/test_observer_sufficiency_*.py'
+      - 'tests/test_cig017_observer_bridge.py'
+      - 'docs/OBSERVER_SUFFICIENCY_PBG010.md'
+      - '.github/workflows/pbg010-cig-observer.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/vli/observer_sufficiency.py'
+      - 'tests/test_observer_sufficiency_*.py'
+      - 'tests/test_cig017_observer_bridge.py'
+      - '.github/workflows/pbg010-cig-observer.yml'
+permissions:
+  contents: read
+jobs:
+  witness-sufficiency:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.11','3.13']
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/Virtual-Ground-Interpreter
+          ref: ae3f949b7d0b2aaa42236bc7cc37e9857384b174
+          path: upstream/vgi
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/In-Formation-Space
+          ref: 8b24de0c6f7e775ee433adfe08ac8a96f42c61d3
+          path: upstream/ifs
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install original neural/evidence adapters
+        run: python -m pip install -e . -e upstream/vl64 -e upstream/ecpu -e upstream/vgi/virtual_ground_interpreter 'numpy>=1.26' 'pytest>=8'
+      - name: Mathematical receiver audit, actual CIG-015/017 and native causal witness regression
+        run: |
+          python -c "import sys,pytest; sys.path[:0]=['tests','upstream/vl64/tests','upstream/ifs/experiments/pnp-ground-navigation/cut_intention']; raise SystemExit(pytest.main(['-q','tests/test_observer_sufficiency_math.py','tests/test_observer_sufficiency_native.py','tests/test_cig017_observer_bridge.py','tests/test_neural_trace_ground_native.py','tests/test_causal_basis_expansion.py','tests/test_source_hankel_ground.py']))"
