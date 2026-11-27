@@ -1,0 +1,80 @@
+name: PBG-008 durable active neural observation and fenced recovery
+
+on:
+  pull_request:
+    paths:
+      - 'src/vli/durable_neural_acquisition.py'
+      - 'tests/test_durable_neural_math.py'
+      - 'tests/test_durable_neural_acquisition.py'
+      - 'docs/DURABLE_ACTIVE_NEURAL_ACQUISITION_PBG008.md'
+      - '.github/workflows/pbg008-durable-neural.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/vli/durable_neural_acquisition.py'
+      - 'tests/test_durable_neural_math.py'
+      - 'tests/test_durable_neural_acquisition.py'
+      - '.github/workflows/pbg008-durable-neural.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  crash-fencing-and-neural-evidence:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ['3.11','3.13']
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/VL-64
+          ref: fea0d29d5a8a1edb03d9c66edd5ca4b15a1395d3
+          path: upstream/vl64
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/E-CPU
+          ref: f9ed67c495b00f9d26df47e291b40b41070cb609
+          path: upstream/ecpu
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/In-Formation-Space
+          ref: bfecbfc8b0e1f64e4998617d03654c3c220b39a1
+          path: upstream/ifs
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/Virtual-Ground-Interpreter
+          ref: ae3f949b7d0b2aaa42236bc7cc37e9857384b174
+          path: upstream/vgi
+          sparse-checkout: |
+            virtual_ground_interpreter
+          sparse-checkout-cone-mode: true
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: Kier73/Navigable-Compute
+          ref: 66e216e53ab606547ba4a5316ed44044e327b67b
+          path: upstream/navigable
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install source and evidence dependencies
+        run: |
+          python -m pip install -e . -e upstream/vl64 -e upstream/ecpu -e upstream/navigable -e upstream/vgi/virtual_ground_interpreter 'numpy>=1.26' 'pytest>=8'
+      - name: Durable source journal, IFS route CAS and native Qwen observation recovery
+        run: >-
+          python -c "import sys,pytest;sys.path[:0]=['tests','upstream/vl64/tests','upstream/ifs/bridges/proof-attention'];raise SystemExit(pytest.main(['-q','tests/test_durable_neural_math.py','tests/test_durable_neural_acquisition.py']))"
+      - name: Neural source and active attention regressions
+        run: >-
+          python -c "import sys,pytest;sys.path[:0]=['tests','upstream/vl64/tests','upstream/ifs/bridges/proof-attention'];raise SystemExit(pytest.main(['-q','tests/test_active_neural_acquisition_math.py','tests/test_neural_trace_ground_math.py','tests/test_source_hankel_ground.py']))"
